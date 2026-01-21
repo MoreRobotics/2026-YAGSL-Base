@@ -14,8 +14,10 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -49,7 +51,7 @@ public class RobotContainer
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
                                                                 () -> driver.getLeftY() * -1,
                                                                 () -> driver.getLeftX() * -1)
-                                                            .withControllerRotationAxis(() -> s_Eyes.getTargetRotation())
+                                                            .withControllerRotationAxis(driver::getRightX)
                                                             .deadband(OperatorConstants.DEADBAND)
                                                             .scaleTranslation(0.8)
                                                             .allianceRelativeControl(true);
@@ -102,11 +104,11 @@ public class RobotContainer
   public RobotContainer()
   {
 
-    Command driveFieldOrientedDirectAngle = drivebase.driveCommand(
-      () -> driver.getLeftY(),
-      () -> driver.getLeftX(),
-      () -> s_Eyes.getTargetRotation()
-      );
+Command driveFieldOrientedDirectAngle = drivebase.driveCommand(
+  () -> driver.getLeftX(), 
+  () -> driver.getLeftY(),
+  () -> Math.pow(driver.getRightX(), 3) * drivebase.getSwerveDrive().getMaximumChassisAngularVelocity());
+   
 
       drivebase.setDefaultCommand(driveFieldOrientedDirectAngle);
 
@@ -114,6 +116,7 @@ public class RobotContainer
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
+
   }
 
   /**
@@ -135,44 +138,55 @@ public class RobotContainer
     Command driveSetpointGenKeyboard = drivebase.driveWithSetpointGeneratorFieldRelative(
         driveDirectAngleKeyboard);
 
-    if (RobotBase.isSimulation())
-    {
-      drivebase.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
-    } else
-    {
-      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
-    }
+    // if (RobotBase.isSimulation())
+    // {
+    //   drivebase.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
+    // } else
+    // {
+    //   drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
+    // }
 
-    if (Robot.isSimulation())
-    {
-      Pose2d target = new Pose2d(new Translation2d(1, 4),
-                                 Rotation2d.fromDegrees(90));
-      //drivebase.getSwerveDrive().field.getObject("targetPose").setPose(target);
-      driveDirectAngleKeyboard.driveToPose(() -> target,
-                                           new ProfiledPIDController(5,
-                                                                     0,
-                                                                     0,
-                                                                     new Constraints(5, 2)),
-                                           new ProfiledPIDController(5,
-                                                                     0,
-                                                                     0,
-                                                                     new Constraints(Units.degreesToRadians(360),
-                                                                                     Units.degreesToRadians(180))
-                                           ));
-      driver.triangle().onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
-      // driver.button(1).whileTrue(drivebase.sysIdDriveMotorCommand());
-      // driver.button(2).whileTrue(Commands.runEnd(() -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
-                                                    //  () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));
+    // if (Robot.isSimulation())
+    // {
+    //   Pose2d target = new Pose2d(new Translation2d(1, 4),
+    //                              Rotation2d.fromDegrees(90));
+    //   //drivebase.getSwerveDrive().field.getObject("targetPose").setPose(target);
+    //   driveDirectAngleKeyboard.driveToPose(() -> target,
+    //                                        new ProfiledPIDController(5,
+    //                                                                  0,
+    //                                                                  0,
+    //                                                                  new Constraints(5, 2)),
+    //                                        new ProfiledPIDController(5,
+    //                                                                  0,
+    //                                                                  0,
+    //                                                                  new Constraints(Units.degreesToRadians(360),
+    //                                                                                  Units.degreesToRadians(180))
+    //                                        ));
+    //   driver.triangle().onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
+    //   // driver.button(1).whileTrue(drivebase.sysIdDriveMotorCommand());
+    //   // driver.button(2).whileTrue(Commands.runEnd(() -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
+    //                                                 //  () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));
 
-      // driver.L2().whileTrue(
-      //    driveFieldOrientedDirectAngle = drivebase.driveCommand(
-      //     () -> driver.getLeftY(),
-      //     () -> driver.getLeftX(),
-      //     () -> s_Eyes.getTargetRotation()).andThen(() ->System.out.println("Worked"))
 
-      // );
 
-    }
+    // }
+
+
+    driver.L2().whileTrue(
+      driveFieldOrientedDirectAngle = drivebase.driveCommand(
+          () -> driver.getLeftY(),
+          () -> driver.getLeftX(),
+          () -> (s_Eyes.getTargetRotation()-s_Eyes.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (-.1)))
+      .onFalse(
+        driveFieldOrientedDirectAngle = drivebase.driveCommand(
+        () -> driver.getLeftX(), 
+        () -> driver.getLeftY(),
+        () -> Math.pow(driver.getRightX(), 3) * drivebase.getSwerveDrive().getMaximumChassisAngularVelocity())
+      );
+
+
+    driver.triangle().onTrue(new InstantCommand(() -> drivebase.zeroGyro()));
+
    
 
   }

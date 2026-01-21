@@ -194,16 +194,16 @@ import limelight.Limelight;
 
         double angle =  (Math.atan((targetY - robotY) / (targetX - robotX)) * (180 / Math.PI));
 
-        if (robotX > targetX) {
+        // if (robotX > targetX) {
 
-            angle = angle + 180;
+        //     angle = angle + 180;
 
-        }
+        // }
 
-        SmartDashboard.putNumber("angle", angle);
-        SmartDashboard.putNumber(" inverted angle", -angle);
+        // SmartDashboard.putNumber("angle", angle);
+        // SmartDashboard.putNumber(" inverted angle", -angle);
 
-        return -angle + 180;
+        return angle;
      }
 
      public Pose3d getTargetPose() {
@@ -255,6 +255,11 @@ import limelight.Limelight;
 );
  
          updateData();
+
+        SmartDashboard.putNumber("Robot Angle", m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees());
+        SmartDashboard.putNumber("Target Angle", getTargetRotation());
+        SmartDashboard.putNumber("Velocity Command", (getTargetRotation()-m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (-.1));
+
  
         
  

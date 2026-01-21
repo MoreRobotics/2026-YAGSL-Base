@@ -51,8 +51,8 @@ public final class Constants
 
   public static class Positions
   {
-    public static final double hubBlueX = 2.99;
-    public static final double hubBlueY = 3.86;
+    public static final double hubBlueX = 4.62;
+    public static final double hubBlueY = 4.03;
     public static final double hubBlueR = 0.0;
   }
 }
