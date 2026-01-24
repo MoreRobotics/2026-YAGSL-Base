@@ -51,7 +51,7 @@ public class RobotContainer
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
                                                                 () -> driver.getLeftY() * -1,
                                                                 () -> driver.getLeftX() * -1)
-                                                            .withControllerRotationAxis(driver::getRightX)
+                                                            .withControllerRotationAxis(() -> -driver.getRightX())
                                                             .deadband(OperatorConstants.DEADBAND)
                                                             .scaleTranslation(0.8)
                                                             .allianceRelativeControl(true);
@@ -114,6 +114,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
       //     () -> driver.getLeftY(),
       //     () -> driver.getRightX()));
       drivebase.setDefaultCommand(driveFieldOrientedDirectAngle);
+      
 
     // Configure the trigger bindings
     configureBindings();
@@ -174,15 +175,50 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
 
     // }
 
-
-    driver.L2().whileTrue(
+    if (drivebase.isRedAlliance())
+    {
+      if(s_Eyes.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees() > 0)
+      {
+        driver.L2().whileTrue(
       driveFieldOrientedDirectAngle = drivebase.driveCommand(
-          () -> driver.getLeftY(),
-          () -> driver.getLeftX(),
-          () -> (s_Eyes.getTargetRotation()-s_Eyes.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (-.1)))
+          () -> -driver.getLeftY(),
+          () -> -driver.getLeftX(),
+          () -> (s_Eyes.getTargetRotation()-(180 - s_Eyes.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees())) * (-.1)))
       .onFalse(
         driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity)
       );
+      }
+      else {
+        driver.L2().whileTrue(
+      driveFieldOrientedDirectAngle = drivebase.driveCommand(
+          () -> -driver.getLeftY(),
+          () -> -driver.getLeftX(),
+          () -> (s_Eyes.getTargetRotation()-(-180 - s_Eyes.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees())) * (-.1)))
+      .onFalse(
+        driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity)
+      );
+      }
+    }
+    else
+    {
+      driver.L2().whileTrue(
+      driveFieldOrientedDirectAngle = drivebase.driveCommand(
+          () -> -driver.getLeftY(),
+          () -> -driver.getLeftX(),
+          () -> (s_Eyes.getTargetRotation()-s_Eyes.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.1)))
+      .onFalse(
+        driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity)
+      );
+    }
+
+    // driver.L2().whileTrue(
+    //   driveFieldOrientedDirectAngle = drivebase.driveCommand(
+    //       () -> -driver.getLeftY(),
+    //       () -> -driver.getLeftX(),
+    //       () -> (s_Eyes.getTargetRotation()-s_Eyes.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.1)))
+    //   .onFalse(
+    //     driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity)
+    //   );
 
 
     driver.triangle().onTrue(new InstantCommand(() -> drivebase.zeroGyroWithAlliance()));

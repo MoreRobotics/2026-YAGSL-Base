@@ -50,6 +50,7 @@ import limelight.Limelight;
      SwerveSubsystem s_Swerve;
      LimelightHelpers r_LimelightHelpers;
 
+     public StructPublisher<Pose2d> targetHub;
      public StructPublisher<Pose2d> estimatedRobotPosePublisher;
      public SwerveDrivePoseEstimator m_PoseEstimator;
  
@@ -86,7 +87,8 @@ import limelight.Limelight;
         s_Swerve.getPose(),
         VecBuilder.fill(0.1, 0.1, 0.1),
         VecBuilder.fill(1.5, 1.5, 1.5));
-        
+
+    targetHub = NetworkTableInstance.getDefault().getStructTopic("/TargetHubPose", Pose2d.struct).publish(PubSubOption.sendAll(true));
          
      }
  
@@ -184,7 +186,8 @@ import limelight.Limelight;
 
      public double getTargetRotation() {
         Pose2d robotPose = m_PoseEstimator.getEstimatedPosition();
-        Pose3d targetPose = getTargetPose();
+
+        Pose2d targetPose = getTargetPose();
 
         double robotX = robotPose.getX();
         double robotY = robotPose.getY();
@@ -193,6 +196,8 @@ import limelight.Limelight;
         double targetY = targetPose.getY();
 
         double angle =  (Math.atan((targetY - robotY) / (targetX - robotX)) * (180 / Math.PI));
+
+
 
         // if (robotX > targetX) {
 
@@ -206,20 +211,20 @@ import limelight.Limelight;
         return angle;
      }
 
-     public Pose3d getTargetPose() {
-        Pose3d pose;
+     public Pose2d getTargetPose() {
+        Pose2d pose;
 
 
-        if(DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) {
+        if(DriverStation.getAlliance().equals(Alliance.Blue)) {
 
             // get pose of blue speaker
-            pose = new Pose3d(Constants.Positions.hubBlueX, Constants.Positions.hubBlueY, 0, new Rotation3d(0,0,Constants.Positions.hubBlueR));
+            pose = new Pose2d(Constants.Positions.hubBlueX, Constants.Positions.hubBlueY, new Rotation2d(Constants.Positions.hubBlueR));
 
         // if robot is on red alliance
         } else {
 
             // get pose of red speaker
-            pose = new Pose3d(Constants.Positions.hubBlueX, Constants.Positions.hubBlueY, 0, new Rotation3d(0,0,Constants.Positions.hubBlueY));
+            pose = new Pose2d(Constants.Positions.hubRedX, Constants.Positions.hubRedY, new Rotation2d(Constants.Positions.hubBlueR));
 
         }
         
@@ -257,8 +262,12 @@ import limelight.Limelight;
          updateData();
 
         SmartDashboard.putNumber("Robot Angle", m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees());
+        SmartDashboard.putNumber("Robot Angle Red", m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees() + 180);
         SmartDashboard.putNumber("Target Angle", getTargetRotation());
         SmartDashboard.putNumber("Velocity Command", (getTargetRotation()-m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (-.1));
+        SmartDashboard.putNumber("Velocity Command Red", (getTargetRotation()-(m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees() + 180)) * (-.1));
+
+        targetHub.set(getTargetPose());
 
  
         

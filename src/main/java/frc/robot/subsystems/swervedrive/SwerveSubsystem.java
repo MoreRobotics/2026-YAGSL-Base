@@ -84,7 +84,15 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public SwerveSubsystem(File directory)
   {
-    boolean blueAlliance = false;
+    boolean blueAlliance;
+    // boolean blueAlliance = false;
+    if(isRedAlliance())
+    {
+      blueAlliance = false;
+    }
+    else{
+      blueAlliance = true;
+    }
     Pose2d startingPose = blueAlliance ? new Pose2d(new Translation2d(Meter.of(1),
                                                                       Meter.of(4)),
                                                     Rotation2d.fromDegrees(0))
@@ -95,7 +103,7 @@ public class SwerveSubsystem extends SubsystemBase
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
     try
     {
-      swerveDrive = new SwerveParser(directory).createSwerveDrive(Constants.MAX_SPEED, new Pose2d());
+      swerveDrive = new SwerveParser(directory).createSwerveDrive(Constants.MAX_SPEED, startingPose);
       // Alternative method if you don't want to supply the conversion factor via JSON files.
       // swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed, angleConversionFactor, driveConversionFactor);
     } catch (Exception e)
@@ -135,6 +143,8 @@ public class SwerveSubsystem extends SubsystemBase
                                   Constants.MAX_SPEED,
                                   new Pose2d(new Translation2d(Meter.of(2), Meter.of(0)),
                                              Rotation2d.fromDegrees(0)));
+  
+    
   }
 
   /**
@@ -551,7 +561,7 @@ public class SwerveSubsystem extends SubsystemBase
    *
    * @return true if the red alliance, false if blue. Defaults to false if none is available.
    */
-  private boolean isRedAlliance()
+  public boolean isRedAlliance()
   {
     var alliance = DriverStation.getAlliance();
     return alliance.isPresent() ? alliance.get() == DriverStation.Alliance.Red : false;
@@ -572,6 +582,7 @@ public class SwerveSubsystem extends SubsystemBase
     } else
     {
       zeroGyro();
+
     }
   }
 
