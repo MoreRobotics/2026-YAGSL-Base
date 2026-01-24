@@ -115,16 +115,30 @@ import limelight.Limelight;
          NetworkTableEntry tx = table.getEntry("tx");
          NetworkTableEntry ty = table.getEntry("ty");
          NetworkTableEntry ta = table.getEntry("ta");
+
+         NetworkTable left = NetworkTableInstance.getDefault().getTable("limelight-left");
+         NetworkTableEntry txLeft = left.getEntry("tx");
+         NetworkTableEntry tyLeft = left.getEntry("ty");
+         NetworkTableEntry taLeft = left.getEntry("ta");
+ 
  
          //read values periodically
          double x = tx.getDouble(tID);
          double y = ty.getDouble(0.0);
          double area = ta.getDouble(0.0);
+
+         double xLeft = txLeft.getDouble(tID);
+         double yLeft = tyLeft.getDouble(0.0);
+         double areaLeft = taLeft.getDouble(0.0);
  
          //post to smart dashboard periodically
          SmartDashboard.putNumber("LimelightX", x);
          SmartDashboard.putNumber("LimelightY", y);
          SmartDashboard.putNumber("LimelightArea", area);
+
+         SmartDashboard.putNumber("LimelightX", xLeft);
+         SmartDashboard.putNumber("LimelightY", yLeft);
+         SmartDashboard.putNumber("LimelightArea", areaLeft);
  
          // tx = LimelightHelpers.getTX("limelight");
          // ty = LimelightHelpers.getTY("limelight");
@@ -135,6 +149,7 @@ import limelight.Limelight;
          // tync = LimelightHelpers.getTYNC("limelight");  // Vertical  offset from principal pixel/point to target in degrees
  
          LimelightHelpers.setPipelineIndex("limelight-front", 0);
+         LimelightHelpers.setPipelineIndex("limelight-left", 0);
  
          // log target data
          SmartDashboard.putNumber("AprilTagID", tID);
@@ -182,6 +197,14 @@ import limelight.Limelight;
          return pose;
          
          
+     }
+
+     public Pose2d getRobotPoseLeft() {
+        Pose2d pose;
+ 
+         
+         pose = LimelightHelpers.getBotPose2d_wpiBlue("limelight-left");
+         return pose;
      }
 
      public double getTargetRotation() {
@@ -249,9 +272,13 @@ import limelight.Limelight;
         m_PoseEstimator.update(s_Swerve.getHeading(), s_Swerve.getSwerveDrive().getModulePositions());
         estimatedRobotPosePublisher.set(m_PoseEstimator.getEstimatedPosition());
 
-         if (LimelightHelpers.getTV("limelight-front") == true) {
+         if (LimelightHelpers.getTV("limelight-front") == true || LimelightHelpers.getTV("limelight-left") == true) {
              m_PoseEstimator.addVisionMeasurement(
                  getRobotPose(), 
+                 Timer.getFPGATimestamp() - (LimelightHelpers.getLatency_Pipeline("limelight-front")/1000.0) - (LimelightHelpers.getLatency_Capture("limelight")/1000.0)
+             );
+             m_PoseEstimator.addVisionMeasurement(
+                 getRobotPoseLeft(), 
                  Timer.getFPGATimestamp() - (LimelightHelpers.getLatency_Pipeline("limelight-front")/1000.0) - (LimelightHelpers.getLatency_Capture("limelight")/1000.0)
              );
          }

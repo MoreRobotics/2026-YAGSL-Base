@@ -221,7 +221,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     //   );
 
 
-    driver.triangle().onTrue(new InstantCommand(() -> drivebase.zeroGyroWithAlliance()));
+    driver.options().onTrue(new InstantCommand(() -> drivebase.zeroGyroWithAlliance()));
 
    
 
