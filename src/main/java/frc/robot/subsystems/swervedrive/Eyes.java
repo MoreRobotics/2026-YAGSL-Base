@@ -83,7 +83,7 @@ import limelight.Limelight;
         s_Swerve.getKinematics(),
         s_Swerve.getHeading(),
         s_Swerve.getSwerveDrive().getModulePositions(),
-        new Pose2d(),
+        s_Swerve.getPose(),
         VecBuilder.fill(0.1, 0.1, 0.1),
         VecBuilder.fill(1.5, 1.5, 1.5));
         
@@ -244,15 +244,15 @@ import limelight.Limelight;
         m_PoseEstimator.update(s_Swerve.getHeading(), s_Swerve.getSwerveDrive().getModulePositions());
         estimatedRobotPosePublisher.set(m_PoseEstimator.getEstimatedPosition());
 
-        //  if (LimelightHelpers.getTV("limelight-front") == true) {
-        //      s_Swerve.getSwerveDrive().addVisionMeasurement(
-        //          getRobotPose(), 
-        //          Timer.getFPGATimestamp() - (LimelightHelpers.getLatency_Pipeline("limelight-front")/1000.0) - (LimelightHelpers.getLatency_Capture("limelight")/1000.0)
-        //      );
-        //  }
-        m_PoseEstimator.addVisionMeasurement( getRobotPose(),
-             Timer.getFPGATimestamp() - (LimelightHelpers.getLatency_Pipeline("limelight-front")/1000.0) - (LimelightHelpers.getLatency_Capture("limelight")/1000.0)
-);
+         if (LimelightHelpers.getTV("limelight-front") == true) {
+             m_PoseEstimator.addVisionMeasurement(
+                 getRobotPose(), 
+                 Timer.getFPGATimestamp() - (LimelightHelpers.getLatency_Pipeline("limelight-front")/1000.0) - (LimelightHelpers.getLatency_Capture("limelight")/1000.0)
+             );
+         }
+//         m_PoseEstimator.addVisionMeasurement( getRobotPose(),
+//              Timer.getFPGATimestamp() - (LimelightHelpers.getLatency_Pipeline("limelight-front")/1000.0) - (LimelightHelpers.getLatency_Capture("limelight")/1000.0)
+// );
  
          updateData();
 

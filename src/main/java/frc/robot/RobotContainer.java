@@ -104,12 +104,15 @@ public class RobotContainer
   public RobotContainer()
   {
 
-Command driveFieldOrientedDirectAngle = drivebase.driveCommand(
-  () -> driver.getLeftX(), 
-  () -> driver.getLeftY(),
-  () -> Math.pow(driver.getRightX(), 3) * drivebase.getSwerveDrive().getMaximumChassisAngularVelocity());
+Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity);
    
 
+      // drivebase.setDefaultCommand(
+      //   new AbsoluteFieldDrive(
+      //     drivebase, 
+      //     () -> driver.getLeftX(),
+      //     () -> driver.getLeftY(),
+      //     () -> driver.getRightX()));
       drivebase.setDefaultCommand(driveFieldOrientedDirectAngle);
 
     // Configure the trigger bindings
@@ -178,14 +181,11 @@ Command driveFieldOrientedDirectAngle = drivebase.driveCommand(
           () -> driver.getLeftX(),
           () -> (s_Eyes.getTargetRotation()-s_Eyes.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (-.1)))
       .onFalse(
-        driveFieldOrientedDirectAngle = drivebase.driveCommand(
-        () -> driver.getLeftX(), 
-        () -> driver.getLeftY(),
-        () -> Math.pow(driver.getRightX(), 3) * drivebase.getSwerveDrive().getMaximumChassisAngularVelocity())
+        driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity)
       );
 
 
-    driver.triangle().onTrue(new InstantCommand(() -> drivebase.zeroGyro()));
+    driver.triangle().onTrue(new InstantCommand(() -> drivebase.zeroGyroWithAlliance()));
 
    
 
