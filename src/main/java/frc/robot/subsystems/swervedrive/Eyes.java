@@ -13,7 +13,7 @@
 
 
  import frc.robot.Constants;
- import java.util.List;
+import java.util.List;
  
  import com.pathplanner.lib.path.GoalEndState;
  import com.pathplanner.lib.path.IdealStartingState;
@@ -63,7 +63,7 @@ import limelight.Limelight;
      public double txnc;
      public double tync;
  
-     public int closestReefSide;
+     
  
  
     
@@ -71,6 +71,7 @@ import limelight.Limelight;
      public PathPlannerPath reefPath;
      public boolean closeToReef = false;
      public double closestDistance;
+     public boolean doRejectUpdate;
      // constuctor
      public Eyes(SwerveSubsystem swerve) {
  
@@ -86,7 +87,8 @@ import limelight.Limelight;
         s_Swerve.getSwerveDrive().getModulePositions(),
         s_Swerve.getPose(),
         VecBuilder.fill(0.1, 0.1, 0.1),
-        VecBuilder.fill(1.5, 1.5, 1.5));
+        VecBuilder.fill(1.5, 1.5, 1.5)
+        );
 
     targetHub = NetworkTableInstance.getDefault().getStructTopic("/TargetHubPose", Pose2d.struct).publish(PubSubOption.sendAll(true));
          
@@ -111,12 +113,12 @@ import limelight.Limelight;
           * ta = pitch in degrees in limelight FOV
           * tID = target ID number
           */
-         NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight-front");
+         NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight-left");
          NetworkTableEntry tx = table.getEntry("tx");
          NetworkTableEntry ty = table.getEntry("ty");
          NetworkTableEntry ta = table.getEntry("ta");
 
-         NetworkTable left = NetworkTableInstance.getDefault().getTable("limelight-left");
+         NetworkTable left = NetworkTableInstance.getDefault().getTable("limelight-right");
          NetworkTableEntry txLeft = left.getEntry("tx");
          NetworkTableEntry tyLeft = left.getEntry("ty");
          NetworkTableEntry taLeft = left.getEntry("ta");
@@ -136,9 +138,9 @@ import limelight.Limelight;
          SmartDashboard.putNumber("LimelightY", y);
          SmartDashboard.putNumber("LimelightArea", area);
 
-         SmartDashboard.putNumber("LimelightX", xLeft);
-         SmartDashboard.putNumber("LimelightY", yLeft);
-         SmartDashboard.putNumber("LimelightArea", areaLeft);
+         SmartDashboard.putNumber("Limelight-LeftX", xLeft);
+         SmartDashboard.putNumber("Limelight-LeftY", yLeft);
+         SmartDashboard.putNumber("LimelightArea-Left", areaLeft);
  
          // tx = LimelightHelpers.getTX("limelight");
          // ty = LimelightHelpers.getTY("limelight");
@@ -148,11 +150,12 @@ import limelight.Limelight;
          // txnc = LimelightHelpers.getTXNC("limelight");  // Horizontal offset from principal pixel/point to target in degrees
          // tync = LimelightHelpers.getTYNC("limelight");  // Vertical  offset from principal pixel/point to target in degrees
  
-         LimelightHelpers.setPipelineIndex("limelight-front", 0);
+         LimelightHelpers.setPipelineIndex("limelight-right", 0);
          LimelightHelpers.setPipelineIndex("limelight-left", 0);
  
          // log target data
          SmartDashboard.putNumber("AprilTagID", tID);
+         
 
 
  
@@ -190,10 +193,11 @@ import limelight.Limelight;
       */
      public Pose2d getRobotPose() {
  
-         Pose2d pose;
+        // Pose2d pose;
+
  
          
-         pose = LimelightHelpers.getBotPose2d_wpiBlue("limelight-front");
+         Pose2d pose = LimelightHelpers.getBotPose2d_wpiBlue("limelight-right");
          return pose;
          
          
@@ -230,8 +234,19 @@ import limelight.Limelight;
 
         // SmartDashboard.putNumber("angle", angle);
         // SmartDashboard.putNumber(" inverted angle", -angle);
+        if (s_Swerve.isRedAlliance()) {
+            if(m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees() > 0)
+            {
+                return angle-(180 - m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees());
+            }
+            else {
+                return angle + 180 + m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees();
+            }
+        }
+        else{
+            return angle;
+        }
 
-        return angle;
      }
 
      public Pose2d getTargetPose() {
@@ -272,19 +287,22 @@ import limelight.Limelight;
         m_PoseEstimator.update(s_Swerve.getHeading(), s_Swerve.getSwerveDrive().getModulePositions());
         estimatedRobotPosePublisher.set(m_PoseEstimator.getEstimatedPosition());
 
-         if (LimelightHelpers.getTV("limelight-front") == true || LimelightHelpers.getTV("limelight-left") == true) {
+
+
+         if (LimelightHelpers.getTV("limelight-right")) {
              m_PoseEstimator.addVisionMeasurement(
                  getRobotPose(), 
-                 Timer.getFPGATimestamp() - (LimelightHelpers.getLatency_Pipeline("limelight-front")/1000.0) - (LimelightHelpers.getLatency_Capture("limelight")/1000.0)
-             );
-             m_PoseEstimator.addVisionMeasurement(
-                 getRobotPoseLeft(), 
-                 Timer.getFPGATimestamp() - (LimelightHelpers.getLatency_Pipeline("limelight-front")/1000.0) - (LimelightHelpers.getLatency_Capture("limelight")/1000.0)
+                 Timer.getFPGATimestamp() - (LimelightHelpers.getLatency_Pipeline("limelight-right")/1000.0) - (LimelightHelpers.getLatency_Capture("limelight-right")/1000.0)
              );
          }
-//         m_PoseEstimator.addVisionMeasurement( getRobotPose(),
-//              Timer.getFPGATimestamp() - (LimelightHelpers.getLatency_Pipeline("limelight-front")/1000.0) - (LimelightHelpers.getLatency_Capture("limelight")/1000.0)
-// );
+
+         if(LimelightHelpers.getTV("limelight-left") == true)
+         {
+            m_PoseEstimator.addVisionMeasurement(
+                 getRobotPoseLeft(), 
+                 Timer.getFPGATimestamp() - (LimelightHelpers.getLatency_Pipeline("limelight-left")/1000.0) - (LimelightHelpers.getLatency_Capture("limelight-left")/1000.0)
+             );
+         }
  
          updateData();
 
@@ -292,7 +310,8 @@ import limelight.Limelight;
         SmartDashboard.putNumber("Robot Angle Red", m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees() + 180);
         SmartDashboard.putNumber("Target Angle", getTargetRotation());
         SmartDashboard.putNumber("Velocity Command", (getTargetRotation()-m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (-.1));
-        SmartDashboard.putNumber("Velocity Command Red", (getTargetRotation()-(m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees() + 180)) * (-.1));
+        SmartDashboard.putNumber("Velocity Command Red", (getTargetRotation()+(m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees() + 180)) * (-.1));
+        SmartDashboard.putNumber("Theta M Negative", -(180 + m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()));
 
         targetHub.set(getTargetPose());
 

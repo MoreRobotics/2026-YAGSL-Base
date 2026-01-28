@@ -177,27 +177,16 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
 
     if (drivebase.isRedAlliance())
     {
-      if(s_Eyes.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees() > 0)
-      {
         driver.L2().whileTrue(
       driveFieldOrientedDirectAngle = drivebase.driveCommand(
           () -> -driver.getLeftY(),
           () -> -driver.getLeftX(),
-          () -> (s_Eyes.getTargetRotation()-(180 - s_Eyes.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees())) * (-.1)))
+          () -> (s_Eyes.getTargetRotation()) * (-.1)))
       .onFalse(
         driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity)
       );
-      }
-      else {
-        driver.L2().whileTrue(
-      driveFieldOrientedDirectAngle = drivebase.driveCommand(
-          () -> -driver.getLeftY(),
-          () -> -driver.getLeftX(),
-          () -> (s_Eyes.getTargetRotation()-(-180 - s_Eyes.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees())) * (-.1)))
-      .onFalse(
-        driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity)
-      );
-      }
+      
+      
     }
     else
     {
@@ -205,7 +194,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
       driveFieldOrientedDirectAngle = drivebase.driveCommand(
           () -> -driver.getLeftY(),
           () -> -driver.getLeftX(),
-          () -> (s_Eyes.getTargetRotation()-s_Eyes.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.1)))
+          () -> (s_Eyes.getTargetRotation()-s_Eyes.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.15)))
       .onFalse(
         driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity)
       );
