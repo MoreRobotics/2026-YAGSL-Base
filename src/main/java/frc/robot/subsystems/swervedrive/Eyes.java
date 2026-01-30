@@ -223,6 +223,10 @@ import limelight.Limelight;
         double targetY = targetPose.getY();
 
         double angle =  (Math.atan((targetY - robotY) / (targetX - robotX)) * (180 / Math.PI));
+        SmartDashboard.putNumber("RobotX", robotX);
+        SmartDashboard.putNumber("RobotY", robotY);
+        SmartDashboard.putNumber("TargetX", targetX);
+        SmartDashboard.putNumber("TagretY", targetY);
 
 
 
@@ -232,20 +236,20 @@ import limelight.Limelight;
 
         // }
 
-        // SmartDashboard.putNumber("angle", angle);
+         
         // SmartDashboard.putNumber(" inverted angle", -angle);
-        if (s_Swerve.isRedAlliance()) {
-            if(m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees() > 0)
-            {
-                return angle-(180 - m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees());
-            }
-            else {
-                return angle + 180 + m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees();
-            }
-        }
-        else{
+         if (s_Swerve.isRedAlliance()) {
+             if(m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees() > 0)
+             {
+                 return angle+(180 - m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees());
+             }
+             else {
+                 return angle + (-180 - m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees());
+             }
+         }
+         else{
             return angle;
-        }
+         }
 
      }
 
@@ -253,16 +257,16 @@ import limelight.Limelight;
         Pose2d pose;
 
 
-        if(DriverStation.getAlliance().equals(Alliance.Blue)) {
-
-            // get pose of blue speaker
-            pose = new Pose2d(Constants.Positions.hubBlueX, Constants.Positions.hubBlueY, new Rotation2d(Constants.Positions.hubBlueR));
-
-        // if robot is on red alliance
-        } else {
+        if(s_Swerve.isRedAlliance()) {
 
             // get pose of red speaker
             pose = new Pose2d(Constants.Positions.hubRedX, Constants.Positions.hubRedY, new Rotation2d(Constants.Positions.hubBlueR));
+
+        // if robot is on blue alliance
+        } else {
+
+            // get pose of blue speaker
+            pose = new Pose2d(Constants.Positions.hubBlueX, Constants.Positions.hubBlueY, new Rotation2d(Constants.Positions.hubBlueR));
 
         }
         
@@ -309,9 +313,10 @@ import limelight.Limelight;
         SmartDashboard.putNumber("Robot Angle", m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees());
         SmartDashboard.putNumber("Robot Angle Red", m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees() + 180);
         SmartDashboard.putNumber("Target Angle", getTargetRotation());
-        SmartDashboard.putNumber("Velocity Command", (getTargetRotation()-m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (-.1));
+        SmartDashboard.putNumber("Velocity Command", (getTargetRotation()-m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.1));
         SmartDashboard.putNumber("Velocity Command Red", (getTargetRotation()+(m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees() + 180)) * (-.1));
         SmartDashboard.putNumber("Theta M Negative", -(180 + m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()));
+        
 
         targetHub.set(getTargetPose());
 

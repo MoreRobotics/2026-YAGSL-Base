@@ -23,8 +23,12 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteFieldDrive;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.swervedrive.Eyes;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+
+import static edu.wpi.first.units.Units.RPM;
+
 import java.io.File;
 import swervelib.SwerveInputStream;
 
@@ -44,6 +48,7 @@ public class RobotContainer
                                                                                 "swerve/falcon"));
   
   public final Eyes s_Eyes = new Eyes(drivebase);
+  public final Shooter s_Shooter = new Shooter();
 
   /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
@@ -179,9 +184,9 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     {
         driver.L2().whileTrue(
       driveFieldOrientedDirectAngle = drivebase.driveCommand(
-          () -> -driver.getLeftY(),
-          () -> -driver.getLeftX(),
-          () -> (s_Eyes.getTargetRotation()) * (-.1)))
+          () -> driver.getLeftY(),
+          () -> driver.getLeftX(),
+          () -> (s_Eyes.getTargetRotation()) * (.12)))
       .onFalse(
         driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity)
       );
@@ -194,7 +199,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
       driveFieldOrientedDirectAngle = drivebase.driveCommand(
           () -> -driver.getLeftY(),
           () -> -driver.getLeftX(),
-          () -> (s_Eyes.getTargetRotation()-s_Eyes.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.15)))
+          () -> (s_Eyes.getTargetRotation()-s_Eyes.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.1)))
       .onFalse(
         driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity)
       );
@@ -212,9 +217,14 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
 
     driver.options().onTrue(new InstantCommand(() -> drivebase.zeroGyroWithAlliance()));
 
-   
+
+    // driver.cross().whileTrue(s_Shooter.setVelocity(RPM.of(s_Shooter.speed)));
 
   }
+
+   
+
+  
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
