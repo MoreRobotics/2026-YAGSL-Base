@@ -5,56 +5,175 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Feet;
+import static edu.wpi.first.units.Units.Pounds;
+import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
+
+import java.lang.annotation.Target;
+
+import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.Slot1Configs;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.hardware.TalonFXS;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
 import yams.mechanisms.SmartMechanism;
+import yams.mechanisms.config.ArmConfig;
+import yams.mechanisms.positional.Arm;
+import yams.motorcontrollers.SmartMotorController;
 import yams.motorcontrollers.SmartMotorControllerConfig;
 import yams.motorcontrollers.SmartMotorControllerConfig.ControlMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
+import yams.motorcontrollers.local.SparkWrapper;
+import yams.motorcontrollers.remote.TalonFXWrapper;
 
 public class Intake extends SubsystemBase {
-  private double kP = 0;
-  private double kI = 0;
-  private double kD = 0;
-  private double maxVelocity = 0;//90
-  private double maxAcceleration = 0;//45
-  public double speed = 0;
+  private double pivotP = 1;
+  private double pivotI = 0.1;
+  private double pivotD = 0;
+  private double forwardLimit = 0;
+  private double reverseLimit = 0;
+  private double pivotCurrentLimit = 80;
+  private double intakeStowPosition = 0;
+  private double intakeOutPosition = 10;
+  private double target = 0;
+  private boolean intakeOut = false;
+  private double tolerance = 0.3;
+
+  private double rollerP = .1;
+  private double rollerI = 0;
+  private double rollerD = 0;
+  private double rollerCurrentLimit = 80;
+   private double intakeSpeed = 40;
 
   private double gearRatio = 0;
+  private int intakePivotID = 12;
+  private int intakeID = 11;
 
-    private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
-  .withControlMode(ControlMode.CLOSED_LOOP)
-  // Feedback Constants (PID Constants)
-  .withClosedLoopController(kP, kI, kD, DegreesPerSecond.of(maxVelocity), DegreesPerSecondPerSecond.of(maxAcceleration))
-  .withSimClosedLoopController(kP, kI, kD, DegreesPerSecond.of(maxVelocity), DegreesPerSecondPerSecond.of(maxAcceleration))
-  // Feedforward Constants
-  .withFeedforward(new ArmFeedforward(0, 0, 0))
-  .withSimFeedforward(new ArmFeedforward(0, 0, 0))
-  // Telemetry name and verbosity level
-  .withTelemetry("Intake Pivot", TelemetryVerbosity.HIGH)
-  // Gearing from the motor rotor to final shaft.
-  // In this example GearBox.fromReductionStages(3,4) is the same as GearBox.fromStages("3:1","4:1") which corresponds to the gearbox attached to your motor.
-  // You could also use .withGearing(12) which does the same thing.
-  .withGearing(new MechanismGearing(GearBox.fromReductionStages(3, 4)))
-  // Motor properties to prevent over currenting.
-  .withMotorInverted(false)
-  .withIdleMode(MotorMode.BRAKE)
-  .withStatorCurrentLimit(Amps.of(40))
-  .withClosedLoopRampRate(Seconds.of(0.25))
-  .withOpenLoopRampRate(Seconds.of(0.25));
+  private Slot0Configs pidConfig;
+  private TalonFX m_IntakePivot;
+  private TalonFX m_Intake;
+  private CANcoder e_Climber;
+  private Servo servo;
+  private CurrentLimitsConfigs currentLimitConfig;
+  private FeedbackConfigs feedbackConfig;
+  private ArmFeedforward feedforward;
+  private PositionVoltage m_Request;
+  private TalonFXConfiguration pivotConfigs;
+  private TalonFXConfiguration rollerConfigs;
+  private VelocityVoltage m_VelocityRequest;
+
   /** Creates a new Intake. */
-  public Intake() {}
+  public Intake() {
+    m_IntakePivot = new TalonFX(intakePivotID);
+    m_Intake = new TalonFX(intakeID);
+
+    m_Request = new PositionVoltage(0).withSlot(0);
+    m_VelocityRequest = new VelocityVoltage(0).withSlot(0);
+
+    pivotConfigs = new TalonFXConfiguration();
+    pivotConfigs.Slot0.kP = pivotP;
+    pivotConfigs.Slot0.kI = pivotI;
+    pivotConfigs.Slot0.kD = pivotD;
+    // pivotConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    // pivotConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = forwardLimit;
+    // pivotConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    // pivotConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = reverseLimit;
+    pivotConfigs.Feedback.SensorToMechanismRatio = gearRatio;
+    pivotConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
+    pivotConfigs.CurrentLimits.SupplyCurrentLimit = pivotCurrentLimit;
+    pivotConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+    rollerConfigs = new TalonFXConfiguration();
+    rollerConfigs.Slot0.kP = rollerP;
+    rollerConfigs.Slot0.kI = rollerI;
+    rollerConfigs.Slot0.kD = rollerD;
+    rollerConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
+    rollerConfigs.CurrentLimits.SupplyCurrentLimit = rollerCurrentLimit;
+
+
+    m_IntakePivot.getConfigurator().apply(pivotConfigs);
+    m_Intake.getConfigurator().apply(rollerConfigs);
+    
+    
+  }
+
+  public void setIntakePosition(){
+    m_IntakePivot.setControl(m_Request.withPosition(target));
+  }
+
+  public void changeTarget(){
+    if(intakeOut)
+    {
+      target = intakeStowPosition;
+    }
+    else
+    {
+      target = intakeOutPosition;
+    }
+  }
+
+  public void changeState()
+  {
+    intakeOut = !intakeOut;
+  }
+
+  public double getIntakePosition()
+  {
+    return m_IntakePivot.getPosition().getValueAsDouble();
+  }
+
+  public boolean atPosition()
+  {
+    return (Math.abs(getIntakePosition() - target) < tolerance);
+  }
+  
+
+  public void setIntakeSpeed(double speed){
+    m_Intake.setControl(m_VelocityRequest.withVelocity(speed));
+  }
+  
+
+  public double getIntakeSpeed()
+  {
+    return intakeSpeed;
+  }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Intake Pivot Motor Position", getIntakePosition());
+    
+  }
+
+  @Override
+  public void simulationPeriodic() {
+    // This method will be called once per scheduler run during simulation
+    
   }
 }

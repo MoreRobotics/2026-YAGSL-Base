@@ -18,11 +18,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.MoveIntake;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteFieldDrive;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.swervedrive.Eyes;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -49,6 +52,7 @@ public class RobotContainer
   
   public final Eyes s_Eyes = new Eyes(drivebase);
   public final Shooter s_Shooter = new Shooter();
+  public final Intake s_Intake = new Intake();
 
   /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
@@ -216,6 +220,17 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
 
 
     driver.options().onTrue(new InstantCommand(() -> drivebase.zeroGyroWithAlliance()));
+    driver.R1().whileTrue(new InstantCommand(() -> s_Intake.setIntakeSpeed(s_Intake.getIntakeSpeed())))
+    .onFalse(new InstantCommand(() -> s_Intake.setIntakeSpeed(0)));
+
+    driver.L1().onTrue(
+      new SequentialCommandGroup(
+        new InstantCommand(() -> s_Intake.changeTarget()),
+        new MoveIntake(s_Intake),
+        new InstantCommand(() -> s_Intake.changeState())
+
+      )
+    );
 
 
     // driver.cross().whileTrue(s_Shooter.setVelocity(RPM.of(s_Shooter.speed)));
