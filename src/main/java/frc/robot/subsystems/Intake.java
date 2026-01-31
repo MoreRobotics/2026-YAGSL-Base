@@ -56,6 +56,10 @@ public class Intake extends SubsystemBase {
   private double pivotP = 1;
   private double pivotI = 0.1;
   private double pivotD = 0;
+  private double pivotAccelerationOut = 0;
+  private double pivotVelocityOut = 0;
+  private double pivotAcceleration = 0;
+  private double pivotVelocity = 0;
   private double forwardLimit = 0;
   private double reverseLimit = 0;
   private double pivotCurrentLimit = 80;
@@ -100,6 +104,8 @@ public class Intake extends SubsystemBase {
     pivotConfigs.Slot0.kP = pivotP;
     pivotConfigs.Slot0.kI = pivotI;
     pivotConfigs.Slot0.kD = pivotD;
+    pivotConfigs.MotionMagic.MotionMagicAcceleration = pivotAccelerationOut;
+    pivotConfigs.MotionMagic.MotionMagicCruiseVelocity = pivotVelocityOut;
     // pivotConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     // pivotConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = forwardLimit;
     // pivotConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
