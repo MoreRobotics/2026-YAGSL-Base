@@ -5,40 +5,41 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.ShooterPivot;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class MoveIntake extends Command {
-  Intake s_Intake;
-  /** Creates a new MoveIntake. */
-  public MoveIntake(Intake s_Intake) {
-    this.s_Intake = s_Intake;
-    addRequirements(s_Intake);
+public class AimShooter extends Command {
+  ShooterPivot s_ShooterPivot;
+  double setpoint;
+  /** Creates a new AimShooter. */
+  public AimShooter(ShooterPivot s_ShooterPivot) {
     // Use addRequirements() here to declare subsystem dependencies.
+    this.s_ShooterPivot = s_ShooterPivot;
+    //this.setpoint = setpoint;
+
+    addRequirements(s_ShooterPivot);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    s_Intake.setIntakePosition();
+    s_ShooterPivot.setShooterAngle(s_ShooterPivot.getShooterAngle());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    s_ShooterPivot.setShooterAngle(s_ShooterPivot.getShooterAngle());
+  }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    // if(!s_Intake.atPosition()){
-    //   s_Intake.setTarget(s_Intake.getIntakePosition());
-    //   s_Intake.setIntakePosition();
-    // }
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return s_Intake.atPosition();
+    return false;
   }
 }

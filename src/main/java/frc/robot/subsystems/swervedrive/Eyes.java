@@ -272,6 +272,22 @@ import limelight.Limelight;
         
         return pose;
      }
+
+     public double getTargetDistance()
+     {
+        Pose2d robotPose = m_PoseEstimator.getEstimatedPosition();
+
+        Pose2d targetPose = getTargetPose();
+        double robotX = robotPose.getX();
+        double robotY = robotPose.getY();
+
+        double targetX = targetPose.getX();
+        double targetY = targetPose.getY();
+        double thetaX = targetX - robotX;
+        double thetaY = targetY - robotY;
+        double distance = Math.sqrt(Math.pow(thetaX, 2) + Math.pow(thetaY, 2));
+        return distance;
+     }
      
  
      /*

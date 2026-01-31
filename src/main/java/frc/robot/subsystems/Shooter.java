@@ -12,6 +12,8 @@ import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Seconds;
 
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.hardware.TalonFXS;
 
@@ -36,80 +38,76 @@ import yams.motorcontrollers.remote.TalonFXSWrapper;
 
 public class Shooter extends SubsystemBase {
 
-  // private double kP = 0;
-  // private double kI = 0;
-  // private double kD = 0;
-  // private double maxVelocity = 0;//90
-  // private double maxAcceleration = 0;//45
-  // public double speed = 0;
+  private double shooterP = .1;
+  private double shooterI = 0;
+  private double shooterD = 0;
+  private double hotDogP = .1;
+  private double hotDogI = 0;
+  private double hotDogD = 0;
+  
+  private double currentLimit = 0;
+  private double shooterSpeed = 20;
+  private double hotDogSpeed = 20;
 
-  // private int iD = 0;
-  // private double gearRatio = 0;
+  private int shooterID = 13;
+  private int hotDogID = 0;
+  private double gearRatio = 0;
 
-  // private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
-  // .withControlMode(ControlMode.CLOSED_LOOP)
-  // // Feedback Constants (PID Constants)
-  // .withClosedLoopController(kP, kI, kD, DegreesPerSecond.of(maxVelocity), DegreesPerSecondPerSecond.of(maxAcceleration))
-  // .withSimClosedLoopController(kP, kI, kD, DegreesPerSecond.of(maxVelocity), DegreesPerSecondPerSecond.of(maxAcceleration))
-  // // Feedforward Constants
-  // .withFeedforward(new SimpleMotorFeedforward(0, 0, 0))
-  // .withSimFeedforward(new SimpleMotorFeedforward(0, 0, 0))
-  // // Telemetry name and verbosity level
-  // .withTelemetry("ShooterMotor", TelemetryVerbosity.HIGH)
-  // // Gearing from the motor rotor to final shaft.
-  // // In this example GearBox.fromReductionStages(3,4) is the same as GearBox.fromStages("3:1","4:1") which corresponds to the gearbox attached to your motor.
-  // // You could also use .withGearing(12) which does the same thing.
-  // .withGearing(new MechanismGearing(GearBox.fromReductionStages(gearRatio)))
-  // // Motor properties to prevent over currenting.
-  // .withMotorInverted(false)
-  // .withIdleMode(MotorMode.COAST)
-  // .withStatorCurrentLimit(Amps.of(40));
-
-  // private TalonFXS m_Shooter = new TalonFXS(iD);
-
-  // private SmartMotorController sparkSmartMotorController = new TalonFXSWrapper(m_Shooter, DCMotor.getKrakenX60(1), smcConfig);
-
-  // private final FlyWheelConfig shooterConfig = new FlyWheelConfig()
-  // // Diameter of the flywheel.
-  // .withDiameter(Inches.of(4))
-  // // Mass of the flywheel.
-  // .withMass(Pounds.of(1))
-  // // Maximum speed of the shooter.
-  // .withUpperSoftLimit(RPM.of(1000))
-  // // Telemetry name and verbosity for the arm.
-  // .withTelemetry("ShooterMech", TelemetryVerbosity.HIGH);
-
-  // // Shooter Mechanism
-  // private FlyWheel shooter = new FlyWheel(shooterConfig);
+  private TalonFX m_Shooter;
+  private TalonFX m_HotDog;
+  private TalonFXConfiguration shooterConfigs;
+  private TalonFXConfiguration hotDogConfigs;
+  private VelocityVoltage m_velocityRequest;
 
 
-  //  /**
-  //  * Gets the current velocity of the shooter.
-  //  *
-  //  * @return Shooter velocity.
-  //  */
-  // public AngularVelocity getVelocity() {return shooter.getSpeed();}
-
-  // /**
-  //  * Set the shooter velocity.
-  //  *
-  //  * @param speed Speed to set.
-  //  * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
-  //  */
-  // public Command setVelocity(AngularVelocity speed) {return shooter.setSpeed(speed);}
-
-  // /**
-  //  * Set the dutycycle of the shooter.
-  //  *
-  //  * @param dutyCycle DutyCycle to set.
-  //  * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
-  //  */
-  // public Command set(double dutyCycle) {return shooter.set(dutyCycle);}
+  
 
   /** Creates a new Shooter. */
   public Shooter() {
-    
+    m_Shooter = new TalonFX(shooterID);
+    m_HotDog = new TalonFX(hotDogID);
+    m_velocityRequest = new VelocityVoltage(0).withSlot(0);
+
+    shooterConfigs = new TalonFXConfiguration();
+    shooterConfigs.Slot0.kP = shooterP;
+    shooterConfigs.Slot0.kI = shooterI;
+    shooterConfigs.Slot0.kD = shooterD;
+    shooterConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
+    shooterConfigs.CurrentLimits.SupplyCurrentLimit = currentLimit;
+
+    hotDogConfigs = new TalonFXConfiguration();
+    hotDogConfigs.Slot0.kP = hotDogP;
+    hotDogConfigs.Slot0.kI = hotDogI;
+    hotDogConfigs.Slot0.kI = hotDogI;
+    hotDogConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
+    hotDogConfigs.CurrentLimits.SupplyCurrentLimit = currentLimit;
+
+    m_Shooter.getConfigurator().apply(shooterConfigs);
+    m_HotDog.getConfigurator().apply(hotDogConfigs);
+
+
   }
+
+  public void setShooterSpeed(double setpoint)
+  {
+    m_Shooter.setControl(m_velocityRequest.withVelocity(setpoint));
+  }
+
+  public double getShootSpeed()
+  {
+    return shooterSpeed;
+  }
+
+  public void setHotDogSpeed(double setpoint)
+  {
+    m_HotDog.setControl(m_velocityRequest.withVelocity(setpoint));
+  }
+
+  public double getHotDogSpeed()
+  {
+    return hotDogSpeed;
+  }
+
 
   @Override
   public void periodic() {

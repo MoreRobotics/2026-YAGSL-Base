@@ -25,11 +25,13 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.hardware.TalonFXS;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
@@ -56,10 +58,10 @@ public class Intake extends SubsystemBase {
   private double pivotP = 1;
   private double pivotI = 0.1;
   private double pivotD = 0;
-  private double pivotAccelerationOut = 0;
-  private double pivotVelocityOut = 0;
-  private double pivotAcceleration = 0;
-  private double pivotVelocity = 0;
+  private double pivotAcceleration = 50.0;
+  private double pivotVelocity = 5;
+  private double pivotAccelerationSlow = 10.0;
+  private double pivotVelocitySlow = 1.0;
   private double forwardLimit = 0;
   private double reverseLimit = 0;
   private double pivotCurrentLimit = 80;
@@ -77,17 +79,11 @@ public class Intake extends SubsystemBase {
 
   private double gearRatio = 0;
   private int intakePivotID = 12;
-  private int intakeID = 11;
+  private int intakeRollerID = 11;
 
-  private Slot0Configs pidConfig;
   private TalonFX m_IntakePivot;
-  private TalonFX m_Intake;
-  private CANcoder e_Climber;
-  private Servo servo;
-  private CurrentLimitsConfigs currentLimitConfig;
-  private FeedbackConfigs feedbackConfig;
-  private ArmFeedforward feedforward;
-  private PositionVoltage m_Request;
+  private TalonFX m_IntakeRoller;
+  private MotionMagicVoltage m_Request;
   private TalonFXConfiguration pivotConfigs;
   private TalonFXConfiguration rollerConfigs;
   private VelocityVoltage m_VelocityRequest;
@@ -95,17 +91,18 @@ public class Intake extends SubsystemBase {
   /** Creates a new Intake. */
   public Intake() {
     m_IntakePivot = new TalonFX(intakePivotID);
-    m_Intake = new TalonFX(intakeID);
+    m_IntakeRoller = new TalonFX(intakeRollerID);
 
-    m_Request = new PositionVoltage(0).withSlot(0);
+    m_Request = new MotionMagicVoltage(0).withSlot(0);
     m_VelocityRequest = new VelocityVoltage(0).withSlot(0);
 
     pivotConfigs = new TalonFXConfiguration();
+    pivotConfigs.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
     pivotConfigs.Slot0.kP = pivotP;
     pivotConfigs.Slot0.kI = pivotI;
     pivotConfigs.Slot0.kD = pivotD;
-    pivotConfigs.MotionMagic.MotionMagicAcceleration = pivotAccelerationOut;
-    pivotConfigs.MotionMagic.MotionMagicCruiseVelocity = pivotVelocityOut;
+    pivotConfigs.MotionMagic.MotionMagicAcceleration = pivotAcceleration;
+    pivotConfigs.MotionMagic.MotionMagicCruiseVelocity = pivotVelocity;
     // pivotConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     // pivotConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = forwardLimit;
     // pivotConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
@@ -124,7 +121,7 @@ public class Intake extends SubsystemBase {
 
 
     m_IntakePivot.getConfigurator().apply(pivotConfigs);
-    m_Intake.getConfigurator().apply(rollerConfigs);
+    m_IntakeRoller.getConfigurator().apply(rollerConfigs);
     
     
   }
@@ -158,10 +155,31 @@ public class Intake extends SubsystemBase {
   {
     return (Math.abs(getIntakePosition() - target) < tolerance);
   }
+
+  public void setSlowMode()
+  {
+    pivotConfigs.MotionMagic.MotionMagicAcceleration = pivotAccelerationSlow;
+    pivotConfigs.MotionMagic.MotionMagicCruiseVelocity = pivotVelocitySlow;
+    m_IntakePivot.getConfigurator().apply(pivotConfigs);
+    intakeOut = true;
+  }
+
+  public void setNormalMode()
+  {
+    pivotConfigs.MotionMagic.MotionMagicAcceleration = pivotAcceleration;
+    pivotConfigs.MotionMagic.MotionMagicCruiseVelocity = pivotVelocity;
+    m_IntakePivot.getConfigurator().apply(pivotConfigs);
+    intakeOut = false;
+  }
+
+  public void setTarget(double newTarget)
+  {
+    target = newTarget;
+  }
   
 
   public void setIntakeSpeed(double speed){
-    m_Intake.setControl(m_VelocityRequest.withVelocity(speed));
+    m_IntakeRoller.setControl(m_VelocityRequest.withVelocity(speed));
   }
   
 
@@ -174,6 +192,11 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Intake Pivot Motor Position", getIntakePosition());
+    SmartDashboard.putNumber("Intake Pivot Acceleration Config", pivotConfigs.MotionMagic.MotionMagicAcceleration);
+    SmartDashboard.putNumber("Intake Pivot Velocity Config", pivotConfigs.MotionMagic.MotionMagicCruiseVelocity);
+    SmartDashboard.putNumber("Intake Pivot Target", target);
+    SmartDashboard.putNumber("Intake Pivot Motor Acceleration", m_IntakePivot.getAcceleration().getValueAsDouble());
+    SmartDashboard.putNumber("Intake Pivot Motor Velocity", m_IntakePivot.getVelocity().getValueAsDouble());
     
   }
 
