@@ -19,16 +19,16 @@ public class ShooterPivot extends SubsystemBase {
   private final Eyes s_Eyes;
 
   private int shooterPivotID = 10;
-  private double kP = 1;
-  private double kI = 0;
+  private double kP = 10;
+  private double kI = .1;
   private double kD = 0;
   private double forwardLimit = 0;
   private double reverseLimit = 0;
   private double gearRatio = 0;
   private double currentLimit = 70;
   private double safePosition = 0;
-  private double acceleration = 50;
-  private double velocity = 5;
+  private double acceleration = 500;
+  private double velocity = 24;
 
 
 
@@ -66,7 +66,7 @@ public class ShooterPivot extends SubsystemBase {
 
   public double getShooterAngle()
   {
-    double angle = 70-Math.exp(s_Eyes.getTargetDistance());
+    double angle = 2*(12*(Math.pow(s_Eyes.getTargetDistance(), 2))-95.2*s_Eyes.getTargetDistance()+232.9)/360;//divide by 360 to get rotations
     return angle;
   }
 

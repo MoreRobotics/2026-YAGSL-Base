@@ -156,38 +156,6 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     Command driveSetpointGenKeyboard = drivebase.driveWithSetpointGeneratorFieldRelative(
         driveDirectAngleKeyboard);
 
-    // if (RobotBase.isSimulation())
-    // {
-    //   drivebase.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
-    // } else
-    // {
-    //   drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
-    // }
-
-    // if (Robot.isSimulation())
-    // {
-    //   Pose2d target = new Pose2d(new Translation2d(1, 4),
-    //                              Rotation2d.fromDegrees(90));
-    //   //drivebase.getSwerveDrive().field.getObject("targetPose").setPose(target);
-    //   driveDirectAngleKeyboard.driveToPose(() -> target,
-    //                                        new ProfiledPIDController(5,
-    //                                                                  0,
-    //                                                                  0,
-    //                                                                  new Constraints(5, 2)),
-    //                                        new ProfiledPIDController(5,
-    //                                                                  0,
-    //                                                                  0,
-    //                                                                  new Constraints(Units.degreesToRadians(360),
-    //                                                                                  Units.degreesToRadians(180))
-    //                                        ));
-    //   driver.triangle().onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
-    //   // driver.button(1).whileTrue(drivebase.sysIdDriveMotorCommand());
-    //   // driver.button(2).whileTrue(Commands.runEnd(() -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
-    //                                                 //  () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));
-
-
-
-    // }
 
     if (drivebase.isRedAlliance())
     {
@@ -197,15 +165,11 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
           () -> driver.getLeftY(),
           () -> driver.getLeftX(),
           () -> (s_Eyes.getTargetRotation()) * (.12)),
-          new AimShooter(s_ShooterPivot
-          //, s_ShooterPivot.getShooterAngle()
-          )))
+          new AimShooter(s_ShooterPivot)))
       .onFalse(
         new ParallelCommandGroup(
           driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity),
-          new AimShooter(s_ShooterPivot
-         // , s_ShooterPivot.getShooterPivotSafePose()
-          )
+          new AimShooter(s_ShooterPivot)
         )
       );
       
@@ -270,6 +234,20 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
         new InstantCommand(() -> s_Intake.setTarget(s_Intake.getIntakePosition())),
         new MoveIntake(s_Intake),
         new InstantCommand(() -> s_Intake.setNormalMode())));
+
+
+
+    driver.cross().whileTrue(
+      new ParallelCommandGroup(
+        new InstantCommand(() -> s_Intake.setIntakeSpeed(s_Intake.getOutakeSpeed())),
+        new InstantCommand(() -> s_Shooter.setHotDogSpeed(s_Shooter.getReverseHotDogSpeed()))
+      )
+    ).onFalse(
+      new ParallelCommandGroup(
+        new InstantCommand(() -> s_Intake.setIntakeSpeed(0)),
+        new InstantCommand(() -> s_Shooter.setHotDogSpeed(0))
+      )
+    );
 
   }
 

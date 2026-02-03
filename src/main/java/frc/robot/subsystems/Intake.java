@@ -75,7 +75,8 @@ public class Intake extends SubsystemBase {
   private double rollerI = 0;
   private double rollerD = 0;
   private double rollerCurrentLimit = 80;
-   private double intakeSpeed = 40;
+  private double intakeSpeed = 40;
+  private double outakeSpeed = -40;
 
   private double gearRatio = 0;
   private int intakePivotID = 12;
@@ -186,6 +187,11 @@ public class Intake extends SubsystemBase {
   public double getIntakeSpeed()
   {
     return intakeSpeed;
+  }
+
+  public double getOutakeSpeed()
+  {
+    return outakeSpeed;
   }
 
   @Override

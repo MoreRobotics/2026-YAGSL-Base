@@ -48,6 +48,7 @@ public class Shooter extends SubsystemBase {
   private double currentLimit = 0;
   private double shooterSpeed = 20;
   private double hotDogSpeed = 20;
+  private double reverseHotDogSpeed = -20;
 
   private int shooterID = 13;
   private int hotDogID = 0;
@@ -106,6 +107,11 @@ public class Shooter extends SubsystemBase {
   public double getHotDogSpeed()
   {
     return hotDogSpeed;
+  }
+
+  public double getReverseHotDogSpeed()
+  {
+    return reverseHotDogSpeed;
   }
 
 
