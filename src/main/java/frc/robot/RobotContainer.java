@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -14,6 +15,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -29,6 +31,7 @@ import frc.robot.commands.MoveIntake;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteFieldDrive;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.HotDog;
 import frc.robot.subsystems.ShooterPivot;
 import frc.robot.subsystems.swervedrive.Eyes;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -54,9 +57,10 @@ public class RobotContainer
                                                                                 "swerve/falcon"));
   
   public final Eyes s_Eyes = new Eyes(drivebase);
-  public final Shooter s_Shooter = new Shooter();
+  public final HotDog s_HotDog = new HotDog();
   public final Intake s_Intake = new Intake();
   public final ShooterPivot s_ShooterPivot = new ShooterPivot(s_Eyes);
+  public final Shooter s_Shooter = new Shooter();
 
   /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
@@ -111,6 +115,8 @@ public class RobotContainer
                                                                                .translationHeadingOffset(Rotation2d.fromDegrees(
                                                                                    0));
 
+  public final SendableChooser<Command> autoChooser;
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -134,7 +140,11 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
+    
 
+    autoChooser = AutoBuilder.buildAutoChooser();
+
+    SmartDashboard.putData("Auto Chooser", autoChooser);
   }
 
   /**
@@ -165,11 +175,14 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
           () -> driver.getLeftY(),
           () -> driver.getLeftX(),
           () -> (s_Eyes.getTargetRotation()) * (.12)),
-          new AimShooter(s_ShooterPivot)))
+          new AimShooter(s_ShooterPivot),
+          new InstantCommand(() -> s_Shooter.setShooterSpeed(s_Shooter.getShooterSpeed()))
+          ))
       .onFalse(
         new ParallelCommandGroup(
           driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity),
-          new AimShooter(s_ShooterPivot)
+          new AimShooter(s_ShooterPivot),
+          new InstantCommand(() -> s_Shooter.setShooterSpeed(0))
         )
       );
       
@@ -220,8 +233,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
      driver.R2().whileTrue(
       new ParallelCommandGroup(
         new InstantCommand(() -> s_Intake.setIntakeSpeed(s_Intake.getIntakeSpeed())),
-        new InstantCommand(() -> s_Shooter.setShooterSpeed(s_Shooter.getShootSpeed())),
-        new InstantCommand(() -> s_Shooter.setHotDogSpeed(s_Shooter.getHotDogSpeed())),
+        new InstantCommand(() -> s_HotDog.setHotDogSpeed(s_HotDog.getHotDogSpeed())),
         new InstantCommand(() -> s_Intake.setSlowMode()),
         new InstantCommand(() -> s_Intake.changeTarget()),
         new MoveIntake(s_Intake)
@@ -229,8 +241,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
       
         .onFalse(new ParallelCommandGroup(
           new InstantCommand(() -> s_Intake.setIntakeSpeed(0)),
-        new InstantCommand(() -> s_Shooter.setShooterSpeed(0)),
-        new InstantCommand(() -> s_Shooter.setHotDogSpeed(0)),
+        new InstantCommand(() -> s_HotDog.setHotDogSpeed(0)),
         new InstantCommand(() -> s_Intake.setTarget(s_Intake.getIntakePosition())),
         new MoveIntake(s_Intake),
         new InstantCommand(() -> s_Intake.setNormalMode())));
@@ -240,12 +251,12 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     driver.cross().whileTrue(
       new ParallelCommandGroup(
         new InstantCommand(() -> s_Intake.setIntakeSpeed(s_Intake.getOutakeSpeed())),
-        new InstantCommand(() -> s_Shooter.setHotDogSpeed(s_Shooter.getReverseHotDogSpeed()))
+        new InstantCommand(() -> s_HotDog.setHotDogSpeed(s_HotDog.getReverseHotDogSpeed()))
       )
     ).onFalse(
       new ParallelCommandGroup(
         new InstantCommand(() -> s_Intake.setIntakeSpeed(0)),
-        new InstantCommand(() -> s_Shooter.setHotDogSpeed(0))
+        new InstantCommand(() -> s_HotDog.setHotDogSpeed(0))
       )
     );
 
@@ -263,7 +274,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
   public Command getAutonomousCommand()
   {
     // An example command will be run in autonomous
-    return drivebase.getAutonomousCommand("New Auto");
+    return autoChooser.getSelected();
   }
 
   public void setMotorBrake(boolean brake)
