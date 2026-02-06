@@ -52,7 +52,6 @@ import limelight.Limelight;
 
      public StructPublisher<Pose2d> targetHub;
      public StructPublisher<Pose2d> estimatedRobotPosePublisher;
-     public SwerveDrivePoseEstimator m_PoseEstimator;
  
      // create objects and variables
      public LimelightHelpers limelight;
@@ -80,15 +79,7 @@ import limelight.Limelight;
 
 
     estimatedRobotPosePublisher = NetworkTableInstance.getDefault().getStructTopic("/EstimatedRobotPose", Pose2d.struct).publish(PubSubOption.sendAll(true));//publisher needs arguments
-    m_PoseEstimator = 
-    new SwerveDrivePoseEstimator(
-        s_Swerve.getKinematics(),
-        s_Swerve.getHeading(),
-        s_Swerve.getSwerveDrive().getModulePositions(),
-        s_Swerve.getPose(),
-        VecBuilder.fill(0.1, 0.1, 0.1),
-        VecBuilder.fill(1.5, 1.5, 1.5)
-        );
+    
 
     targetHub = NetworkTableInstance.getDefault().getStructTopic("/TargetHubPose", Pose2d.struct).publish(PubSubOption.sendAll(true));
          
@@ -212,7 +203,7 @@ import limelight.Limelight;
      }
 
      public double getTargetRotation() {
-        Pose2d robotPose = m_PoseEstimator.getEstimatedPosition();
+        Pose2d robotPose = s_Swerve.m_PoseEstimator.getEstimatedPosition();
 
         Pose2d targetPose = getTargetPose();
 
@@ -239,12 +230,12 @@ import limelight.Limelight;
          
         // SmartDashboard.putNumber(" inverted angle", -angle);
          if (s_Swerve.isRedAlliance()) {
-             if(m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees() > 0)
+             if(s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees() > 0)
              {
-                 return angle+(180 - m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees());
+                 return angle+(180 - s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees());
              }
              else {
-                 return angle + (-180 - m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees());
+                 return angle + (-180 - s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees());
              }
          }
          else{
@@ -275,7 +266,7 @@ import limelight.Limelight;
 
      public double getTargetDistance()
      {
-        Pose2d robotPose = m_PoseEstimator.getEstimatedPosition();
+        Pose2d robotPose = s_Swerve.m_PoseEstimator.getEstimatedPosition();
 
         Pose2d targetPose = getTargetPose();
         double robotX = robotPose.getX();
@@ -304,13 +295,13 @@ import limelight.Limelight;
      @Override
      public void periodic() {
 
-        m_PoseEstimator.update(s_Swerve.getHeading(), s_Swerve.getSwerveDrive().getModulePositions());
-        estimatedRobotPosePublisher.set(m_PoseEstimator.getEstimatedPosition());
+        s_Swerve.m_PoseEstimator.update(s_Swerve.getHeading(), s_Swerve.getSwerveDrive().getModulePositions());
+        estimatedRobotPosePublisher.set(s_Swerve.m_PoseEstimator.getEstimatedPosition());
 
 
 
          if (LimelightHelpers.getTV("limelight-right")) {
-             m_PoseEstimator.addVisionMeasurement(
+             s_Swerve.m_PoseEstimator.addVisionMeasurement(
                  getRobotPose(), 
                  Timer.getFPGATimestamp() - (LimelightHelpers.getLatency_Pipeline("limelight-right")/1000.0) - (LimelightHelpers.getLatency_Capture("limelight-right")/1000.0)
              );
@@ -318,7 +309,7 @@ import limelight.Limelight;
 
          if(LimelightHelpers.getTV("limelight-left") == true)
          {
-            m_PoseEstimator.addVisionMeasurement(
+            s_Swerve.m_PoseEstimator.addVisionMeasurement(
                  getRobotPoseLeft(), 
                  Timer.getFPGATimestamp() - (LimelightHelpers.getLatency_Pipeline("limelight-left")/1000.0) - (LimelightHelpers.getLatency_Capture("limelight-left")/1000.0)
              );
@@ -326,12 +317,12 @@ import limelight.Limelight;
  
          updateData();
 
-        SmartDashboard.putNumber("Robot Angle", m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees());
-        SmartDashboard.putNumber("Robot Angle Red", m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees() + 180);
+        SmartDashboard.putNumber("Robot Angle", s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees());
+        SmartDashboard.putNumber("Robot Angle Red", s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees() + 180);
         SmartDashboard.putNumber("Target Angle", getTargetRotation());
-        SmartDashboard.putNumber("Velocity Command", (getTargetRotation()-m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.1));
-        SmartDashboard.putNumber("Velocity Command Red", (getTargetRotation()+(m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees() + 180)) * (-.1));
-        SmartDashboard.putNumber("Theta M Negative", -(180 + m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()));
+        SmartDashboard.putNumber("Velocity Command", (getTargetRotation()-s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.1));
+        SmartDashboard.putNumber("Velocity Command Red", (getTargetRotation()+(s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees() + 180)) * (-.1));
+        SmartDashboard.putNumber("Theta M Negative", -(180 + s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()));
         
 
         targetHub.set(getTargetPose());

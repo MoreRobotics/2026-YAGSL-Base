@@ -10,22 +10,28 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.swervedrive.Eyes;
 
 public class Shooter extends SubsystemBase {
-  private int leftShooterID;
+  private final Eyes s_Eyes;
+
+  private int leftShooterID = 15;
   // private int rightShooterID;
-  private double kP = 15;
-  private double kI = .1;
+  private double kP = 1;
+  private double kI = 0;
   private double kD = 0;
   private double forwardLimit = 0;
   private double reverseLimit = 0;
   private double gearRatio = 0;
   private double currentLimit = 70;
-  private double acceleration = 500;
-  private double velocity = 24;
+  private double acceleration = 50;
+  private double velocity = 5;
 
-  private double shooterSpeed = 0;
+  private double kShooter = 5;
+
+  private double shooterSpeed = 20;
 
 
 
@@ -36,7 +42,8 @@ public class Shooter extends SubsystemBase {
   private MotionMagicVelocityVoltage m_Request;
 
   /** Creates a new Shooter. */
-  public Shooter() {
+  public Shooter(Eyes s_Eyes) {
+    this.s_Eyes = s_Eyes;
 
     m_LeftShooter = new TalonFX(leftShooterID);
     // m_RightShooter = new TalonFX(rightShooterID);
@@ -70,11 +77,14 @@ public class Shooter extends SubsystemBase {
 
   public double getShooterSpeed()
   {
-    return shooterSpeed;
+    double speed = velocity - (kShooter / s_Eyes.getTargetDistance());
+    return speed;
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Shooter Speed", getShooterSpeed());
+    SmartDashboard.putNumber("Shooter Motor Speed", m_LeftShooter.getVelocity().getValueAsDouble());
   }
 }

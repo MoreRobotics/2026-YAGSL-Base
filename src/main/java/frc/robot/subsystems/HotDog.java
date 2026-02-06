@@ -38,16 +38,16 @@ import yams.motorcontrollers.remote.TalonFXSWrapper;
 
 public class HotDog extends SubsystemBase {
 
-  private double indexerP = .001;
+  private double indexerP = .1;
   private double indexerI = 0;
   private double indexerD = 0;
-  private double hotDogP = .001;
+  private double hotDogP = .1;
   private double hotDogI = 0;
   private double hotDogD = 0;
   
   private double currentLimit = 70;
-  private double indexerSpeed = 2;
-  private double hotDogSpeed = 2;
+  private double indexerSpeed = 20;
+  private double hotDogSpeed = 20;
   private double reverseHotDogSpeed = -2;
   private double reverseIndexerSpeed = -2;
 
@@ -107,7 +107,7 @@ public class HotDog extends SubsystemBase {
 
   public void setHotDogSpeed(double setpoint)
   {
-    // m_HotDog.setControl(m_velocityRequest.withVelocity(setpoint));
+    m_HotDog.setControl(m_velocityRequest.withVelocity(setpoint));
     m_Indexer.setControl(m_velocityRequest.withVelocity(setpoint));
   }
 

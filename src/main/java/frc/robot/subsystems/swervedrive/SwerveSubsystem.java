@@ -17,6 +17,8 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
+
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -71,7 +73,7 @@ public class SwerveSubsystem extends SubsystemBase
   private final boolean     visionDriveTest = false;
   
   // public StructPublisher<Pose2d> estimatedRobotPosePublisher;
-  // public SwerveDrivePoseEstimator m_PoseEstimator;
+   public SwerveDrivePoseEstimator m_PoseEstimator;
   /**
    * PhotonVision class to keep an accurate odometry.
    */
@@ -121,13 +123,15 @@ public class SwerveSubsystem extends SubsystemBase
     setupPathPlanner();
     RobotModeTriggers.autonomous().onTrue(Commands.runOnce(this::zeroGyroWithAlliance));
 
-    // estimatedRobotPosePublisher = NetworkTableInstance.getDefault().getStructTopic("/EstimatedRobotPose", Pose2d.struct).publish(PubSubOption.sendAll(true));//publisher needs arguments
-    // m_PoseEstimator = 
-    // new SwerveDrivePoseEstimator(
-    //   getKinematics(),
-    //    getHeading(),
-    //     swerveDrive.getModulePositions(),
-    //      startingPose);
+    m_PoseEstimator = 
+        new SwerveDrivePoseEstimator(
+            getKinematics(),
+            getHeading(),
+            getSwerveDrive().getModulePositions(),
+            getPose(),
+            VecBuilder.fill(0.1, 0.1, 0.1),
+            VecBuilder.fill(1.5, 1.5, 1.5)
+            );
   }
 
   /**
@@ -176,7 +180,7 @@ public class SwerveSubsystem extends SubsystemBase
       final boolean enableFeedforward = true;
       // Configure AutoBuilder last
       AutoBuilder.configure(
-          this::getPose,
+          this::getEstimatedPosition,
           // Robot pose supplier
           this::resetOdometry,
           // Method to reset odometry (will be called if your auto has a starting pose)
@@ -527,6 +531,11 @@ public class SwerveSubsystem extends SubsystemBase
   public Pose2d getPose()
   {
     return swerveDrive.getPose();
+  }
+
+  public Pose2d getEstimatedPosition()
+  {
+    return m_PoseEstimator.getEstimatedPosition();
   }
 
   /**
