@@ -241,6 +241,18 @@ public class SwerveSubsystem extends SubsystemBase
    *
    * @return A {@link Command} which will run the alignment.
    */
+   public Command aimAtTarget()
+  {
+
+    return run(() -> {
+      
+       
+          drive(getTargetSpeeds(0,
+                                0,
+                                Rotation2d.fromDegrees(s_Eyes.getTargetRotation()))); // Not sure if this will work, more math may be required.
+      
+    });
+  }
 
   /**
    * Get the path follower with events.

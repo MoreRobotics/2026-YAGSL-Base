@@ -51,7 +51,7 @@ public class HotDog extends SubsystemBase {
   private double reverseHotDogSpeed = -2;
   private double reverseIndexerSpeed = -2;
 
-  private int indexerID = 13;
+  private int indexerID = 16;
   private int hotDogID = 0;
   private double gearRatio = 0;
 
@@ -90,20 +90,20 @@ public class HotDog extends SubsystemBase {
 
   }
 
-  public void setIndexerSpeed(double setpoint)
-  {
-    m_Indexer.setControl(m_velocityRequest.withVelocity(setpoint));
-  }
+  // public void setIndexerSpeed(double setpoint)
+  // {
+  //   m_Indexer.setControl(m_velocityRequest.withVelocity(setpoint));
+  // }
 
-  public double getIndexerSpeed()
-  {
-    return indexerSpeed;
-  }
+  // public double getIndexerSpeed()
+  // {
+  //   return indexerSpeed;
+  // }
 
-  public double getReverseIndexerSpeed()
-  {
-    return reverseIndexerSpeed;
-  }
+  // public double getReverseIndexerSpeed()
+  // {
+  //   return reverseIndexerSpeed;
+  // }
 
   public void setHotDogSpeed(double setpoint)
   {
