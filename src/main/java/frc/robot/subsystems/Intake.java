@@ -78,12 +78,14 @@ public class Intake extends SubsystemBase {
   private double intakeSpeed = 40;
   private double outakeSpeed = -40;
 
-  private double gearRatio = 0;
+  private double gearRatio = 87.5/1;
   private int intakePivotID = 12;
   private int intakeRollerID = 11;
+  private int intakePivotCANCoderID = 12;
 
   private TalonFX m_IntakePivot;
   private TalonFX m_IntakeRoller;
+  private CANcoder e_IntakePivot;
   private MotionMagicVoltage m_Request;
   private TalonFXConfiguration pivotConfigs;
   private TalonFXConfiguration rollerConfigs;
@@ -93,6 +95,7 @@ public class Intake extends SubsystemBase {
   public Intake() {
     m_IntakePivot = new TalonFX(intakePivotID);
     m_IntakeRoller = new TalonFX(intakeRollerID);
+    e_IntakePivot =  new CANcoder(intakePivotCANCoderID);
 
     m_Request = new MotionMagicVoltage(0).withSlot(0);
     m_VelocityRequest = new VelocityVoltage(0).withSlot(0);
@@ -121,6 +124,7 @@ public class Intake extends SubsystemBase {
     rollerConfigs.CurrentLimits.SupplyCurrentLimit = rollerCurrentLimit;
 
 
+    m_IntakePivot.setPosition(e_IntakePivot.getPosition().getValueAsDouble());
     m_IntakePivot.getConfigurator().apply(pivotConfigs);
     m_IntakeRoller.getConfigurator().apply(rollerConfigs);
     
@@ -194,6 +198,7 @@ public class Intake extends SubsystemBase {
     return outakeSpeed;
   }
 
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -203,6 +208,7 @@ public class Intake extends SubsystemBase {
     SmartDashboard.putNumber("Intake Pivot Target", target);
     SmartDashboard.putNumber("Intake Pivot Motor Acceleration", m_IntakePivot.getAcceleration().getValueAsDouble());
     SmartDashboard.putNumber("Intake Pivot Motor Velocity", m_IntakePivot.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("Intake Pivot CANCoder Position", e_IntakePivot.getPosition().getValueAsDouble());
     
   }
 

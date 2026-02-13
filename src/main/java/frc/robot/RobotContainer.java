@@ -26,18 +26,18 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.AimShooter;
+// import frc.robot.commands.AimShooter;
 import frc.robot.commands.MoveIntake;
 import frc.robot.commands.Outake;
-import frc.robot.commands.PrepareShooter;
+// import frc.robot.commands.PrepareShooter;
 import frc.robot.commands.RunHotDog;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteFieldDrive;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Climber;
+// import frc.robot.subsystems.Shooter;
+// import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.HotDog;
-import frc.robot.subsystems.ShooterPivot;
+// import frc.robot.subsystems.ShooterPivot;
 import frc.robot.subsystems.swervedrive.Eyes;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
@@ -66,9 +66,9 @@ public class RobotContainer
   public final Eyes s_Eyes = new Eyes(drivebase);
   public final HotDog s_HotDog = new HotDog();
   public final Intake s_Intake = new Intake();
-  public final ShooterPivot s_ShooterPivot = new ShooterPivot(s_Eyes);
-  public final Shooter s_Shooter = new Shooter(s_Eyes);
-  public final Climber s_Climber = new Climber();
+  // public final ShooterPivot s_ShooterPivot = new ShooterPivot(s_Eyes);
+  // public final Shooter s_Shooter = new Shooter(s_Eyes);
+  // public final Climber s_Climber = new Climber();
   /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
    */
@@ -149,10 +149,10 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
     NamedCommands.registerCommand("Auto Aim Blue", drivebase.aimAtTarget());
     NamedCommands.registerCommand("Run HotDog", new RunHotDog(s_HotDog));
-    NamedCommands.registerCommand("PrepareShooter", new PrepareShooter(s_Shooter));
+    // NamedCommands.registerCommand("PrepareShooter", new PrepareShooter(s_Shooter));
     NamedCommands.registerCommand("Intake", new RunIntake(s_Intake));
     NamedCommands.registerCommand("Move Intake", new MoveIntake(s_Intake)); 
-    NamedCommands.registerCommand("Aim", new AimShooter(s_ShooterPivot));
+    // NamedCommands.registerCommand("Aim", new AimShooter(s_ShooterPivot));
     
 
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -187,9 +187,9 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
             driveFieldOrientedDirectAngle = drivebase.driveCommand(
           () -> driver.getLeftY(),
           () -> driver.getLeftX(),
-          () -> (s_Eyes.getTargetRotation()) * (.12)),
-          new AimShooter(s_ShooterPivot),
-          new PrepareShooter(s_Shooter)
+          () -> (s_Eyes.getTargetRotation()) * (.12))
+          // new AimShooter(s_ShooterPivot)
+          // new PrepareShooter(s_Shooter)
           ))
       .onFalse(
         new ParallelCommandGroup(
@@ -208,9 +208,9 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
           driveFieldOrientedDirectAngle = drivebase.driveCommand(
           () -> -driver.getLeftY(),
           () -> -driver.getLeftX(),
-          () -> (s_Eyes.getTargetRotation()-drivebase.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.12)),
-          new AimShooter(s_ShooterPivot),
-          new PrepareShooter(s_Shooter)
+          () -> (s_Eyes.getTargetRotation()-drivebase.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.12))
+          // new AimShooter(s_ShooterPivot)
+          // new PrepareShooter(s_Shooter)
           ))
       .onFalse(
         new ParallelCommandGroup(
@@ -279,13 +279,13 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
       new Outake(s_Intake, s_HotDog));
 
     
-    driver.triangle().onTrue(
-      new InstantCommand(() -> s_Climber.setServo(s_Climber.getServoIn()))
-    );
+    // driver.triangle().onTrue(
+    //   new InstantCommand(() -> s_Climber.setServo(s_Climber.getServoIn()))
+    // );
 
-    driver.square().onTrue(
-    new InstantCommand(() -> s_Climber.setServo(s_Climber.getServoMid()))
-    );
+    // driver.square().onTrue(
+    // new InstantCommand(() -> s_Climber.setServo(s_Climber.getServoMid()))
+    // );
 
   }
 

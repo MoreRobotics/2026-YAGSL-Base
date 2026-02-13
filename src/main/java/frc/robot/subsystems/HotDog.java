@@ -55,7 +55,7 @@ public class HotDog extends SubsystemBase {
   private int hotDogID = 0;
   private double gearRatio = 0;
 
-  private TalonFX m_Indexer;
+  // private TalonFX m_Indexer;
   private TalonFX m_HotDog;
   private TalonFXConfiguration indexerConfigs;
   private TalonFXConfiguration hotDogConfigs;
@@ -66,7 +66,7 @@ public class HotDog extends SubsystemBase {
 
   /** Creates a new Shooter. */
   public HotDog() {
-    m_Indexer = new TalonFX(indexerID);
+    // m_Indexer = new TalonFX(indexerID);
     m_HotDog = new TalonFX(hotDogID);
     m_velocityRequest = new VelocityVoltage(0).withSlot(0);
 
@@ -84,7 +84,7 @@ public class HotDog extends SubsystemBase {
     hotDogConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
     hotDogConfigs.CurrentLimits.SupplyCurrentLimit = currentLimit;
 
-    m_Indexer.getConfigurator().apply(indexerConfigs);
+    // m_Indexer.getConfigurator().apply(indexerConfigs);
     m_HotDog.getConfigurator().apply(hotDogConfigs);
 
 
@@ -108,7 +108,7 @@ public class HotDog extends SubsystemBase {
   public void setHotDogSpeed(double setpoint)
   {
     m_HotDog.setControl(m_velocityRequest.withVelocity(setpoint));
-    m_Indexer.setControl(m_velocityRequest.withVelocity(setpoint));
+    // m_Indexer.setControl(m_velocityRequest.withVelocity(setpoint));
   }
 
   public double getHotDogSpeed()
