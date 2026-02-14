@@ -108,4 +108,8 @@ public class Lights extends SubsystemBase {
         m_candle.setControl(new SolidColor(0, halfpoint).withColor(kBlack));
         m_candle.setControl(new SolidColor(halfpoint, numLEDS).withColor(kBlue));
     }
+
+    public void Intake() {
+        m_candle.setControl(new SolidColor(0, numLEDS).withColor(kYellow));
+    };
 }

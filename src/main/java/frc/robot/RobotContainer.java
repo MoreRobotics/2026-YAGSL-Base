@@ -168,7 +168,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     // NamedCommands.registerCommand("Auto Aim Blue", drivebase.aimAtTarget());
     NamedCommands.registerCommand("Run HotDog", new RunHotDog(s_HotDog));
     // NamedCommands.registerCommand("PrepareShooter", new PrepareShooter(s_Shooter));
-    NamedCommands.registerCommand("Intake", new RunIntake(s_Intake));
+    NamedCommands.registerCommand("Intake", new RunIntake(s_Intake, s_Lights));
     NamedCommands.registerCommand("Move Intake", new MoveIntake(s_Intake)); 
     // NamedCommands.registerCommand("Aim", new AimShooter(s_ShooterPivot));
     
@@ -287,7 +287,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     driver.options().onTrue(new InstantCommand(() -> drivebase.zeroGyroWithAlliance()));
 
     //run intake
-    driver.R1().whileTrue(new RunIntake(s_Intake));
+    driver.R1().whileTrue(new RunIntake(s_Intake, s_Lights));
     // InstantCommand(() -> s_Intake.setIntakeSpeed(s_Intake.getIntakeSpeed())))
     // .onFalse(new InstantCommand(() -> s_Intake.setIntakeSpeed(0)));
 
