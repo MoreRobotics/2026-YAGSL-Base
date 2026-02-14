@@ -36,9 +36,10 @@ public class Lights extends SubsystemBase {
     // RGB Colors
     private static final RGBWColor kRed = new RGBWColor(Color.kRed).scaleBrightness(brightness);
     private static final RGBWColor kGreen = new RGBWColor(Color.kGreen).scaleBrightness(brightness);
-    private static final RGBWColor kBlue = new RGBWColor(Color.kBlue).scaleBrightness(0.5);
-    private static final RGBWColor kYellow = new RGBWColor(Color.kYellow).scaleBrightness(0.5);
-    private static final RGBWColor kBlack = new RGBWColor(Color.kBlack).scaleBrightness(0.5);
+    private static final RGBWColor kBlue = new RGBWColor(Color.kBlue).scaleBrightness(brightness);
+    private static final RGBWColor kYellow = new RGBWColor(Color.kYellow).scaleBrightness(brightness);
+    private static final RGBWColor kBlack = new RGBWColor(Color.kBlack).scaleBrightness(brightness);
+    private static final RGBWColor kWhite = new RGBWColor(Color.kWhite).scaleBrightness(brightness);
 
     // Candle Method
     private final CANdle m_candle = new CANdle(candleID, CANBus.roboRIO());
@@ -85,6 +86,10 @@ public class Lights extends SubsystemBase {
          m_candle.setControl(new SolidColor(0, numLEDS).withColor(kBlack));
     }
 
+    public void Idle() {
+         m_candle.setControl(new SolidColor(0, numLEDS).withColor(kWhite));
+    }
+
 
     public void Aim() {
         m_candle.setControl(new SolidColor(0, numLEDS).withColor(kGreen));
@@ -94,14 +99,13 @@ public class Lights extends SubsystemBase {
         m_candle.setControl(new SolidColor(0, numLEDS).withColor(kRed));
     };
 
-    
+
     public void Defense() {
         m_candle.setControl(new SolidColor(0, halfpoint).withColor(kRed));
-        m_candle.setControl(new SolidColor(halfpoint, numLEDS).withColor(kBlue));
+        m_candle.setControl(new SolidColor(halfpoint, numLEDS).withColor(kBlack));
     };
     public void DefenseAlternate() {
-        m_candle.setControl(new SolidColor(0, halfpoint).withColor(kBlue));
-        m_candle.setControl(new SolidColor(halfpoint, numLEDS).withColor(kRed));
+        m_candle.setControl(new SolidColor(0, halfpoint).withColor(kBlack));
+        m_candle.setControl(new SolidColor(halfpoint, numLEDS).withColor(kBlue));
     }
-
 }

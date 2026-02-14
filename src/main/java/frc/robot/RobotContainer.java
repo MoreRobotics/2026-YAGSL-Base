@@ -39,8 +39,11 @@ import frc.robot.commands.Outake;
 import frc.robot.commands.RunHotDog;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.LightCommands.Aim;
+import frc.robot.commands.LightCommands.Blue;
 import frc.robot.commands.LightCommands.Clear;
+import frc.robot.commands.LightCommands.Idle;
 import frc.robot.commands.LightCommands.ReadyToFire;
+import frc.robot.commands.LightCommands.Red;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteFieldDrive;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Lights;
@@ -140,12 +143,20 @@ public class RobotContainer
    */
   public RobotContainer()
   {
+    s_Lights.setDefaultCommand(new Idle(s_Lights));
 
 Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity);
    
 
       
-       drivebase.setDefaultCommand(driveFieldOrientedDirectAngle);
+       drivebase.setDefaultCommand(
+        new ConditionalCommand(
+          driveFieldOrientedDirectAngle,
+          driveFieldOrientedDirectAngle, 
+          null)
+
+
+       );
 
 
       //s_ShooterPivot.setDefaultCommand(new AimShooter(s_ShooterPivot,s_ShooterPivot.getShooterAngle()).repeatedly());
