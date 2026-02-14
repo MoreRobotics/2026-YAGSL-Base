@@ -259,7 +259,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
 
 
 //outake
-    driver.cross().whileTrue(
+    driver.R1().whileTrue(
       new Outake(s_Intake, s_HotDog));
 
     
