@@ -4,11 +4,13 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.controls.SolidColor;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.estimator.PoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -21,9 +23,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -34,8 +38,12 @@ import frc.robot.commands.Outake;
 // import frc.robot.commands.PrepareShooter;
 import frc.robot.commands.RunHotDog;
 import frc.robot.commands.RunIntake;
+import frc.robot.commands.LightCommands.Aim;
+import frc.robot.commands.LightCommands.Clear;
+import frc.robot.commands.LightCommands.ReadyToFire;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteFieldDrive;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Lights;
 // import frc.robot.subsystems.Shooter;
 // import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.HotDog;
@@ -68,6 +76,7 @@ public class RobotContainer
   public final Eyes s_Eyes = new Eyes(drivebase);
   public final HotDog s_HotDog = new HotDog();
   public final Intake s_Intake = new Intake();
+  public final Lights s_Lights = new Lights();
   // public final ShooterPivot s_ShooterPivot = new ShooterPivot(s_Eyes);
   // public final Shooter s_Shooter = new Shooter(s_Eyes);
   // public final Climber s_Climber = new Climber();
@@ -182,13 +191,34 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     {
         driver.L2().whileTrue(
           new ParallelCommandGroup(
-            driveFieldOrientedDirectAngle = drivebase.driveCommand(
-          () -> driver.getLeftY(),
-          () -> driver.getLeftX(),
-          () -> (s_Eyes.getTargetRotation()) * (.12))
-          // new AimShooter(s_ShooterPivot)
-          // new PrepareShooter(s_Shooter)
-          ))
+              driveFieldOrientedDirectAngle = drivebase.driveCommand(
+            () -> driver.getLeftY(),
+            () -> driver.getLeftX(),
+            () -> (s_Eyes.getTargetRotation()) * (.12)),
+            // new AimShooter(s_ShooterPivot)
+            // new PrepareShooter(s_Shooter)
+
+            // Lights
+            new ConditionalCommand(
+              // if on target, fire
+              new ReadyToFire(s_Lights),
+
+              // if not on target, hold fire
+              new SequentialCommandGroup(
+                new Aim(s_Lights),
+                new WaitCommand(0.25),
+                new Clear(s_Lights)
+              ),
+
+              // check if on target
+              () -> Math.abs(
+                drivebase.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()- (s_Eyes.getTargetRotation() * 0.12)) < 2.0
+
+            )
+          )
+        )
+        
+      
       .onFalse(
         new ParallelCommandGroup(
           driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity)
@@ -206,9 +236,28 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
           driveFieldOrientedDirectAngle = drivebase.driveCommand(
           () -> -driver.getLeftY(),
           () -> -driver.getLeftX(),
-          () -> (s_Eyes.getTargetRotation()-drivebase.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.12))
+          () -> (s_Eyes.getTargetRotation()-drivebase.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.12)),
           // new AimShooter(s_ShooterPivot)
           // new PrepareShooter(s_Shooter)
+
+          // Lights
+          new ConditionalCommand(
+            // if on target, fire
+            new ReadyToFire(s_Lights),
+
+            // if not on target, hold fire
+            new SequentialCommandGroup(
+              new Aim(s_Lights),
+              new WaitCommand(0.25),
+              new Clear(s_Lights)
+            ),
+
+            // check if on target
+            () -> Math.abs(
+              drivebase.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()- (s_Eyes.getTargetRotation() * 0.12)) < 2.0
+
+            )
+
           ))
       .onFalse(
         new ParallelCommandGroup(
