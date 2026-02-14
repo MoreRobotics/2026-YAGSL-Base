@@ -284,15 +284,15 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
 
     
     //zero gyro
-    driver.options().onTrue(new InstantCommand(() -> drivebase.zeroGyroWithAlliance()));
+    driver.create().onTrue(new InstantCommand(() -> drivebase.zeroGyroWithAlliance()));
 
     //run intake
-    driver.R1().whileTrue(new RunIntake(s_Intake, s_Lights));
+    driver.L1().whileTrue(new RunIntake(s_Intake, s_Lights));
     // InstantCommand(() -> s_Intake.setIntakeSpeed(s_Intake.getIntakeSpeed())))
     // .onFalse(new InstantCommand(() -> s_Intake.setIntakeSpeed(0)));
 
     //intake out
-    driver.L1().onTrue(
+    driver.cross().onTrue(
       new SequentialCommandGroup(
         new InstantCommand(() -> s_Intake.changeTarget()),
         new MoveIntake(s_Intake),
@@ -319,7 +319,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
 
 
 //outake
-    driver.cross().whileTrue(
+    driver.R1().whileTrue(
       new Outake(s_Intake, s_HotDog));
 
     
