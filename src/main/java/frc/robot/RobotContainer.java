@@ -6,6 +6,8 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -133,13 +135,9 @@ public class RobotContainer
 Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity);
    
 
-      // drivebase.setDefaultCommand(
-      //   new AbsoluteFieldDrive(
-      //     drivebase, 
-      //     () -> driver.getLeftX(),
-      //     () -> driver.getLeftY(),
-      //     () -> driver.getRightX()));
-      drivebase.setDefaultCommand(driveFieldOrientedDirectAngle);
+      
+       drivebase.setDefaultCommand(driveFieldOrientedDirectAngle);
+
 
       //s_ShooterPivot.setDefaultCommand(new AimShooter(s_ShooterPivot,s_ShooterPivot.getShooterAngle()).repeatedly());
 
@@ -147,7 +145,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
-    NamedCommands.registerCommand("Auto Aim Blue", drivebase.aimAtTarget());
+    // NamedCommands.registerCommand("Auto Aim Blue", drivebase.aimAtTarget());
     NamedCommands.registerCommand("Run HotDog", new RunHotDog(s_HotDog));
     // NamedCommands.registerCommand("PrepareShooter", new PrepareShooter(s_Shooter));
     NamedCommands.registerCommand("Intake", new RunIntake(s_Intake));
@@ -169,15 +167,15 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
    */
   private void configureBindings()
   {
-    Command driveFieldOrientedDirectAngle      = drivebase.driveFieldOriented(driveDirectAngle);
-    Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
-    Command driveRobotOrientedAngularVelocity  = drivebase.driveFieldOriented(driveRobotOriented);
-    Command driveSetpointGen = drivebase.driveWithSetpointGeneratorFieldRelative(
-        driveDirectAngle);
-    Command driveFieldOrientedDirectAngleKeyboard      = drivebase.driveFieldOriented(driveDirectAngleKeyboard);
-    Command driveFieldOrientedAnglularVelocityKeyboard = drivebase.driveFieldOriented(driveAngularVelocityKeyboard);
-    Command driveSetpointGenKeyboard = drivebase.driveWithSetpointGeneratorFieldRelative(
-        driveDirectAngleKeyboard);
+     Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveDirectAngle);
+    // Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
+    // Command driveRobotOrientedAngularVelocity  = drivebase.driveFieldOriented(driveRobotOriented);
+    // Command driveSetpointGen = drivebase.driveWithSetpointGeneratorFieldRelative(
+    //     driveDirectAngle);
+    // Command driveFieldOrientedDirectAngleKeyboard      = drivebase.driveFieldOriented(driveDirectAngleKeyboard);
+    // Command driveFieldOrientedAnglularVelocityKeyboard = drivebase.driveFieldOriented(driveAngularVelocityKeyboard);
+    // Command driveSetpointGenKeyboard = drivebase.driveWithSetpointGeneratorFieldRelative(
+    //     driveDirectAngleKeyboard);
 
 
     if (drivebase.isRedAlliance())
@@ -221,21 +219,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
       );
     }
 
-    // driver.L2().onTrue(
-    //   new InstantCommand(() -> s_Shooter.setShooterSpeed(s_Shooter.getShooterSpeed()))
-    // )
-    // .onFalse(
-    //   new InstantCommand(() -> s_Shooter.setShooterSpeed(0))
-    // );
-
-    // driver.L2().whileTrue(
-    //   driveFieldOrientedDirectAngle = drivebase.driveCommand(
-    //       () -> -driver.getLeftY(),
-    //       () -> -driver.getLeftX(),
-    //       () -> (s_Eyes.getTargetRotation()-s_Eyes.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.1)))
-    //   .onFalse(
-    //     driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity)
-    //   );
+  
 
 
     

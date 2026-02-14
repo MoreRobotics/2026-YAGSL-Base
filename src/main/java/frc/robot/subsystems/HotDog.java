@@ -20,6 +20,7 @@ import com.ctre.phoenix6.hardware.TalonFXS;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import yams.gearing.GearBox;
@@ -41,14 +42,14 @@ public class HotDog extends SubsystemBase {
   private double indexerP = .1;
   private double indexerI = 0;
   private double indexerD = 0;
-  private double hotDogP = .1;
+  private double hotDogP = .3;
   private double hotDogI = 0;
   private double hotDogD = 0;
   
   private double currentLimit = 70;
   private double indexerSpeed = 20;
-  private double hotDogSpeed = 20;
-  private double reverseHotDogSpeed = -2;
+  private double hotDogSpeed = 100;
+  private double reverseHotDogSpeed = -40;
   private double reverseIndexerSpeed = -2;
 
   private int indexerID = 16;
@@ -107,6 +108,7 @@ public class HotDog extends SubsystemBase {
 
   public void setHotDogSpeed(double setpoint)
   {
+    SmartDashboard.putNumber("HotDog Commanded Speed", setpoint);
     m_HotDog.setControl(m_velocityRequest.withVelocity(setpoint));
     // m_Indexer.setControl(m_velocityRequest.withVelocity(setpoint));
   }
@@ -128,6 +130,7 @@ public class HotDog extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     // shooter.updateTelemetry();
+    SmartDashboard.putNumber("HotDog Speed", m_HotDog.getVelocity().getValueAsDouble());
   }
 
   @Override

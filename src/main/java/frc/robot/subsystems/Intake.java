@@ -55,28 +55,28 @@ import yams.motorcontrollers.local.SparkWrapper;
 import yams.motorcontrollers.remote.TalonFXWrapper;
 
 public class Intake extends SubsystemBase {
-  private double pivotP = 1;
-  private double pivotI = 0.1;
+  private double pivotP = 60;
+  private double pivotI = 0;
   private double pivotD = 0;
-  private double pivotAcceleration = 50.0;
-  private double pivotVelocity = 5;
-  private double pivotAccelerationSlow = 10.0;
-  private double pivotVelocitySlow = 1.0;
+  private double pivotAcceleration = 20.0;
+  private double pivotVelocity = 2;
+  private double pivotAccelerationSlow = 1.0;
+  private double pivotVelocitySlow = 0.1;
   private double forwardLimit = 0;
   private double reverseLimit = 0;
   private double pivotCurrentLimit = 80;
-  private double intakeStowPosition = 0;
-  private double intakeOutPosition = 10;
+  private double intakeStowPosition = -.324;
+  private double intakeOutPosition = .017;
   private double target = 0;
   private boolean intakeOut = false;
   private double tolerance = 0.3;
 
-  private double rollerP = .1;
+  private double rollerP = .25;//.5 too much
   private double rollerI = 0;
   private double rollerD = 0;
   private double rollerCurrentLimit = 80;
-  private double intakeSpeed = 40;
-  private double outakeSpeed = -40;
+  private double intakeSpeed = 75;
+  private double outakeSpeed = -60;
 
   private double gearRatio = 87.5/1;
   private int intakePivotID = 12;
@@ -184,6 +184,7 @@ public class Intake extends SubsystemBase {
   
 
   public void setIntakeSpeed(double speed){
+    SmartDashboard.putNumber("Intake Roller Commanded Speed", speed);
     m_IntakeRoller.setControl(m_VelocityRequest.withVelocity(speed));
   }
   
@@ -204,11 +205,12 @@ public class Intake extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Intake Pivot Motor Position", getIntakePosition());
     SmartDashboard.putNumber("Intake Pivot Acceleration Config", pivotConfigs.MotionMagic.MotionMagicAcceleration);
-    SmartDashboard.putNumber("Intake Pivot Velocity Config", pivotConfigs.MotionMagic.MotionMagicCruiseVelocity);
+    SmartDashboard.putNumber("Intake Pivot Velocity Config", m_Request.getPositionMeasure().baseUnitMagnitude());
     SmartDashboard.putNumber("Intake Pivot Target", target);
     SmartDashboard.putNumber("Intake Pivot Motor Acceleration", m_IntakePivot.getAcceleration().getValueAsDouble());
     SmartDashboard.putNumber("Intake Pivot Motor Velocity", m_IntakePivot.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("Intake Pivot CANCoder Position", e_IntakePivot.getPosition().getValueAsDouble());
+    SmartDashboard.putNumber("Intake Roller Speed", m_IntakeRoller.getVelocity().getValueAsDouble());
     
   }
 

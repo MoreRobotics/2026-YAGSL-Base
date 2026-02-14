@@ -300,20 +300,20 @@ import limelight.Limelight;
 
 
 
-         if (LimelightHelpers.getTV("limelight-right")) {
-             s_Swerve.m_PoseEstimator.addVisionMeasurement(
-                 getRobotPose(), 
-                 Timer.getFPGATimestamp() - (LimelightHelpers.getLatency_Pipeline("limelight-right")/1000.0) - (LimelightHelpers.getLatency_Capture("limelight-right")/1000.0)
-             );
-         }
+        //  if (LimelightHelpers.getTV("limelight-right")) {
+        //      s_Swerve.m_PoseEstimator.addVisionMeasurement(
+        //          getRobotPose(), 
+        //          Timer.getFPGATimestamp() - (LimelightHelpers.getLatency_Pipeline("limelight-right")/1000.0) - (LimelightHelpers.getLatency_Capture("limelight-right")/1000.0)
+        //      );
+        //  }
 
-         if(LimelightHelpers.getTV("limelight-left") == true)
-         {
-            s_Swerve.m_PoseEstimator.addVisionMeasurement(
-                 getRobotPoseLeft(), 
-                 Timer.getFPGATimestamp() - (LimelightHelpers.getLatency_Pipeline("limelight-left")/1000.0) - (LimelightHelpers.getLatency_Capture("limelight-left")/1000.0)
-             );
-         }
+        //  if(LimelightHelpers.getTV("limelight-left") == true)
+        //  {
+        //     s_Swerve.m_PoseEstimator.addVisionMeasurement(
+        //          getRobotPoseLeft(), 
+        //          Timer.getFPGATimestamp() - (LimelightHelpers.getLatency_Pipeline("limelight-left")/1000.0) - (LimelightHelpers.getLatency_Capture("limelight-left")/1000.0)
+        //      );
+        //  }
  
          updateData();
 
