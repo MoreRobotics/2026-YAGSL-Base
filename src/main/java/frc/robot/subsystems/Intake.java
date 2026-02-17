@@ -65,11 +65,11 @@ public class Intake extends SubsystemBase {
   private double forwardLimit = 0;
   private double reverseLimit = 0;
   private double pivotCurrentLimit = 80;
-  private double intakeStowPosition = -.324;
-  private double intakeOutPosition = .017;
+  private double intakeStowPosition = -.325;
+  private double intakeOutPosition = .020;
   private double target = 0;
   private boolean intakeOut = false;
-  private double tolerance = 0.3;
+  private double tolerance = 0.03;
 
   private double rollerP = .25;//.5 too much
   private double rollerI = 0;
@@ -124,9 +124,9 @@ public class Intake extends SubsystemBase {
     rollerConfigs.CurrentLimits.SupplyCurrentLimit = rollerCurrentLimit;
 
 
-    m_IntakePivot.setPosition(e_IntakePivot.getPosition().getValueAsDouble());
     m_IntakePivot.getConfigurator().apply(pivotConfigs);
     m_IntakeRoller.getConfigurator().apply(rollerConfigs);
+    m_IntakePivot.setPosition(e_IntakePivot.getPosition().getValueAsDouble());
     
     
   }

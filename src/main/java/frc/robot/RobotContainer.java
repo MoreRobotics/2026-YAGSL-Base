@@ -179,7 +179,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
 
 
     if (drivebase.isRedAlliance())
-    {
+    { 
         driver.L2().whileTrue(
           new ParallelCommandGroup(
             driveFieldOrientedDirectAngle = drivebase.driveCommand(

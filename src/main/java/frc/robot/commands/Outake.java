@@ -25,6 +25,7 @@ public class Outake extends Command {
   public void initialize() {
     s_Intake.setIntakeSpeed(s_Intake.getOutakeSpeed());
     s_HotDog.setHotDogSpeed(s_HotDog.getReverseHotDogSpeed());
+    s_HotDog.setIndexerSpeed(s_HotDog.getReverseIndexerSpeed());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -36,6 +37,7 @@ public class Outake extends Command {
   public void end(boolean interrupted) {
     s_Intake.setIntakeSpeed(0);
     s_HotDog.setHotDogSpeed(0);
+    s_HotDog.setIndexerSpeed(0);
   }
 
   // Returns true when the command should end.

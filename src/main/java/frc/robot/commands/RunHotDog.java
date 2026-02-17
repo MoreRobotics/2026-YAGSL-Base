@@ -21,6 +21,7 @@ public class RunHotDog extends Command {
   @Override
   public void initialize() {
     s_HotDog.setHotDogSpeed(s_HotDog.getHotDogSpeed());
+    s_HotDog.setIndexerSpeed(s_HotDog.getIndexerSpeed());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -31,6 +32,7 @@ public class RunHotDog extends Command {
   @Override
   public void end(boolean interrupted) {
     s_HotDog.setHotDogSpeed(0);
+    s_HotDog.setIndexerSpeed(0);
   }
 
   // Returns true when the command should end.
