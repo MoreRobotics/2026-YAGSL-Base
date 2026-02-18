@@ -40,16 +40,17 @@ import yams.motorcontrollers.remote.TalonFXSWrapper;
 
 public class HotDog extends SubsystemBase {
 
-  private double indexerP = .3;
+  private double indexerP = .33;
   private double indexerI = 0;
   private double indexerD = 0;
   private double hotDogP = .33;
   private double hotDogI = 0;
   private double hotDogD = 0;
+  private double hotDogV = .15;
   
   private double currentLimit = 70;
-  private double indexerSpeed = 100;
-  private double hotDogSpeed = 100;
+  private double indexerSpeed = 85;
+  private double hotDogSpeed = 85;
   private double reverseHotDogSpeed = -40;
   private double reverseIndexerSpeed = -40;
   private double acceleration = 500;
@@ -85,6 +86,7 @@ public class HotDog extends SubsystemBase {
     hotDogConfigs.Slot0.kP = hotDogP;
     hotDogConfigs.Slot0.kI = hotDogI;
     hotDogConfigs.Slot0.kD = hotDogD;
+    hotDogConfigs.Slot0.kV = hotDogV;
     hotDogConfigs.MotionMagic.MotionMagicAcceleration = acceleration;
     hotDogConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
     hotDogConfigs.CurrentLimits.SupplyCurrentLimit = currentLimit;
