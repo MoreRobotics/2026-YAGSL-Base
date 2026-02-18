@@ -244,6 +244,46 @@ import limelight.Limelight;
 
      }
 
+
+     public double getTargetPassRotation() {
+        Pose2d robotPose = s_Swerve.m_PoseEstimator.getEstimatedPosition();
+
+        Pose2d targetPose = getTargetPassPose();
+
+        double robotX = robotPose.getX();
+        double robotY = robotPose.getY();
+
+        double targetX = targetPose.getX();
+        double targetY = targetPose.getY();
+
+        double angle =  (Math.atan((targetY - robotY) / (targetX - robotX)) * (180 / Math.PI));
+
+
+
+        // if (robotX > targetX) {
+
+        //     angle = angle + 180;
+
+        // }
+
+         
+        // SmartDashboard.putNumber(" inverted angle", -angle);
+         if (s_Swerve.isRedAlliance()) {
+             if(s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees() > 0)
+             {
+                 return angle+(180 - s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees());
+             }
+             else {
+                 return angle + (-180 - s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees());
+             }
+         }
+         else{
+            return angle;
+         }
+
+     }
+
+
      public Pose2d getTargetPose() {
         Pose2d pose;
         Pose2d robotPose = s_Swerve.m_PoseEstimator.getEstimatedPosition();
@@ -259,6 +299,27 @@ import limelight.Limelight;
 
             // get pose of blue speaker
             pose = new Pose2d(Constants.Positions.hubBlueX, Constants.Positions.hubBlueY, new Rotation2d(Constants.Positions.hubBlueR));
+
+        }
+        
+        return pose;
+     }
+
+     public Pose2d getTargetPassPose() {
+        Pose2d pose;
+        Pose2d robotPose = s_Swerve.m_PoseEstimator.getEstimatedPosition();
+
+
+        if(s_Swerve.isRedAlliance()) {
+
+            // get pose of red speaker
+            pose = new Pose2d(Constants.Positions.humanPlayerRedX, Constants.Positions.humanPlayerRedY, new Rotation2d(Constants.Positions.humanPlayerRedR));
+
+        // if robot is on blue alliance
+        } else {
+
+            // get pose of blue speaker
+            pose = new Pose2d(Constants.Positions.humanPlayerBlueX, Constants.Positions.humanPlayerBlueY, new Rotation2d(Constants.Positions.humanPlayerBlueR));
 
         }
         
