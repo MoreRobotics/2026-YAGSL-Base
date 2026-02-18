@@ -27,8 +27,6 @@ public class Shooter extends SubsystemBase {
   private double gearRatio = 0;
   private double currentLimit = 70;
   private double acceleration = 50;
-  private double velocity = 5;
-
   private double kShooter = 5;
 
   private double shooterSpeed = 20;
@@ -54,7 +52,6 @@ public class Shooter extends SubsystemBase {
     configs.Slot0.kI = kI;
     configs.Slot0.kD = kD;
     configs.MotionMagic.MotionMagicAcceleration = acceleration;
-    configs.MotionMagic.MotionMagicCruiseVelocity = velocity;
     // configs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     // configs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = forwardLimit;
     // configs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
@@ -62,7 +59,7 @@ public class Shooter extends SubsystemBase {
     configs.Feedback.SensorToMechanismRatio = gearRatio;
     configs.CurrentLimits.SupplyCurrentLimitEnable = true;
     configs.CurrentLimits.SupplyCurrentLimit = currentLimit;
-    configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    configs.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
     m_LeftShooter.getConfigurator().apply(configs);
     // m_RightShooter.getConfigurator().apply(configs);
@@ -77,7 +74,7 @@ public class Shooter extends SubsystemBase {
 
   public double getShooterSpeed()
   {
-    double speed = velocity - (kShooter / s_Eyes.getTargetDistance());
+    double speed = shooterSpeed - (kShooter / s_Eyes.getTargetDistance());
     return speed;
   }
 
