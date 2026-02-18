@@ -20,6 +20,10 @@ public class Climber extends SubsystemBase {
   private int servoMid = 90;
   private int servoOut = 0;
 
+  private double climberSafe = 0;
+  private double climberUp = 0;
+  private double climberHalfWay = 0;
+
   private int climberID = 0;
 
   private double kP = 0;
@@ -31,6 +35,8 @@ public class Climber extends SubsystemBase {
   private double currentLimit = 0;
   private double acceleration = 0;
   private double velocity = 0;
+  private double tolerance = 0;
+  private double target = 0;
 
   private Servo servo;
   private TalonFX m_Climber;
@@ -60,6 +66,38 @@ public class Climber extends SubsystemBase {
     configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     m_Climber.getConfigurator().apply(configs);
+  }
+
+
+  public void setClimberPosition(double setpoint)
+  {
+    target = setpoint;
+    m_Climber.setControl(m_Request.withPosition(setpoint));
+  }
+
+  public double getClimberSafePose()
+  {
+    return climberSafe;
+  }
+
+  public double getClimberUpPose()
+  {
+    return climberUp;
+  }
+
+  public double getClimberHalfWayPose()
+  {
+    return climberHalfWay;
+  }
+
+   public boolean atPosition()
+  {
+    return (Math.abs(getClimberPosition() - target) < tolerance);
+  }
+
+  public double getClimberPosition()
+  {
+    return m_Climber.getPosition().getValueAsDouble();
   }
 
   public void setServo(int setpoint)
