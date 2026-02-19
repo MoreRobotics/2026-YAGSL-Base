@@ -36,6 +36,8 @@ import frc.robot.commands.RunHotDog;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteFieldDrive;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.ShooterPivot;
 // import frc.robot.subsystems.Shooter;
 // import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.HotDog;
@@ -68,8 +70,8 @@ public class RobotContainer
   public final Eyes s_Eyes = new Eyes(drivebase);
   public final HotDog s_HotDog = new HotDog();
   public final Intake s_Intake = new Intake();
-  // public final ShooterPivot s_ShooterPivot = new ShooterPivot(s_Eyes);
-  // public final Shooter s_Shooter = new Shooter(s_Eyes);
+  public final ShooterPivot s_ShooterPivot = new ShooterPivot(s_Eyes);
+  public final Shooter s_Shooter = new Shooter(s_Eyes);
   // public final Climber s_Climber = new Climber();
   /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
