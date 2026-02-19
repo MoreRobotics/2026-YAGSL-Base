@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AimShooter;
+import frc.robot.commands.MoveClimber;
 import frc.robot.commands.MoveIntake;
 import frc.robot.commands.Outake;
 import frc.robot.commands.PrepareShooter;
@@ -278,13 +279,23 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     driver.cross().whileTrue(
       new Outake(s_Intake, s_HotDog));
 
-    
+
+ //Elevator up   
     driver.triangle().onTrue(
-      new InstantCommand(() -> s_Climber.setServo(s_Climber.getServoIn()))
+      new SequentialCommandGroup(
+        new MoveClimber(s_Climber, s_Climber.getClimberHalfWayPose()),
+        new ParallelCommandGroup(
+          new InstantCommand(() -> s_Climber.setServo(s_Climber.getServoMid())),
+          new MoveClimber(s_Climber, s_Climber.getClimberUpPose())
+        ),
+        new InstantCommand(() -> s_Climber.setServo(s_Climber.getServoOut()))
+      )
     );
 
+
+//Elevator Down
     driver.square().onTrue(
-    new InstantCommand(() -> s_Climber.setServo(s_Climber.getServoMid()))
+    new MoveClimber(s_Climber, s_Climber.getClimberDownPose())
     );
 
   }

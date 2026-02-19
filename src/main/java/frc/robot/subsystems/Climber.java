@@ -20,7 +20,7 @@ public class Climber extends SubsystemBase {
   private int servoMid = 90;
   private int servoOut = 0;
 
-  private double climberSafe = 0;
+  private double climberDown = 0;
   private double climberUp = 0;
   private double climberHalfWay = 0;
 
@@ -75,9 +75,9 @@ public class Climber extends SubsystemBase {
     m_Climber.setControl(m_Request.withPosition(setpoint));
   }
 
-  public double getClimberSafePose()
+  public double getClimberDownPose()
   {
-    return climberSafe;
+    return climberDown;
   }
 
   public double getClimberUpPose()
