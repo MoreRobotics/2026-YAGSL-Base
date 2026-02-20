@@ -21,18 +21,17 @@ public class Shooter extends SubsystemBase {
 
   private int leftShooterID = 14;
   private int rightShooterID = 15;
-  private double kP = .1;
+  private double kP = .7;
   private double kI = 0;
   private double kD = 0;
-  private double forwardLimit = 0;
-  private double reverseLimit = 0;
+  private double kV = 0.1;
   private double gearRatio = 0;
-  private double currentLimit = 70;
-  private double acceleration = 50;
+  private double currentLimit = 150;
+  private double acceleration = 250;
 
-  private double kShooter = 5;
+  private double kShooter = 1;
 
-  private double shooterSpeed = 20;
+  private double shooterSpeed = -57;
 
 
 
@@ -56,14 +55,11 @@ public class Shooter extends SubsystemBase {
     configs.Slot0.kP = kP;
     configs.Slot0.kI = kI;
     configs.Slot0.kD = kD;
+    configs.Slot0.kV = kV;
     configs.MotionMagic.MotionMagicAcceleration = acceleration;
-    // configs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    // configs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = forwardLimit;
-    // configs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    // configs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = reverseLimit;
     configs.Feedback.SensorToMechanismRatio = gearRatio;
-    configs.CurrentLimits.SupplyCurrentLimitEnable = true;
-    configs.CurrentLimits.SupplyCurrentLimit = currentLimit;
+    configs.CurrentLimits.StatorCurrentLimitEnable = true;
+    configs.CurrentLimits.StatorCurrentLimit = currentLimit;
     configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     m_LeftShooter.getConfigurator().apply(configs);
@@ -73,20 +69,25 @@ public class Shooter extends SubsystemBase {
 
   public void setShooterSpeed(double speed)
   {
+    SmartDashboard.putNumber("Shooter Set Speed", speed);
     m_LeftShooter.setControl(m_Request.withVelocity(speed));
     m_RightShooter.setControl(m_Follower.withLeaderID(leftShooterID));
   }
 
   public double getShooterSpeed()
   {
-    double speed = shooterSpeed - (kShooter / s_Eyes.getTargetDistance());
-    return speed;
+    // double speed = shooterSpeed - (kShooter / s_Eyes.getTargetDistance());
+    // return speed;
+    return shooterSpeed;
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Shooter Speed", getShooterSpeed());
-    SmartDashboard.putNumber("Shooter Motor Speed", m_LeftShooter.getVelocity().getValueAsDouble());
+    // SmartDashboard.putNumber("Shooter Speed", getShooterSpeed());
+    SmartDashboard.putNumber("Left Shooter Motor Speed", m_LeftShooter.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("Right Shooter Motor Speed", m_RightShooter.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("Shooter Motor Current", m_LeftShooter.getStatorCurrent().getValueAsDouble());
+    
   }
 }

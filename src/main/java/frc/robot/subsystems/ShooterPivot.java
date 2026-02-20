@@ -11,7 +11,9 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -22,16 +24,17 @@ public class ShooterPivot extends SubsystemBase {
 
   private int shooterPivotID = 16;
   private int canCoderID = 6;
-  private double kP = 0;
+  private double kP = 60;
   private double kI = 0;
   private double kD = 0;
-  private double forwardLimit = 0;
-  private double reverseLimit = 0;
-  private double gearRatio = 67.232/1;
-  private double currentLimit = 70;
-  private double safePosition = 0;
-  private double acceleration = 0;
-  private double velocity = 0;
+  private double forwardLimit = 0.495;
+  private double reverseLimit = .25;
+  private double gearRatio = (16384/675)/1.062;
+  private double currentLimit = 100;
+  private double safePosition = 0.501;
+  private double extendedPose = 0.223;
+  private double acceleration = 250;
+  private double velocity = 50;
 
 
 
@@ -57,26 +60,27 @@ public class ShooterPivot extends SubsystemBase {
     configs.Slot0.kD = kD;
     configs.MotionMagic.MotionMagicAcceleration = acceleration;
     configs.MotionMagic.MotionMagicCruiseVelocity = velocity;
-    // configs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    // configs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = forwardLimit;
-    // configs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    // configs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = reverseLimit;
+    configs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    configs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = forwardLimit;
+    configs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    configs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = reverseLimit;
     configs.Feedback.SensorToMechanismRatio = gearRatio;
-    configs.CurrentLimits.SupplyCurrentLimitEnable = true;
-    configs.CurrentLimits.SupplyCurrentLimit = currentLimit;
-    configs.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    configs.CurrentLimits.StatorCurrentLimitEnable = true;
+    configs.CurrentLimits.StatorCurrentLimit = currentLimit;
+    configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
 
 
 
     m_ShooterPivot.getConfigurator().apply(configs);
-    m_ShooterPivot.setPosition(e_ShooterPivot.getPosition().getValueAsDouble()/2.8125);
+    m_ShooterPivot.setPosition(e_ShooterPivot.getPosition().getValueAsDouble());
 
   }
 
   public double getShooterAngle()
   {
-    double angle = 2*(12*(Math.pow(s_Eyes.getTargetDistance(), 2))-95.2*s_Eyes.getTargetDistance()+232.9)/360;//divide by 360 to get rotations
-    return angle;
+    double angle_Rotation = (-0.149*s_Eyes.getTargetDistance()+0.65);
+    return angle_Rotation;
   }
 
   public void setShooterAngle(double setpoint)
@@ -99,6 +103,6 @@ public class ShooterPivot extends SubsystemBase {
 
     SmartDashboard.putNumber("Shooter Calculated angle", getShooterAngle());
     SmartDashboard.putNumber("Shooter Pivot Motor Position", m_ShooterPivot.getPosition().getValueAsDouble()); 
-    SmartDashboard.putNumber("Shooter Pivot CANCoder Position", e_ShooterPivot.getPosition().getValueAsDouble()/2.8125);
+    SmartDashboard.putNumber("Shooter Pivot CANCoder Position", e_ShooterPivot.getPosition().getValueAsDouble());
   }
 }

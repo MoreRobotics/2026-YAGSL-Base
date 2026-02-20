@@ -28,9 +28,11 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.AimShooter;
 // import frc.robot.commands.AimShooter;
 import frc.robot.commands.MoveIntake;
 import frc.robot.commands.Outake;
+import frc.robot.commands.PrepareShooter;
 // import frc.robot.commands.PrepareShooter;
 import frc.robot.commands.RunHotDog;
 import frc.robot.commands.RunIntake;
@@ -187,15 +189,15 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
             driveFieldOrientedDirectAngle = drivebase.driveCommand(
           () -> driver.getLeftY(),
           () -> driver.getLeftX(),
-          () -> (s_Eyes.getTargetRotation()) * (.12))
-          // new AimShooter(s_ShooterPivot)
-          // new PrepareShooter(s_Shooter)
+          () -> (s_Eyes.getTargetRotation()) * (.12)),
+           new AimShooter(s_ShooterPivot),
+           new PrepareShooter(s_Shooter)
           ))
       .onFalse(
         new ParallelCommandGroup(
-          driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity)
-          // new AimShooter(s_ShooterPivot),
-          //  new InstantCommand(() -> s_Shooter.setShooterSpeed(0))
+          driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity),
+           new AimShooter(s_ShooterPivot),
+            new InstantCommand(() -> s_Shooter.setShooterSpeed(0))
         )
       );
       
@@ -208,15 +210,15 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
           driveFieldOrientedDirectAngle = drivebase.driveCommand(
           () -> -driver.getLeftY(),
           () -> -driver.getLeftX(),
-          () -> (s_Eyes.getTargetRotation()-drivebase.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.12))
-          // new AimShooter(s_ShooterPivot)
-          // new PrepareShooter(s_Shooter)
+          () -> (s_Eyes.getTargetRotation()-drivebase.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.12)),
+           new AimShooter(s_ShooterPivot),
+           new PrepareShooter(s_Shooter)
           ))
       .onFalse(
         new ParallelCommandGroup(
-          driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity)
-          // new AimShooter(s_ShooterPivot),
-          //  new InstantCommand(() -> s_Shooter.setShooterSpeed(0))
+          driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity),
+           new AimShooter(s_ShooterPivot),
+            new InstantCommand(() -> s_Shooter.setShooterSpeed(0))
           )
       );
     }

@@ -64,7 +64,7 @@ public class Intake extends SubsystemBase {
   private double pivotVelocitySlow = 0.1;
   private double forwardLimit = 0;
   private double reverseLimit = 0;
-  private double pivotCurrentLimit = 80;
+  private double pivotCurrentLimit = 100;
   private double intakeStowPosition = -.325;
   private double intakeOutPosition = .020;
   private double target = 0;
@@ -74,7 +74,7 @@ public class Intake extends SubsystemBase {
   private double rollerP = .25;//.5 too much
   private double rollerI = 0;
   private double rollerD = 0;
-  private double rollerCurrentLimit = 80;
+  private double rollerCurrentLimit = 100;
   private double intakeSpeed = 75;
   private double outakeSpeed = -60;
 
@@ -112,16 +112,16 @@ public class Intake extends SubsystemBase {
     // pivotConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
     // pivotConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = reverseLimit;
     pivotConfigs.Feedback.SensorToMechanismRatio = gearRatio;
-    pivotConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
-    pivotConfigs.CurrentLimits.SupplyCurrentLimit = pivotCurrentLimit;
+    pivotConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
+    pivotConfigs.CurrentLimits.StatorCurrentLimit = pivotCurrentLimit;
     pivotConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     rollerConfigs = new TalonFXConfiguration();
     rollerConfigs.Slot0.kP = rollerP;
     rollerConfigs.Slot0.kI = rollerI;
     rollerConfigs.Slot0.kD = rollerD;
-    rollerConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
-    rollerConfigs.CurrentLimits.SupplyCurrentLimit = rollerCurrentLimit;
+    rollerConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
+    rollerConfigs.CurrentLimits.StatorCurrentLimit = rollerCurrentLimit;
 
 
     m_IntakePivot.getConfigurator().apply(pivotConfigs);

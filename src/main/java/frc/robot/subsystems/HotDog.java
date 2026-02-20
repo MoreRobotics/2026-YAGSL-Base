@@ -48,7 +48,7 @@ public class HotDog extends SubsystemBase {
   private double hotDogD = 0;
   private double hotDogV = .15;
   
-  private double currentLimit = 70;
+  private double currentLimit = 100;
   private double indexerSpeed = 85;
   private double hotDogSpeed = 85;
   private double reverseHotDogSpeed = -40;
@@ -79,8 +79,8 @@ public class HotDog extends SubsystemBase {
     indexerConfigs.Slot0.kI = indexerI;
     indexerConfigs.Slot0.kD = indexerD;
     indexerConfigs.MotionMagic.MotionMagicAcceleration = acceleration;
-    indexerConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
-    indexerConfigs.CurrentLimits.SupplyCurrentLimit = currentLimit;
+    indexerConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
+    indexerConfigs.CurrentLimits.StatorCurrentLimit = currentLimit;
 
     hotDogConfigs = new TalonFXConfiguration();
     hotDogConfigs.Slot0.kP = hotDogP;
@@ -136,7 +136,7 @@ public class HotDog extends SubsystemBase {
     // This method will be called once per scheduler run
     // shooter.updateTelemetry();
     SmartDashboard.putNumber("HotDog Speed", m_HotDog.getVelocity().getValueAsDouble());
-    SmartDashboard.putNumber("HotDog Current", m_HotDog.getSupplyCurrent().getValueAsDouble());
+    SmartDashboard.putNumber("HotDog Current", m_HotDog.getStatorCurrent().getValueAsDouble());
   }
 
   @Override
