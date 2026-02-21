@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AimShooter;
+import frc.robot.commands.HomeShooter;
 // import frc.robot.commands.AimShooter;
 import frc.robot.commands.MoveIntake;
 import frc.robot.commands.Outake;
@@ -36,6 +37,7 @@ import frc.robot.commands.PrepareShooter;
 // import frc.robot.commands.PrepareShooter;
 import frc.robot.commands.RunHotDog;
 import frc.robot.commands.RunIntake;
+import frc.robot.commands.StowShooter;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteFieldDrive;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -85,6 +87,14 @@ public class RobotContainer
                                                             .deadband(OperatorConstants.DEADBAND)
                                                             .scaleTranslation(0.8)
                                                             .allianceRelativeControl(true);
+
+  // SwerveInputStream driveAngularVelocityAutoAim = SwerveInputStream.of(drivebase.getSwerveDrive(),
+  //                                                               () -> driver.getLeftY() * -1,
+  //                                                               () -> driver.getLeftX() * -1)
+  //                                                           .withControllerRotationAxis(() -> -driver.getRightX())
+  //                                                           .deadband(OperatorConstants.DEADBAND)
+  //                                                           .scaleTranslation(0.8)
+  //                                                           .allianceRelativeControl(true);
 
   /**
    * Clone's the angular velocity input stream and converts it to a fieldRelative input stream.
@@ -190,13 +200,13 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
           () -> driver.getLeftY(),
           () -> driver.getLeftX(),
           () -> (s_Eyes.getTargetRotation()) * (.12)),
-           new AimShooter(s_ShooterPivot),
+            new AimShooter(s_ShooterPivot),
            new PrepareShooter(s_Shooter)
           ))
       .onFalse(
         new ParallelCommandGroup(
           driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity),
-           new AimShooter(s_ShooterPivot),
+            new StowShooter(s_ShooterPivot),
             new InstantCommand(() -> s_Shooter.setShooterSpeed(0))
         )
       );
@@ -211,13 +221,13 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
           () -> -driver.getLeftY(),
           () -> -driver.getLeftX(),
           () -> (s_Eyes.getTargetRotation()-drivebase.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.12)),
-           new AimShooter(s_ShooterPivot),
+            new AimShooter(s_ShooterPivot),
            new PrepareShooter(s_Shooter)
           ))
       .onFalse(
         new ParallelCommandGroup(
           driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity),
-           new AimShooter(s_ShooterPivot),
+            new StowShooter(s_ShooterPivot),
             new InstantCommand(() -> s_Shooter.setShooterSpeed(0))
           )
       );
@@ -245,6 +255,11 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
       )
     );
 
+    //home shooter
+    driver.povDown().onTrue(
+      new HomeShooter(s_ShooterPivot)
+    );
+
 //shoot
      driver.R2().whileTrue(
       new ParallelCommandGroup(
@@ -255,11 +270,18 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
         new MoveIntake(s_Intake)
         ))
       
-        .onFalse(new ParallelCommandGroup(
+        .onFalse(
+          new SequentialCommandGroup(
+          new ParallelCommandGroup(
           new InstantCommand(() -> s_Intake.setIntakeSpeed(0)),
         new InstantCommand(() -> s_Intake.setTarget(s_Intake.getIntakePosition())),
         new MoveIntake(s_Intake),
-        new InstantCommand(() -> s_Intake.setNormalMode())));
+        new InstantCommand(() -> s_Intake.setNormalMode())),
+         new InstantCommand(() -> s_Intake.changeTarget()),
+        new MoveIntake(s_Intake),
+        new InstantCommand(() -> s_Intake.changeState())
+        )
+        );
 
 
 //outake

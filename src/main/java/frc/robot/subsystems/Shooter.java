@@ -31,7 +31,7 @@ public class Shooter extends SubsystemBase {
 
   private double kShooter = 1;
 
-  private double shooterSpeed = -57;
+  private double shooterSpeed = -57*.9;
 
 
 
@@ -76,9 +76,11 @@ public class Shooter extends SubsystemBase {
 
   public double getShooterSpeed()
   {
-    // double speed = shooterSpeed - (kShooter / s_Eyes.getTargetDistance());
-    // return speed;
-    return shooterSpeed;
+    double speed = 0.9245*Math.pow(s_Eyes.getTargetDistance(), 2)
+    -4.1243*s_Eyes.getTargetDistance()
+    +47.093;
+    return -speed;
+    // return shooterSpeed;
   }
 
   @Override

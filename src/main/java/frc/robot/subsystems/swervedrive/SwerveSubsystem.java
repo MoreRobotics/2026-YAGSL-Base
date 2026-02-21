@@ -18,6 +18,7 @@ import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -420,11 +421,12 @@ public class SwerveSubsystem extends SubsystemBase
   public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularRotationX)
   {
 
+
     return run(() -> {
       // Make the robot move
       swerveDrive.drive(SwerveMath.scaleTranslation(new Translation2d(
-                            translationX.getAsDouble() * swerveDrive.getMaximumChassisVelocity(),
-                            translationY.getAsDouble() * swerveDrive.getMaximumChassisVelocity()), 0.8),
+                            MathUtil.applyDeadband(translationX.getAsDouble(), Constants.OperatorConstants.DEADBAND) * swerveDrive.getMaximumChassisVelocity(),
+                            MathUtil.applyDeadband(translationY.getAsDouble(), Constants.OperatorConstants.DEADBAND) * swerveDrive.getMaximumChassisVelocity()), 0.8),
                         Math.pow(angularRotationX.getAsDouble(), 1),
                         true,
                         false);

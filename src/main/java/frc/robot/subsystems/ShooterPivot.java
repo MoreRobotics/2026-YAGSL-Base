@@ -8,6 +8,7 @@ import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
@@ -27,23 +28,29 @@ public class ShooterPivot extends SubsystemBase {
   private double kP = 60;
   private double kI = 0;
   private double kD = 0;
-  private double forwardLimit = 0.495;
-  private double reverseLimit = .25;
   private double gearRatio = (16384/675)/1.062;
   private double currentLimit = 100;
-  private double safePosition = 0.501;
-  private double extendedPose = 0.223;
+  private double safePosition = 0.0;
+  private double extendedPose = -0.28;
   private double acceleration = 250;
   private double velocity = 50;
 
+  public double homingSpeed = 0.5;
+  public double homingCurrentLimit = currentLimit / 2;
+  public double homingPosition = 0;
+
+  public double forwardLimit = 0.0;
+  public double reverseLimit = -0.28;
 
 
 
-  private TalonFX m_ShooterPivot;
+
+  public TalonFX m_ShooterPivot;
+  public CANcoder e_ShooterPivot;
   private TalonFXConfiguration configs;
   private MotionMagicVoltage m_Request;
-  private CANcoder e_ShooterPivot;
   private CANcoderConfiguration e_Configs;
+  private VelocityVoltage m_VelocityRequest;
 
 
 
@@ -53,6 +60,7 @@ public class ShooterPivot extends SubsystemBase {
     m_ShooterPivot = new TalonFX(shooterPivotID);
     m_Request = new MotionMagicVoltage(0).withSlot(0);
     e_ShooterPivot = new CANcoder(canCoderID);
+    m_VelocityRequest = new VelocityVoltage(0).withSlot(0);
 
     configs = new TalonFXConfiguration();
     configs.Slot0.kP = kP;
@@ -79,7 +87,22 @@ public class ShooterPivot extends SubsystemBase {
 
   public double getShooterAngle()
   {
-    double angle_Rotation = (-0.149*s_Eyes.getTargetDistance()+0.65);
+    double angle_Rotation = (
+      -0.0056*Math.pow(s_Eyes.getTargetDistance(), 4)
+     + 0.0931*Math.pow(s_Eyes.getTargetDistance(), 3)
+      - 0.5359*Math.pow(s_Eyes.getTargetDistance(), 2)
+       + 1.2133*s_Eyes.getTargetDistance()
+       -0.9293);
+
+      if (angle_Rotation > 0) {
+        angle_Rotation = 0;
+      } else if (angle_Rotation < -0.28) {
+        angle_Rotation = -0.28;
+      }
+      
+      if (s_Eyes.getTargetDistance() > 4) {
+        angle_Rotation = -0.138;
+      }
     return angle_Rotation;
   }
 
@@ -95,7 +118,13 @@ public class ShooterPivot extends SubsystemBase {
     return safePosition;
   }
 
+  public void homeShooter() {
+    m_ShooterPivot.setControl(m_VelocityRequest.withVelocity(homingSpeed));
+  }
 
+  public double getCurrent() {
+    return m_ShooterPivot.getTorqueCurrent().getValueAsDouble();
+  }
 
   @Override
   public void periodic() {
@@ -104,5 +133,6 @@ public class ShooterPivot extends SubsystemBase {
     SmartDashboard.putNumber("Shooter Calculated angle", getShooterAngle());
     SmartDashboard.putNumber("Shooter Pivot Motor Position", m_ShooterPivot.getPosition().getValueAsDouble()); 
     SmartDashboard.putNumber("Shooter Pivot CANCoder Position", e_ShooterPivot.getPosition().getValueAsDouble());
+    SmartDashboard.putNumber("Shooter Pivot Current", getCurrent());
   }
 }
