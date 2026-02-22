@@ -159,12 +159,23 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
-    // NamedCommands.registerCommand("Auto Aim Blue", drivebase.aimAtTarget());
+    //  NamedCommands.registerCommand("Auto Aim Blue", drivebase.aimAtTarget());
     NamedCommands.registerCommand("Run HotDog", new RunHotDog(s_HotDog));
-    // NamedCommands.registerCommand("PrepareShooter", new PrepareShooter(s_Shooter));
+    NamedCommands.registerCommand("Stop HotDog", new InstantCommand(() -> s_HotDog.setHotDogSpeed(0)).alongWith(new InstantCommand(() -> s_HotDog.setIndexerSpeed(0))));
+     NamedCommands.registerCommand("Prepare Shooter", new PrepareShooter(s_Shooter));
+     NamedCommands.registerCommand("Stop Shooter", new InstantCommand(() -> s_Shooter.setShooterSpeed(0)));
     NamedCommands.registerCommand("Intake", new RunIntake(s_Intake));
-    NamedCommands.registerCommand("Move Intake", new MoveIntake(s_Intake)); 
-    // NamedCommands.registerCommand("Aim", new AimShooter(s_ShooterPivot));
+    NamedCommands.registerCommand("Stop Intake", new InstantCommand(() -> s_Intake.setIntakeSpeed(0)));
+    NamedCommands.registerCommand("Move Intake", new SequentialCommandGroup(
+        new InstantCommand(() -> s_Intake.changeTarget()),
+        new MoveIntake(s_Intake),
+        new InstantCommand(() -> s_Intake.changeState())
+
+      )); 
+
+    
+     NamedCommands.registerCommand("Aim Shooter", new AimShooter(s_ShooterPivot));
+     NamedCommands.registerCommand("Stow Shooter", new StowShooter(s_ShooterPivot));
     
 
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -199,7 +210,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
             driveFieldOrientedDirectAngle = drivebase.driveCommand(
           () -> driver.getLeftY(),
           () -> driver.getLeftX(),
-          () -> (s_Eyes.getTargetRotation()) * (.12)),
+          () -> (s_Eyes.getTargetRotation()) * (-.12)),
             new AimShooter(s_ShooterPivot),
            new PrepareShooter(s_Shooter)
           ))

@@ -33,6 +33,7 @@ public class HomeShooter extends Command {
   public void execute() {
     s_ShooterPivot.homeShooter();
     if (s_ShooterPivot.getCurrent() >= Math.abs(s_ShooterPivot.homingCurrentLimit)) {
+        s_ShooterPivot.m_ShooterPivot.setPosition(s_ShooterPivot.homingPosition);
         s_ShooterPivot.e_ShooterPivot.setPosition(s_ShooterPivot.homingPosition);
         finished = true;
     } else {
@@ -43,7 +44,7 @@ public class HomeShooter extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    
+    s_ShooterPivot.stopSooter();
   }
 
   // Returns true when the command should end.

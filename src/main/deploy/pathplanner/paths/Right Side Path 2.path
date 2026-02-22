@@ -8,27 +8,32 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.752953736654805,
-        "y": 0.4683274021352317
+        "x": 7.764317912218269,
+        "y": 0.33921708185053356
       },
       "isLocked": false,
       "linkedName": "Right Side Path 1 End"
     },
     {
       "anchor": {
-        "x": 3.9555634638196917,
-        "y": 0.5866785290628707
+        "x": 2.5138315539739033,
+        "y": 0.6081969157769855
       },
       "prevControl": {
-        "x": 5.2897034400948995,
-        "y": 0.6727520759193351
+        "x": 4.6118742586002375,
+        "y": 0.5651601423487547
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "Right Side Path 2 End"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.8916518650088825,
+      "rotationDegrees": 0.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [
     {
@@ -37,12 +42,24 @@
         "y": 4.035
       },
       "rotationOffset": 0.0,
-      "minWaypointRelativePos": 0.9111361079865005,
+      "minWaypointRelativePos": 0.9628796400449959,
       "maxWaypointRelativePos": 1.0,
       "name": "Point Towards Zone"
     }
   ],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "Prepare Shooter",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Prepare Shooter"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -53,7 +70,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 78.92979742206062
+    "rotation": 58.57043438516154
   },
   "reversed": false,
   "folder": null,

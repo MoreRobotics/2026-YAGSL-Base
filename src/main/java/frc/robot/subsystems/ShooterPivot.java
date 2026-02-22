@@ -28,6 +28,7 @@ public class ShooterPivot extends SubsystemBase {
   private double kP = 60;
   private double kI = 0;
   private double kD = 0;
+  private double speedkP = 10;
   private double gearRatio = (16384/675)/1.062;
   private double currentLimit = 100;
   private double safePosition = 0.0;
@@ -40,7 +41,7 @@ public class ShooterPivot extends SubsystemBase {
   public double homingPosition = 0;
 
   public double forwardLimit = 0.0;
-  public double reverseLimit = -0.28;
+  public double reverseLimit = -0.278;
 
 
 
@@ -60,18 +61,19 @@ public class ShooterPivot extends SubsystemBase {
     m_ShooterPivot = new TalonFX(shooterPivotID);
     m_Request = new MotionMagicVoltage(0).withSlot(0);
     e_ShooterPivot = new CANcoder(canCoderID);
-    m_VelocityRequest = new VelocityVoltage(0).withSlot(0);
+    m_VelocityRequest = new VelocityVoltage(0).withSlot(1);
 
     configs = new TalonFXConfiguration();
     configs.Slot0.kP = kP;
     configs.Slot0.kI = kI;
     configs.Slot0.kD = kD;
+    configs.Slot1.kP = speedkP;
     configs.MotionMagic.MotionMagicAcceleration = acceleration;
     configs.MotionMagic.MotionMagicCruiseVelocity = velocity;
-    configs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    configs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = forwardLimit;
-    configs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    configs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = reverseLimit;
+    // configs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    // configs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = forwardLimit;
+    // configs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    // configs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = reverseLimit;
     configs.Feedback.SensorToMechanismRatio = gearRatio;
     configs.CurrentLimits.StatorCurrentLimitEnable = true;
     configs.CurrentLimits.StatorCurrentLimit = currentLimit;
@@ -81,27 +83,23 @@ public class ShooterPivot extends SubsystemBase {
 
 
     m_ShooterPivot.getConfigurator().apply(configs);
-    m_ShooterPivot.setPosition(e_ShooterPivot.getPosition().getValueAsDouble());
+    m_ShooterPivot.setPosition(0);
 
   }
 
   public double getShooterAngle()
   {
     double angle_Rotation = (
-      -0.0056*Math.pow(s_Eyes.getTargetDistance(), 4)
-     + 0.0931*Math.pow(s_Eyes.getTargetDistance(), 3)
-      - 0.5359*Math.pow(s_Eyes.getTargetDistance(), 2)
-       + 1.2133*s_Eyes.getTargetDistance()
-       -0.9293);
+      -0.0262*Math.pow(s_Eyes.getTargetDistance(), 2) + 0.0844*s_Eyes.getTargetDistance()-0.1412);
 
-      if (angle_Rotation > 0) {
-        angle_Rotation = 0;
-      } else if (angle_Rotation < -0.28) {
-        angle_Rotation = -0.28;
+      if (angle_Rotation > -0.074) {
+        angle_Rotation = -0.074;
+      } else if (angle_Rotation < -0.212) {
+        angle_Rotation = -0.212;
       }
       
       if (s_Eyes.getTargetDistance() > 4) {
-        angle_Rotation = -0.138;
+        angle_Rotation = -0.212;
       }
     return angle_Rotation;
   }
@@ -120,6 +118,11 @@ public class ShooterPivot extends SubsystemBase {
 
   public void homeShooter() {
     m_ShooterPivot.setControl(m_VelocityRequest.withVelocity(homingSpeed));
+  }
+
+  public void stopSooter()
+  {
+    m_ShooterPivot.setControl(m_VelocityRequest.withVelocity(0));
   }
 
   public double getCurrent() {

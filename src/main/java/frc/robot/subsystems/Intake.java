@@ -60,8 +60,8 @@ public class Intake extends SubsystemBase {
   private double pivotD = 0;
   private double pivotAcceleration = 20.0;
   private double pivotVelocity = 2;
-  private double pivotAccelerationSlow = 1.0;
-  private double pivotVelocitySlow = 0.1;
+  private double pivotAccelerationSlow = 0.75;
+  private double pivotVelocitySlow = 0.075;
   private double forwardLimit = .168;
   private double reverseLimit = -.163;
   private double pivotCurrentLimit = 100;
@@ -75,7 +75,7 @@ public class Intake extends SubsystemBase {
   private double rollerI = 0;
   private double rollerD = 0;
   private double rollerCurrentLimit = 100;
-  private double intakeSpeed = 75;
+  private double intakeSpeed = 60;
   private double outakeSpeed = -60;
 
   private double gearRatio = 87.5/1;
