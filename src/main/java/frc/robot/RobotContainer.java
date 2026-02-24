@@ -68,7 +68,7 @@ public class RobotContainer
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final         CommandPS5Controller driver = new CommandPS5Controller(0);
   // The robot's subsystems and commands are defined here...
-  private final SwerveSubsystem       drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
+  private static final SwerveSubsystem       drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
                                                                                 "swerve/falcon"));
   
   public final Eyes s_Eyes = new Eyes(drivebase);
@@ -145,6 +145,7 @@ public class RobotContainer
    */
   public RobotContainer()
   {
+    
 
 Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity);
    
@@ -203,14 +204,14 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     //     driveDirectAngleKeyboard);
 
 
-    if (drivebase.isRedAlliance())
+    if (drivebase.redAlliance)
     { 
         driver.L2().whileTrue(
           new ParallelCommandGroup(
             driveFieldOrientedDirectAngle = drivebase.driveCommand(
           () -> driver.getLeftY(),
           () -> driver.getLeftX(),
-          () -> (s_Eyes.getTargetRotation()) * (-.12)),
+          () -> (s_Eyes.getTargetRotation()) * (.12)),
             new AimShooter(s_ShooterPivot),
            new PrepareShooter(s_Shooter)
           ))
@@ -328,5 +329,10 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
   public void setMotorBrake(boolean brake)
   {
     drivebase.setMotorBrake(brake);
+  }
+
+  public static SwerveSubsystem getSwerveDrive()
+  {
+    return drivebase;
   }
 }

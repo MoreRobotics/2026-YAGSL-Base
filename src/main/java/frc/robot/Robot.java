@@ -4,11 +4,13 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to each mode, as
@@ -53,6 +55,8 @@ public class Robot extends TimedRobot
     {
       DriverStation.silenceJoystickConnectionWarning(true);
     }
+
+    DataLogManager.start();
   }
 
   /**
@@ -108,6 +112,8 @@ public class Robot extends TimedRobot
     {
       CommandScheduler.getInstance().schedule(m_autonomousCommand);
     }
+    
+    RobotContainer.getSwerveDrive();
   }
 
   /**
@@ -132,6 +138,7 @@ public class Robot extends TimedRobot
     {
       CommandScheduler.getInstance().cancelAll();
     }
+     RobotContainer.getSwerveDrive();
   }
 
   /**

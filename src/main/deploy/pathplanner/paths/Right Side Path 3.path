@@ -8,30 +8,51 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.933341637010677,
-        "y": 1.6621091340450749
+        "x": 7.376986951365765,
+        "y": 0.5651601423488262
       },
       "isLocked": false,
       "linkedName": "Right Side Path 2 End"
     },
     {
       "anchor": {
-        "x": 3.181,
-        "y": 0.684
+        "x": 7.732040332148685,
+        "y": 3.5454567022539267
       },
       "prevControl": {
-        "x": 3.1916607354685653,
-        "y": 1.2429893238434158
+        "x": 7.6674851720063355,
+        "y": 0.5651601423488253
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Right Side Path 3 End"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.04440497335700209,
+      "rotationDegrees": 0.0
+    },
+    {
+      "waypointRelativePos": 0.1953818827708692,
+      "rotationDegrees": 0.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "Intake",
+      "waypointRelativePos": 0.27221597300337336,
+      "endWaypointRelativePos": 1.0,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Intake"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -42,7 +63,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -1.3613544531794062
+    "rotation": 88.3153156818556
   },
   "reversed": false,
   "folder": null,

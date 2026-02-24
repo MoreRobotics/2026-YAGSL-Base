@@ -80,6 +80,9 @@ public class SwerveSubsystem extends SubsystemBase
    */
   private       Eyes      s_Eyes;
 
+
+  public boolean redAlliance;
+
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
    *
@@ -89,7 +92,8 @@ public class SwerveSubsystem extends SubsystemBase
   {
     boolean blueAlliance;
     // boolean blueAlliance = false;
-    if(isRedAlliance())
+    isRedAlliance();
+    if(redAlliance)
     {
       blueAlliance = false;
     }
@@ -130,7 +134,7 @@ public class SwerveSubsystem extends SubsystemBase
             getHeading(),
             getSwerveDrive().getModulePositions(),
             getPose(),
-            VecBuilder.fill(0.1, 0.1, 0.1),
+            VecBuilder.fill(0.01, 0.01, 0.01),
             VecBuilder.fill(1.5, 1.5, 1.5)
             );
   }
@@ -585,11 +589,13 @@ public class SwerveSubsystem extends SubsystemBase
    *
    * @return true if the red alliance, false if blue. Defaults to false if none is available.
    */
-  public boolean isRedAlliance()
+  public void isRedAlliance()
   {
     var alliance = DriverStation.getAlliance();
-    return alliance.isPresent() ? alliance.get() == DriverStation.Alliance.Red : false;
+    redAlliance = alliance.isPresent() ? alliance.get() == DriverStation.Alliance.Red : false;
   }
+
+
 
   /**
    * This will zero (calibrate) the robot to assume the current position is facing forward
@@ -598,7 +604,7 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public void zeroGyroWithAlliance()
   {
-    if (isRedAlliance())
+    if (redAlliance)
     {
       zeroGyro();
       //Set the pose 180 degrees

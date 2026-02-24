@@ -229,7 +229,7 @@ import limelight.Limelight;
 
          
         // SmartDashboard.putNumber(" inverted angle", -angle);
-         if (s_Swerve.isRedAlliance()) {
+         if (s_Swerve.redAlliance) {
              if(s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees() > 0)
              {
                  return angle+(180 - s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees());
@@ -268,7 +268,7 @@ import limelight.Limelight;
 
          
         // SmartDashboard.putNumber(" inverted angle", -angle);
-         if (s_Swerve.isRedAlliance()) {
+         if (s_Swerve.redAlliance) {
              if(s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees() > 0)
              {
                  return angle+(180 - s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees());
@@ -289,7 +289,7 @@ import limelight.Limelight;
         Pose2d robotPose = s_Swerve.m_PoseEstimator.getEstimatedPosition();
 
 
-        if(s_Swerve.isRedAlliance()) {
+        if(s_Swerve.redAlliance) {
 
             // get pose of red speaker
             pose = new Pose2d(Constants.Positions.hubRedX, Constants.Positions.hubRedY, new Rotation2d(Constants.Positions.hubBlueR));
@@ -307,10 +307,9 @@ import limelight.Limelight;
 
      public Pose2d getTargetPassPose() {
         Pose2d pose;
-        Pose2d robotPose = s_Swerve.m_PoseEstimator.getEstimatedPosition();
+        
 
-
-        if(s_Swerve.isRedAlliance()) {
+        if(s_Swerve.redAlliance) {
 
             // get pose of red speaker
             pose = new Pose2d(Constants.Positions.humanPlayerRedX, Constants.Positions.humanPlayerRedY, new Rotation2d(Constants.Positions.humanPlayerRedR));
@@ -363,6 +362,7 @@ import limelight.Limelight;
 
 
          if (LimelightHelpers.getTV("limelight-right")) {
+            
              s_Swerve.m_PoseEstimator.addVisionMeasurement(
                  getRobotPose(), 
                  Timer.getFPGATimestamp() - (LimelightHelpers.getLatency_Pipeline("limelight-right")/1000.0) - (LimelightHelpers.getLatency_Capture("limelight-right")/1000.0)

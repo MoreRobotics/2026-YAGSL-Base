@@ -29,19 +29,25 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "wait",
                 "data": {
-                  "name": "Prepare Shooter"
+                  "waitTime": 7.0
                 }
               },
               {
-                "type": "sequential",
+                "type": "parallel",
                 "data": {
                   "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Prepare Shooter"
+                      }
+                    },
                     {
                       "type": "named",
                       "data": {
@@ -49,15 +55,58 @@
                       }
                     },
                     {
-                      "type": "named",
+                      "type": "sequential",
                       "data": {
-                        "name": "Run HotDog"
+                        "commands": [
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 1.0
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Run HotDog"
+                            }
+                          }
+                        ]
                       }
                     }
                   ]
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Move Intake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stow Shooter"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop Shooter"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop HotDog"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right Side Path 3"
           }
         }
       ]
