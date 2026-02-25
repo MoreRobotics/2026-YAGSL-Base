@@ -134,8 +134,8 @@ public class SwerveSubsystem extends SubsystemBase
             getHeading(),
             getSwerveDrive().getModulePositions(),
             getPose(),
-            VecBuilder.fill(0.01, 0.01, 0.01),
-            VecBuilder.fill(1.5, 1.5, 1.5)
+            VecBuilder.fill(0.1, 0.1, 0.1),
+            VecBuilder.fill(1.5, 1.5, 5)
             );
   }
 
