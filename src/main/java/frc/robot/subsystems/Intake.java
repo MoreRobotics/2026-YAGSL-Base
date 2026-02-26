@@ -60,22 +60,22 @@ public class Intake extends SubsystemBase {
   private double pivotD = 0;
   private double pivotAcceleration = 20.0;
   private double pivotVelocity = 2;
-  private double pivotAccelerationSlow = 1.0;
-  private double pivotVelocitySlow = 0.1;
-  private double forwardLimit = 0;
-  private double reverseLimit = 0;
-  private double pivotCurrentLimit = 80;
-  private double intakeStowPosition = -.324;
-  private double intakeOutPosition = .017;
+  private double pivotAccelerationSlow = 0.75;
+  private double pivotVelocitySlow = 0.075;
+  private double forwardLimit = .168;
+  private double reverseLimit = -.163;
+  private double pivotCurrentLimit = 100;
+  private double intakeStowPosition = -.162;
+  private double intakeOutPosition = .167;
   private double target = 0;
   private boolean intakeOut = false;
-  private double tolerance = 0.3;
+  private double tolerance = 0.03;
 
   private double rollerP = .25;//.5 too much
   private double rollerI = 0;
   private double rollerD = 0;
-  private double rollerCurrentLimit = 80;
-  private double intakeSpeed = 75;
+  private double rollerCurrentLimit = 100;
+  private double intakeSpeed = 60;
   private double outakeSpeed = -60;
 
   private double gearRatio = 87.5/1;
@@ -107,26 +107,26 @@ public class Intake extends SubsystemBase {
     pivotConfigs.Slot0.kD = pivotD;
     pivotConfigs.MotionMagic.MotionMagicAcceleration = pivotAcceleration;
     pivotConfigs.MotionMagic.MotionMagicCruiseVelocity = pivotVelocity;
-    // pivotConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    // pivotConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = forwardLimit;
-    // pivotConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    // pivotConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = reverseLimit;
+    pivotConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    pivotConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = forwardLimit;
+    pivotConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    pivotConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = reverseLimit;
     pivotConfigs.Feedback.SensorToMechanismRatio = gearRatio;
-    pivotConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
-    pivotConfigs.CurrentLimits.SupplyCurrentLimit = pivotCurrentLimit;
+    pivotConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
+    pivotConfigs.CurrentLimits.StatorCurrentLimit = pivotCurrentLimit;
     pivotConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     rollerConfigs = new TalonFXConfiguration();
     rollerConfigs.Slot0.kP = rollerP;
     rollerConfigs.Slot0.kI = rollerI;
     rollerConfigs.Slot0.kD = rollerD;
-    rollerConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
-    rollerConfigs.CurrentLimits.SupplyCurrentLimit = rollerCurrentLimit;
+    rollerConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
+    rollerConfigs.CurrentLimits.StatorCurrentLimit = rollerCurrentLimit;
 
 
-    m_IntakePivot.setPosition(e_IntakePivot.getPosition().getValueAsDouble());
     m_IntakePivot.getConfigurator().apply(pivotConfigs);
     m_IntakeRoller.getConfigurator().apply(rollerConfigs);
+    m_IntakePivot.setPosition(e_IntakePivot.getPosition().getValueAsDouble());
     
     
   }

@@ -229,7 +229,7 @@ import limelight.Limelight;
 
          
         // SmartDashboard.putNumber(" inverted angle", -angle);
-         if (s_Swerve.isRedAlliance()) {
+         if (s_Swerve.redAlliance) {
              if(s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees() > 0)
              {
                  return angle+(180 - s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees());
@@ -244,11 +244,52 @@ import limelight.Limelight;
 
      }
 
+
+     public double getTargetPassRotation() {
+        Pose2d robotPose = s_Swerve.m_PoseEstimator.getEstimatedPosition();
+
+        Pose2d targetPose = getTargetPassPose();
+
+        double robotX = robotPose.getX();
+        double robotY = robotPose.getY();
+
+        double targetX = targetPose.getX();
+        double targetY = targetPose.getY();
+
+        double angle =  (Math.atan((targetY - robotY) / (targetX - robotX)) * (180 / Math.PI));
+
+
+
+        // if (robotX > targetX) {
+
+        //     angle = angle + 180;
+
+        // }
+
+         
+        // SmartDashboard.putNumber(" inverted angle", -angle);
+         if (s_Swerve.redAlliance) {
+             if(s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees() > 0)
+             {
+                 return angle+(180 - s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees());
+             }
+             else {
+                 return angle + (-180 - s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees());
+             }
+         }
+         else{
+            return angle;
+         }
+
+     }
+
+
      public Pose2d getTargetPose() {
         Pose2d pose;
+        Pose2d robotPose = s_Swerve.m_PoseEstimator.getEstimatedPosition();
 
 
-        if(s_Swerve.isRedAlliance()) {
+        if(s_Swerve.redAlliance) {
 
             // get pose of red speaker
             pose = new Pose2d(Constants.Positions.hubRedX, Constants.Positions.hubRedY, new Rotation2d(Constants.Positions.hubBlueR));
@@ -258,6 +299,26 @@ import limelight.Limelight;
 
             // get pose of blue speaker
             pose = new Pose2d(Constants.Positions.hubBlueX, Constants.Positions.hubBlueY, new Rotation2d(Constants.Positions.hubBlueR));
+
+        }
+        
+        return pose;
+     }
+
+     public Pose2d getTargetPassPose() {
+        Pose2d pose;
+        
+
+        if(s_Swerve.redAlliance) {
+
+            // get pose of red speaker
+            pose = new Pose2d(Constants.Positions.humanPlayerRedX, Constants.Positions.humanPlayerRedY, new Rotation2d(Constants.Positions.humanPlayerRedR));
+
+        // if robot is on blue alliance
+        } else {
+
+            // get pose of blue speaker
+            pose = new Pose2d(Constants.Positions.humanPlayerBlueX, Constants.Positions.humanPlayerBlueY, new Rotation2d(Constants.Positions.humanPlayerBlueR));
 
         }
         
@@ -300,20 +361,21 @@ import limelight.Limelight;
 
 
 
-        //  if (LimelightHelpers.getTV("limelight-right")) {
-        //      s_Swerve.m_PoseEstimator.addVisionMeasurement(
-        //          getRobotPose(), 
-        //          Timer.getFPGATimestamp() - (LimelightHelpers.getLatency_Pipeline("limelight-right")/1000.0) - (LimelightHelpers.getLatency_Capture("limelight-right")/1000.0)
-        //      );
-        //  }
+         if (LimelightHelpers.getTV("limelight-right")) {
+            
+             s_Swerve.m_PoseEstimator.addVisionMeasurement(
+                 getRobotPose(), 
+                 Timer.getFPGATimestamp() - (LimelightHelpers.getLatency_Pipeline("limelight-right")/1000.0) - (LimelightHelpers.getLatency_Capture("limelight-right")/1000.0)
+             );
+         }
 
-        //  if(LimelightHelpers.getTV("limelight-left") == true)
-        //  {
-        //     s_Swerve.m_PoseEstimator.addVisionMeasurement(
-        //          getRobotPoseLeft(), 
-        //          Timer.getFPGATimestamp() - (LimelightHelpers.getLatency_Pipeline("limelight-left")/1000.0) - (LimelightHelpers.getLatency_Capture("limelight-left")/1000.0)
-        //      );
-        //  }
+         if(LimelightHelpers.getTV("limelight-left") == true)
+         {
+            s_Swerve.m_PoseEstimator.addVisionMeasurement(
+                 getRobotPoseLeft(), 
+                 Timer.getFPGATimestamp() - (LimelightHelpers.getLatency_Pipeline("limelight-left")/1000.0) - (LimelightHelpers.getLatency_Capture("limelight-left")/1000.0)
+             );
+         }
  
          updateData();
 
@@ -323,6 +385,7 @@ import limelight.Limelight;
         SmartDashboard.putNumber("Velocity Command", (getTargetRotation()-s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.1));
         SmartDashboard.putNumber("Velocity Command Red", (getTargetRotation()+(s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees() + 180)) * (-.1));
         SmartDashboard.putNumber("Theta M Negative", -(180 + s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()));
+        SmartDashboard.putNumber("Distance to Hub", getTargetDistance());
         
 
         targetHub.set(getTargetPose());

@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.0,
-        "y": 4.0
+        "x": 7.732040332148685,
+        "y": 3.5454567022539267
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.75,
-        "y": 4.0
+        "x": 7.764317912218269,
+        "y": 0.4037722419928822
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Right Side Path 3 End"
     },
     {
       "anchor": {
-        "x": 2.234,
-        "y": 3.588493475682087
+        "x": 3.1271055753262162,
+        "y": 0.6404744958481603
       },
       "prevControl": {
-        "x": 2.4836880847194616,
-        "y": 3.576009071446114
+        "x": 7.06497034400949,
+        "y": 0.5866785290628707
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,7 +42,7 @@
         "y": 4.035
       },
       "rotationOffset": 0.0,
-      "minWaypointRelativePos": 0.0,
+      "minWaypointRelativePos": 0.9606299212598614,
       "maxWaypointRelativePos": 1.0,
       "name": "Point Towards Zone"
     }
@@ -58,13 +58,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 8.971295105305686
+    "rotation": 67.61986494804046
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 88.3153156818556
   },
   "useDefaultConstraints": true
 }

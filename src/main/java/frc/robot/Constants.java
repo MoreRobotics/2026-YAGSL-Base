@@ -58,8 +58,17 @@ public final class Constants
     public static final double hubBlueY = 4.035;
     public static final double hubBlueR = 0.0;
 
+    public static final double humanPlayerBlueX = 0;
+    public static final double humanPlayerBlueY = 0;
+    public static final double humanPlayerBlueR = 0;
+
+
     public static final double hubRedX = 11.91;
     public static final double hubRedY = 4.035;
     public static final double hubRedR = 180.0;
+
+    public static final double humanPlayerRedX = 0;
+    public static final double humanPlayerRedY = 0;
+    public static final double humanPlayerRedR = 0;
   }
 }
