@@ -1,28 +1,21 @@
 package frc.robot.commands.LightCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Lights;
-import frc.robot.subsystems.swervedrive.*;
 
-public class Idle extends Command {
+public class BadBoys extends Command {
     Lights s_Lights;
-    SwerveSubsystem s_Swerve;
   /** Creates a new MoveIntake. */
-    public Idle(Lights s_Lights, SwerveSubsystem s_Swerve) {
+    public BadBoys(Lights s_Lights) {
         this.s_Lights = s_Lights;
-        this.s_Swerve = s_Swerve;
-        addRequirements(s_Lights, s_Swerve);
+        addRequirements(s_Lights);
         // Use addRequirements() here to declare subsystem dependencies.
     }
 
     @Override
     public void initialize() {
         // Runs once when scheduled
-        if (s_Swerve.redAlliance && (s_Swerve.getPose().getX() > 13)) {
-            new BadBoys(s_Lights);
-        }
+        s_Lights.ClearLights();
     }
 
     @Override
