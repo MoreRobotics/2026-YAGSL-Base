@@ -49,6 +49,7 @@ import frc.robot.subsystems.ShooterPivot;
 // import frc.robot.subsystems.Shooter;
 // import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.HotDog;
+import frc.robot.subsystems.Lights;
 // import frc.robot.subsystems.ShooterPivot;
 import frc.robot.subsystems.swervedrive.Eyes;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -80,6 +81,7 @@ public class RobotContainer
   public final Intake s_Intake = new Intake();
   public final ShooterPivot s_ShooterPivot = new ShooterPivot(s_Eyes);
   public final Shooter s_Shooter = new Shooter(s_Eyes);
+  public final Lights s_Lights = new Lights();
   // public final Climber s_Climber = new Climber();
   /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
@@ -176,7 +178,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     NamedCommands.registerCommand("Stop HotDog", new InstantCommand(() -> s_HotDog.setHotDogSpeed(0)).alongWith(new InstantCommand(() -> s_HotDog.setIndexerSpeed(0))));
      NamedCommands.registerCommand("Prepare Shooter", new PrepareShooter(s_Shooter));
      NamedCommands.registerCommand("Stop Shooter", new InstantCommand(() -> s_Shooter.setShooterSpeed(0)));
-    NamedCommands.registerCommand("Intake", new RunIntake(s_Intake));
+    NamedCommands.registerCommand("Intake", new RunIntake(s_Intake, s_Lights));
     NamedCommands.registerCommand("Stop Intake", new InstantCommand(() -> s_Intake.setIntakeSpeed(0)));
     NamedCommands.registerCommand("Move Intake", new SequentialCommandGroup(
         new InstantCommand(() -> s_Intake.changeTarget()),
@@ -264,7 +266,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     driver.create().onTrue(new InstantCommand(() -> drivebase.zeroGyroWithAlliance()));
 
     //run intake
-    driver.L1().whileTrue(new RunIntake(s_Intake));
+    driver.L1().whileTrue(new RunIntake(s_Intake, s_Lights));
     // InstantCommand(() -> s_Intake.setIntakeSpeed(s_Intake.getIntakeSpeed())))
     // .onFalse(new InstantCommand(() -> s_Intake.setIntakeSpeed(0)));
 
