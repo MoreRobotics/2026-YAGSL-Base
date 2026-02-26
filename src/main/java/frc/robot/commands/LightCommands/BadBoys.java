@@ -15,12 +15,17 @@ public class BadBoys extends Command {
     @Override
     public void initialize() {
         // Runs once when scheduled
-        s_Lights.ClearLights();
     }
 
     @Override
     public void execute() {
         // Runs repeatedly while scheduled
+        new SequentialCommandGroup(
+            new InstantCommand(() -> s_Lights.Defense()),
+            new WaitCommand(0.5),
+            new InstantCommand(() -> s_Lights.DefenseAlternate()),
+            new WaitCommand(0.5)
+        );
     }
 
     @Override

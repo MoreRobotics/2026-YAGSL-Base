@@ -195,6 +195,8 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     autoChooser = AutoBuilder.buildAutoChooser();
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
+
+    s_Lights.setDefaultCommand(new Idle(s_Lights, s_Swerve));
   }
 
   /**
