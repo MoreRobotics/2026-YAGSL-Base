@@ -7,16 +7,9 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -30,30 +23,22 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AimShooter;
 import frc.robot.commands.HomeShooter;
-// import frc.robot.commands.AimShooter;
 import frc.robot.commands.MoveIntake;
 import frc.robot.commands.Outake;
 import frc.robot.commands.PrepareShooter;
-// import frc.robot.commands.PrepareShooter;
 import frc.robot.commands.RunHotDog;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.StowShooter;
-import frc.robot.commands.swervedrive.drivebase.AbsoluteFieldDrive;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShooterPivot;
 // import frc.robot.subsystems.Shooter;
 // import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.HotDog;
-// import frc.robot.subsystems.ShooterPivot;
 import frc.robot.subsystems.swervedrive.Eyes;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
-import static edu.wpi.first.units.Units.RPM;
-
 import java.io.File;
-import java.time.Instant;
-
 import swervelib.SwerveInputStream;
 
 /**
@@ -87,14 +72,6 @@ public class RobotContainer
                                                             .deadband(OperatorConstants.DEADBAND)
                                                             .scaleTranslation(0.8)
                                                             .allianceRelativeControl(true);
-
-  // SwerveInputStream driveAngularVelocityAutoAim = SwerveInputStream.of(drivebase.getSwerveDrive(),
-  //                                                               () -> driver.getLeftY() * -1,
-  //                                                               () -> driver.getLeftX() * -1)
-  //                                                           .withControllerRotationAxis(() -> -driver.getRightX())
-  //                                                           .deadband(OperatorConstants.DEADBAND)
-  //                                                           .scaleTranslation(0.8)
-  //                                                           .allianceRelativeControl(true);
 
   /**
    * Clone's the angular velocity input stream and converts it to a fieldRelative input stream.
@@ -154,7 +131,6 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
        drivebase.setDefaultCommand(driveFieldOrientedDirectAngle);
 
 
-      //s_ShooterPivot.setDefaultCommand(new AimShooter(s_ShooterPivot,s_ShooterPivot.getShooterAngle()).repeatedly());
 
     // Configure the trigger bindings
     configureBindings();
