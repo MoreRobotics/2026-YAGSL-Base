@@ -76,10 +76,19 @@ public class Shooter extends SubsystemBase {
 
   public double getShooterSpeed()
   {
-    double speed = shooterSpeed;
-    // 0.9245*Math.pow(s_Eyes.getTargetDistance(), 2)
-    // -4.1243*s_Eyes.getTargetDistance()
-    // +47.093;
+    double speed;
+    if(s_Eyes.getTargetDistance() <3.4)
+    {
+      speed = 42.75;
+    }
+    else 
+    {
+      speed =
+      -0.538126*Math.pow(s_Eyes.getTargetDistance(), 2)
+      +9.607511*s_Eyes.getTargetDistance()
+      +16.353133;
+    }
+
     return speed;
     // return shooterSpeed;
   }
