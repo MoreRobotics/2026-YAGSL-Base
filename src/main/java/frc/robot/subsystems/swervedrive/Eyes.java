@@ -365,7 +365,7 @@ import edu.wpi.first.networktables.StructPublisher;
         SmartDashboard.putNumber("Robot Angle", s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees());
         SmartDashboard.putNumber("Robot Angle Red", s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees() + 180);
         SmartDashboard.putNumber("Target Angle", getTargetRotation());
-        SmartDashboard.putNumber("Velocity Command", (getTargetRotation()-s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.1));
+        SmartDashboard.putNumber("Velocity Command", (getTargetRotation()-s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.12));
         SmartDashboard.putNumber("Velocity Command Red", (getTargetRotation()+(s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees() + 180)) * (-.1));
         SmartDashboard.putNumber("Theta M Negative", -(180 + s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()));
         SmartDashboard.putNumber("Distance to Hub", getTargetDistance());
