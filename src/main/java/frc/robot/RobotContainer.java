@@ -278,7 +278,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
         new InstantCommand(() -> s_Intake.setIntakeSpeed(s_Intake.getIntakeSpeed())),
         new RunHotDog(s_HotDog),
         new InstantCommand(() -> s_Intake.setSlowMode()),
-        new InstantCommand(() -> s_Intake.changeTarget()),
+        new InstantCommand(() -> s_Intake.setIntakeTarget(s_Intake.getIntakeMiddlePosition())),
         new MoveIntake(s_Intake)
         ))
       

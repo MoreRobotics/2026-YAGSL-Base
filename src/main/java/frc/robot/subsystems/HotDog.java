@@ -137,6 +137,7 @@ public class HotDog extends SubsystemBase {
     // shooter.updateTelemetry();
     SmartDashboard.putNumber("HotDog Speed", m_HotDog.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("HotDog Current", m_HotDog.getStatorCurrent().getValueAsDouble());
+    SmartDashboard.putNumber("Indexer Current", m_Indexer.getStatorCurrent().getValueAsDouble());
   }
 
   @Override

@@ -67,6 +67,7 @@ public class Intake extends SubsystemBase {
   private double pivotCurrentLimit = 100;
   private double intakeStowPosition = -.162;
   private double intakeOutPosition = .167;
+  private double intakeMiddlePosition = .002;
   private double target = 0;
   private boolean intakeOut = false;
   private double tolerance = 0.03;
@@ -149,6 +150,17 @@ public class Intake extends SubsystemBase {
   public void changeState()
   {
     intakeOut = !intakeOut;
+  }
+
+
+  public void setIntakeTarget(double setpoint)
+  {
+    target = setpoint;
+  }
+
+  public double getIntakeMiddlePosition()
+  {
+    return intakeMiddlePosition;
   }
 
   public double getIntakePosition()
