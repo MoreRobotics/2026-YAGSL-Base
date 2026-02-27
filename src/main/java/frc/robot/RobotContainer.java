@@ -42,6 +42,7 @@ import frc.robot.commands.PrepareShooter;
 import frc.robot.commands.RunHotDog;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.StowShooter;
+import frc.robot.commands.LightCommands.Idle;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteFieldDrive;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -196,7 +197,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
-    s_Lights.setDefaultCommand(new Idle(s_Lights, s_Swerve));
+    s_Lights.setDefaultCommand(new Idle(s_Lights, drivebase));
   }
 
   /**

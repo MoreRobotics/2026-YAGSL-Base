@@ -22,7 +22,7 @@ public class Idle extends Command {
         // Runs once when scheduled
         if (s_Swerve.redAlliance && (s_Swerve.getPose().getX() < 4.0)) {
             new BadBoys(s_Lights);
-        } else if (s_Swerve.blueAlliance && (s_Swerve.getPose().getX() > 13.0)) {
+        } else if (!s_Swerve.redAlliance && (s_Swerve.getPose().getX() > 13.0)) {
             new BadBoys(s_Lights);
         } else {
             new InstantCommand(() -> s_Lights.Idle());
