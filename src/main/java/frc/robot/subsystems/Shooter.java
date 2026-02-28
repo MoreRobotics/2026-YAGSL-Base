@@ -30,7 +30,7 @@ public class Shooter extends SubsystemBase {
 
   private double kShooter = 1;
 
-  private double shooterSpeed = -57;
+  private double shooterSpeed = -57*.85;
 
 
 
@@ -76,19 +76,21 @@ public class Shooter extends SubsystemBase {
   public double getShooterSpeed()
   {
     double speed;
-    if(s_Eyes.getTargetDistance() <3.4)
-    {
-      speed = 42.75;
-    }
-    else 
-    {
-      speed =
-      -0.538126*Math.pow(s_Eyes.getTargetDistance(), 2)
-      +9.607511*s_Eyes.getTargetDistance()
-      +16.353133;
-    }
+    // if(s_Eyes.getTargetDistance() <3.4)
+    // {
+    //   speed = 42.75;
+    // }
+    // else 
+    // {
+    //   speed =
+    //   -0.538126*Math.pow(s_Eyes.getTargetDistance(), 2)
+    //   +9.607511*s_Eyes.getTargetDistance()
+    //   +16.353133;
+    // }
 
-    return -speed;
+    speed = shooterSpeed;
+
+    return speed;
     // return shooterSpeed;
   }
 
