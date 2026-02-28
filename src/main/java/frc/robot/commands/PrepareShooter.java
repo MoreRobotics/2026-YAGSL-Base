@@ -31,7 +31,7 @@ public class PrepareShooter extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    s_Shooter.setShooterSpeed(0);
+    s_Shooter.setShooterSpeed(-5);
   }
 
   // Returns true when the command should end.

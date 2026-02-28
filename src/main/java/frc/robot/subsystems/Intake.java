@@ -21,8 +21,8 @@ public class Intake extends SubsystemBase {
   private double pivotD = 0;
   private double pivotAcceleration = 20.0;
   private double pivotVelocity = 2;
-  private double pivotAccelerationSlow = 0.75;
-  private double pivotVelocitySlow = 0.075;
+  private double pivotAccelerationSlow = 0.28125;
+  private double pivotVelocitySlow = 0.05625;
   private double forwardLimit = .168;
   private double reverseLimit = -.163;
   private double pivotCurrentLimit = 100;
@@ -153,6 +153,11 @@ public class Intake extends SubsystemBase {
   public void setTarget(double newTarget)
   {
     target = newTarget;
+  }
+
+  public void setState(boolean intakeOut)
+  {
+    this.intakeOut = intakeOut;
   }
   
 

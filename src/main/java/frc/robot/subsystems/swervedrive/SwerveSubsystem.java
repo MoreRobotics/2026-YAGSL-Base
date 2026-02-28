@@ -13,6 +13,8 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
+import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
@@ -73,6 +75,7 @@ public class SwerveSubsystem extends SubsystemBase
    */
   private       Eyes      s_Eyes;
 
+  private PathPlannerTrajectory pathPlannerTrajectory;
 
   public boolean redAlliance;
 
@@ -178,7 +181,7 @@ public class SwerveSubsystem extends SubsystemBase
       final boolean enableFeedforward = true;
       // Configure AutoBuilder last
       AutoBuilder.configure(
-          this::getEstimatedPosition,
+          this::getPose,
           // Robot pose supplier
           this::resetOdometry,
           // Method to reset odometry (will be called if your auto has a starting pose)

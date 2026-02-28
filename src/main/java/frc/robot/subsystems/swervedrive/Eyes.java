@@ -13,11 +13,14 @@
 
 
  import frc.robot.Constants;
+import frc.robot.subsystems.swervedrive.LimelightHelpers.PoseEstimate;
+
 import com.pathplanner.lib.path.PathPlannerPath;
  import edu.wpi.first.wpilibj.Timer;
  import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  import edu.wpi.first.wpilibj2.command.SubsystemBase;
- import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
  import edu.wpi.first.math.geometry.Rotation2d;
  import edu.wpi.first.networktables.NetworkTable;
  import edu.wpi.first.networktables.NetworkTableEntry;
@@ -165,7 +168,7 @@ import edu.wpi.first.networktables.StructPublisher;
       * returns:
       * robot pose      (Pose2d)
       */
-     public Pose2d getRobotPose() {
+     public Pose2d getLimelightRightPose() {
  
         // Pose2d pose;
 
@@ -177,11 +180,10 @@ import edu.wpi.first.networktables.StructPublisher;
          
      }
 
-     public Pose2d getRobotPoseLeft() {
-        Pose2d pose;
+     public Pose2d getLimelightLeftPose() {
  
          
-         pose = LimelightHelpers.getBotPose2d_wpiBlue("limelight-left");
+        Pose2d pose = LimelightHelpers.getBotPose2d_wpiBlue("limelight-left");
          return pose;
      }
 
@@ -344,18 +346,78 @@ import edu.wpi.first.networktables.StructPublisher;
 
 
 
+
+    //     if(LimelightHelpers.getTV("limelight-right"))
+    //   {
+    //     if(getLimelightRightPose().rawFiducials[0].ambiguity > .7)
+    //     {
+    //       doRejectUpdate = true;
+    //     }
+    //     if(getLimelightRightPose().rawFiducials[0].distToCamera > 5)
+    //     {
+    //       doRejectUpdate = true;
+    //     }
+    //   }
+    //   if(getLimelightRightPose().tagCount == 0)
+    //   {
+    //     doRejectUpdate = true;
+    //   }
+
+    //   if(!doRejectUpdate)
+    //   {
+    //     s_Swerve.m_PoseEstimator.addVisionMeasurement(
+    //         getLimelightRightPose().pose,
+    //         getLimelightRightPose().timestampSeconds);
+    //   }
+
+      
+
+
+
+    //   if(LimelightHelpers.getTV("limelight-Left"))
+    //   {
+    //     if(getLimelightLeftPose().rawFiducials[0].ambiguity > .7)
+    //     {
+    //       doRejectUpdate = true;
+    //     }
+    //     if(getLimelightLeftPose().rawFiducials[0].distToCamera > 5)
+    //     {
+    //       doRejectUpdate = true;
+    //     }
+    //   }
+    //   if(getLimelightLeftPose().tagCount == 0)
+    //   {
+    //     doRejectUpdate = true;
+    //   }
+
+    //   if(!doRejectUpdate)
+    //   {
+    //     s_Swerve.m_PoseEstimator.addVisionMeasurement(
+    //         getLimelightLeftPose().pose,
+    //         getLimelightLeftPose().timestampSeconds);
+    //   }
+
+    //   SmartDashboard.putNumber("Right Limelight tagcount", getLimelightRightPose().tagCount);
+    //   SmartDashboard.putNumber("Limelight Right ambiguity", getLimelightRightPose().rawFiducials[0].ambiguity);
+    //   SmartDashboard.putNumber("Limelight Left ambiguity", getLimelightLeftPose().rawFiducials[0].ambiguity);
+
+
+
          if (LimelightHelpers.getTV("limelight-right")) {
             
              s_Swerve.m_PoseEstimator.addVisionMeasurement(
-                 getRobotPose(), 
+                 getLimelightRightPose(), 
                  Timer.getFPGATimestamp() - (LimelightHelpers.getLatency_Pipeline("limelight-right")/1000.0) - (LimelightHelpers.getLatency_Capture("limelight-right")/1000.0)
              );
          }
 
+
+
+
          if(LimelightHelpers.getTV("limelight-left") == true)
          {
             s_Swerve.m_PoseEstimator.addVisionMeasurement(
-                 getRobotPoseLeft(), 
+                 getLimelightLeftPose(), 
                  Timer.getFPGATimestamp() - (LimelightHelpers.getLatency_Pipeline("limelight-left")/1000.0) - (LimelightHelpers.getLatency_Capture("limelight-left")/1000.0)
              );
          }

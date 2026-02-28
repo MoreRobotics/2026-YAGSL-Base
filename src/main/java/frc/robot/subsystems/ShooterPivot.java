@@ -85,29 +85,37 @@ public class ShooterPivot extends SubsystemBase {
   public double getShooterAngle()
   {
     double angle_Rotation;
-    if(s_Eyes.getTargetDistance() <= 3.4)
+
+    if(s_Eyes.getTargetDistance() <= 4)
     {
       angle_Rotation = 
-      -0.017811*Math.pow(s_Eyes.getTargetDistance(), 2) 
-      + 0.015593*s_Eyes.getTargetDistance()
-      -0.010468;
+      0.024836*Math.pow(s_Eyes.getTargetDistance(), 3)
+      -0.197232*Math.pow(s_Eyes.getTargetDistance(), 2)
+      +0.412449*s_Eyes.getTargetDistance()
+      -0.290895;
     }
-    else 
+    else
     {
       angle_Rotation = 
-      0.0032763*Math.pow(s_Eyes.getTargetDistance(), 4) 
-      -0.066184*Math.pow(s_Eyes.getTargetDistance(), 3) 
-      + 0.4814171*Math.pow(s_Eyes.getTargetDistance(), 2) 
-      -1.5052635*s_Eyes.getTargetDistance()
-      +1.5511823;
+      -0.009240*Math.pow(s_Eyes.getTargetDistance(), 2)
+      +0.112713*s_Eyes.getTargetDistance()
+      -0.600534;
     }
+    
+    // angle_Rotation = 
+    // -0.001402*Math.pow(s_Eyes.getTargetDistance(), 4)
+    // +0.024743*Math.pow(s_Eyes.getTargetDistance(), 3)
+    // -0.141838*Math.pow(s_Eyes.getTargetDistance(), 2)
+    // +0.247402*s_Eyes.getTargetDistance()
+    // -0.16659;
+
     return angle_Rotation;
   }
 
   public void setShooterAngle(double setpoint)
   {
 
-    m_ShooterPivot.setControl(m_Request.withPosition((setpoint)));
+    m_ShooterPivot.setControl(m_Request.withPosition((setpoint*1.04)));
      SmartDashboard.putNumber("Shooter Pivot Setpoint", (setpoint));
   }
 
