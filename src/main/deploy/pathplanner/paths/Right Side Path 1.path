@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.795385527876632,
-        "y": 0.45756820877817406
+        "x": 7.904187425860025,
+        "y": 0.5113641755634626
       },
       "isLocked": false,
       "linkedName": null
@@ -20,15 +20,20 @@
         "y": 2.469537366548043
       },
       "prevControl": {
-        "x": 7.4523013048635836,
-        "y": 1.6088018979833918
+        "x": 7.7535587188612105,
+        "y": 0.5866785290628707
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "Right Side Path 1 End"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.3126110124333932,
+      "rotationDegrees": 180.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
@@ -54,13 +59,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 59.34933204294712
+    "rotation": 87.39743779750009
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 178.29018595585848
   },
   "useDefaultConstraints": true
 }

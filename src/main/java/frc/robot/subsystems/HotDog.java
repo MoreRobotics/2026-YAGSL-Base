@@ -4,38 +4,11 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.DegreesPerSecond;
-import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Pounds;
-import static edu.wpi.first.units.Units.RPM;
-import static edu.wpi.first.units.Units.Seconds;
-
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
-import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.hardware.TalonFXS;
-
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import yams.gearing.GearBox;
-import yams.gearing.MechanismGearing;
-import yams.mechanisms.SmartMechanism;
-import yams.mechanisms.config.FlyWheelConfig;
-import yams.mechanisms.velocity.FlyWheel;
-import yams.motorcontrollers.SmartMotorController;
-import yams.motorcontrollers.SmartMotorControllerConfig;
-import yams.motorcontrollers.SmartMotorControllerConfig.ControlMode;
-import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
-import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
-import yams.motorcontrollers.local.SparkWrapper;
-import yams.motorcontrollers.remote.TalonFXSWrapper;
 
 
 public class HotDog extends SubsystemBase {
@@ -49,7 +22,7 @@ public class HotDog extends SubsystemBase {
   private double hotDogV = .15;
   
   private double currentLimit = 100;
-  private double indexerSpeed = 85*.5;
+  private double indexerSpeed = 85*.9;
   private double hotDogSpeed = 85;
   private double reverseHotDogSpeed = -40;
   private double reverseIndexerSpeed = -40;
@@ -57,7 +30,6 @@ public class HotDog extends SubsystemBase {
 
   private int indexerID = 13;
   private int hotDogID = 0;
-  private double gearRatio = 0;
 
    private TalonFX m_Indexer;
   private TalonFX m_HotDog;
@@ -137,6 +109,7 @@ public class HotDog extends SubsystemBase {
     // shooter.updateTelemetry();
     SmartDashboard.putNumber("HotDog Speed", m_HotDog.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("HotDog Current", m_HotDog.getStatorCurrent().getValueAsDouble());
+    SmartDashboard.putNumber("Indexer Current", m_Indexer.getStatorCurrent().getValueAsDouble());
   }
 
   @Override

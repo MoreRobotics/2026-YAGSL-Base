@@ -13,34 +13,20 @@
 
 
  import frc.robot.Constants;
-import java.util.List;
- 
- import com.pathplanner.lib.path.GoalEndState;
- import com.pathplanner.lib.path.IdealStartingState;
- import com.pathplanner.lib.path.PathConstraints;
- import com.pathplanner.lib.path.PathPlannerPath;
- import com.pathplanner.lib.path.Waypoint;
- 
- import edu.wpi.first.wpilibj.DriverStation;
- import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import frc.robot.subsystems.swervedrive.LimelightHelpers.PoseEstimate;
+
+import com.pathplanner.lib.path.PathPlannerPath;
  import edu.wpi.first.wpilibj.Timer;
  import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  import edu.wpi.first.wpilibj2.command.SubsystemBase;
- import edu.wpi.first.math.VecBuilder;
- import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
- import edu.wpi.first.math.geometry.Pose2d;
- import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
  import edu.wpi.first.math.geometry.Rotation2d;
- import edu.wpi.first.math.geometry.Rotation3d;
- import edu.wpi.first.math.geometry.Translation2d;
- import edu.wpi.first.math.util.Units;
  import edu.wpi.first.networktables.NetworkTable;
  import edu.wpi.first.networktables.NetworkTableEntry;
  import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.networktables.StructPublisher;
- import frc.robot.subsystems.swervedrive.*;
-import limelight.Limelight;
  
  
  
@@ -182,7 +168,7 @@ import limelight.Limelight;
       * returns:
       * robot pose      (Pose2d)
       */
-     public Pose2d getRobotPose() {
+     public Pose2d getLimelightRightPose() {
  
         // Pose2d pose;
 
@@ -194,11 +180,10 @@ import limelight.Limelight;
          
      }
 
-     public Pose2d getRobotPoseLeft() {
-        Pose2d pose;
+     public Pose2d getLimelightLeftPose() {
  
          
-         pose = LimelightHelpers.getBotPose2d_wpiBlue("limelight-left");
+        Pose2d pose = LimelightHelpers.getBotPose2d_wpiBlue("limelight-left");
          return pose;
      }
 
@@ -361,18 +346,78 @@ import limelight.Limelight;
 
 
 
+
+    //     if(LimelightHelpers.getTV("limelight-right"))
+    //   {
+    //     if(getLimelightRightPose().rawFiducials[0].ambiguity > .7)
+    //     {
+    //       doRejectUpdate = true;
+    //     }
+    //     if(getLimelightRightPose().rawFiducials[0].distToCamera > 5)
+    //     {
+    //       doRejectUpdate = true;
+    //     }
+    //   }
+    //   if(getLimelightRightPose().tagCount == 0)
+    //   {
+    //     doRejectUpdate = true;
+    //   }
+
+    //   if(!doRejectUpdate)
+    //   {
+    //     s_Swerve.m_PoseEstimator.addVisionMeasurement(
+    //         getLimelightRightPose().pose,
+    //         getLimelightRightPose().timestampSeconds);
+    //   }
+
+      
+
+
+
+    //   if(LimelightHelpers.getTV("limelight-Left"))
+    //   {
+    //     if(getLimelightLeftPose().rawFiducials[0].ambiguity > .7)
+    //     {
+    //       doRejectUpdate = true;
+    //     }
+    //     if(getLimelightLeftPose().rawFiducials[0].distToCamera > 5)
+    //     {
+    //       doRejectUpdate = true;
+    //     }
+    //   }
+    //   if(getLimelightLeftPose().tagCount == 0)
+    //   {
+    //     doRejectUpdate = true;
+    //   }
+
+    //   if(!doRejectUpdate)
+    //   {
+    //     s_Swerve.m_PoseEstimator.addVisionMeasurement(
+    //         getLimelightLeftPose().pose,
+    //         getLimelightLeftPose().timestampSeconds);
+    //   }
+
+    //   SmartDashboard.putNumber("Right Limelight tagcount", getLimelightRightPose().tagCount);
+    //   SmartDashboard.putNumber("Limelight Right ambiguity", getLimelightRightPose().rawFiducials[0].ambiguity);
+    //   SmartDashboard.putNumber("Limelight Left ambiguity", getLimelightLeftPose().rawFiducials[0].ambiguity);
+
+
+
          if (LimelightHelpers.getTV("limelight-right")) {
             
              s_Swerve.m_PoseEstimator.addVisionMeasurement(
-                 getRobotPose(), 
+                 getLimelightRightPose(), 
                  Timer.getFPGATimestamp() - (LimelightHelpers.getLatency_Pipeline("limelight-right")/1000.0) - (LimelightHelpers.getLatency_Capture("limelight-right")/1000.0)
              );
          }
 
+
+
+
          if(LimelightHelpers.getTV("limelight-left") == true)
          {
             s_Swerve.m_PoseEstimator.addVisionMeasurement(
-                 getRobotPoseLeft(), 
+                 getLimelightLeftPose(), 
                  Timer.getFPGATimestamp() - (LimelightHelpers.getLatency_Pipeline("limelight-left")/1000.0) - (LimelightHelpers.getLatency_Capture("limelight-left")/1000.0)
              );
          }
@@ -382,7 +427,7 @@ import limelight.Limelight;
         SmartDashboard.putNumber("Robot Angle", s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees());
         SmartDashboard.putNumber("Robot Angle Red", s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees() + 180);
         SmartDashboard.putNumber("Target Angle", getTargetRotation());
-        SmartDashboard.putNumber("Velocity Command", (getTargetRotation()-s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.1));
+        SmartDashboard.putNumber("Velocity Command", (getTargetRotation()-s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.12));
         SmartDashboard.putNumber("Velocity Command Red", (getTargetRotation()+(s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees() + 180)) * (-.1));
         SmartDashboard.putNumber("Theta M Negative", -(180 + s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()));
         SmartDashboard.putNumber("Distance to Hub", getTargetDistance());

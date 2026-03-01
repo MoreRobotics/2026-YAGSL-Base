@@ -7,7 +7,6 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -26,12 +25,12 @@ public class Shooter extends SubsystemBase {
   private double kD = 0;
   private double kV = 0.1;
   private double gearRatio = 0;
-  private double currentLimit = 150;
+  private double currentLimit = 70;
   private double acceleration = 250;
 
   private double kShooter = 1;
 
-  private double shooterSpeed = -57;
+  private double shooterSpeed = -57*.85;
 
 
 
@@ -76,11 +75,18 @@ public class Shooter extends SubsystemBase {
 
   public double getShooterSpeed()
   {
-    double speed = shooterSpeed;
-    // 0.9245*Math.pow(s_Eyes.getTargetDistance(), 2)
-    // -4.1243*s_Eyes.getTargetDistance()
-    // +47.093;
-    return speed;
+    double speed;
+   
+    speed = 
+    0.082675*Math.pow(s_Eyes.getTargetDistance(), 5)
+    -1.566589*Math.pow(s_Eyes.getTargetDistance(), 4)
+    +10.887974*Math.pow(s_Eyes.getTargetDistance(), 3)
+    -33.684491*Math.pow(s_Eyes.getTargetDistance(), 2)
+    +47.397441*s_Eyes.getTargetDistance()
+    +18.379658;
+
+
+    return -speed*1.05;
     // return shooterSpeed;
   }
 

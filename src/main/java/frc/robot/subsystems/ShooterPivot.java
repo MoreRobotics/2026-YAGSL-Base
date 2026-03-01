@@ -7,15 +7,10 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.GravityTypeValue;
-import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.signals.SensorDirectionValue;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.swervedrive.Eyes;
@@ -89,25 +84,38 @@ public class ShooterPivot extends SubsystemBase {
 
   public double getShooterAngle()
   {
-    double angle_Rotation = (
-      -0.0262*Math.pow(s_Eyes.getTargetDistance(), 2) + 0.0844*s_Eyes.getTargetDistance()-0.1412);
+    double angle_Rotation;
 
-      if (angle_Rotation > -0.074) {
-        angle_Rotation = -0.074;
-      } else if (angle_Rotation < -0.212) {
-        angle_Rotation = -0.212;
-      }
-      
-      if (s_Eyes.getTargetDistance() > 4) {
-        angle_Rotation = -0.212;
-      }
+    if(s_Eyes.getTargetDistance() <= 4)
+    {
+      angle_Rotation = 
+      0.024836*Math.pow(s_Eyes.getTargetDistance(), 3)
+      -0.197232*Math.pow(s_Eyes.getTargetDistance(), 2)
+      +0.412449*s_Eyes.getTargetDistance()
+      -0.290895;
+    }
+    else
+    {
+      angle_Rotation = 
+      -0.009240*Math.pow(s_Eyes.getTargetDistance(), 2)
+      +0.112713*s_Eyes.getTargetDistance()
+      -0.600534;
+    }
+    
+    // angle_Rotation = 
+    // -0.001402*Math.pow(s_Eyes.getTargetDistance(), 4)
+    // +0.024743*Math.pow(s_Eyes.getTargetDistance(), 3)
+    // -0.141838*Math.pow(s_Eyes.getTargetDistance(), 2)
+    // +0.247402*s_Eyes.getTargetDistance()
+    // -0.16659;
+
     return angle_Rotation;
   }
 
   public void setShooterAngle(double setpoint)
   {
 
-    m_ShooterPivot.setControl(m_Request.withPosition((setpoint)));
+    m_ShooterPivot.setControl(m_Request.withPosition((setpoint*1.04)));
      SmartDashboard.putNumber("Shooter Pivot Setpoint", (setpoint));
   }
 

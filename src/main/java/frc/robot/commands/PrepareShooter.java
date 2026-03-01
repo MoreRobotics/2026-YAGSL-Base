@@ -20,18 +20,18 @@ public class PrepareShooter extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    s_Shooter.setShooterSpeed(s_Shooter.getShooterSpeed());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    s_Shooter.setShooterSpeed(s_Shooter.getShooterSpeed());
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    s_Shooter.setShooterSpeed(0);
+    s_Shooter.setShooterSpeed(-5);
   }
 
   // Returns true when the command should end.
