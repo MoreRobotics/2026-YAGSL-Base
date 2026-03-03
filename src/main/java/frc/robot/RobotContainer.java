@@ -26,12 +26,14 @@ import frc.robot.commands.HomeShooter;
 import frc.robot.commands.MoveIntake;
 import frc.robot.commands.Outake;
 import frc.robot.commands.PrepareShooter;
+import frc.robot.commands.RunFeeder;
 import frc.robot.commands.RunHotDog;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.StowShooter;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShooterPivot;
+import frc.robot.subsystems.Feeder;
 // import frc.robot.subsystems.Shooter;
 // import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.HotDog;
@@ -61,6 +63,7 @@ public class RobotContainer
   public final Intake s_Intake = new Intake();
   public final ShooterPivot s_ShooterPivot = new ShooterPivot(s_Eyes);
   public final Shooter s_Shooter = new Shooter(s_Eyes);
+  public final Feeder s_Feeder = new Feeder();
   // public final Climber s_Climber = new Climber();
   /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
@@ -253,7 +256,8 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
      driver.R2().whileTrue(
       new ParallelCommandGroup(
         new InstantCommand(() -> s_Intake.setIntakeSpeed(s_Intake.getIntakeSpeed())),
-        new RunHotDog(s_HotDog)
+        new RunHotDog(s_HotDog),
+        new RunFeeder(s_Feeder)
         // new InstantCommand(() -> s_Intake.setSlowMode()),
         // new InstantCommand(() -> s_Intake.setIntakeTarget(s_Intake.getIntakeMiddlePosition())),
         // new MoveIntake(s_Intake)
