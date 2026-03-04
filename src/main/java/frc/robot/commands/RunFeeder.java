@@ -11,9 +11,6 @@ import frc.robot.subsystems.Feeder;
 public class RunFeeder extends Command {
     Feeder s_Feeder;
 
-    private double leftMotorSpeed = 10;
-    private double rightMotorSpeed = -10;
-
   /** Creates a new Outake. */
   public RunFeeder(Feeder s_Feeder) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -24,7 +21,7 @@ public class RunFeeder extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    s_Feeder.setMotorSpeed(leftMotorSpeed, rightMotorSpeed);
+    s_Feeder.setFeederSpeed(s_Feeder.getLeftFeederSpeed(), s_Feeder.getRightFeederSpeed());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -34,7 +31,7 @@ public class RunFeeder extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    s_Feeder.setMotorSpeed(0, 0);
+    s_Feeder.setFeederSpeed(0, 0);
   }
 
   // Returns true when the command should end.

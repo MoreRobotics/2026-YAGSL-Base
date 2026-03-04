@@ -6,8 +6,10 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 
 public class Feeder extends SubsystemBase {
@@ -16,11 +18,21 @@ public class Feeder extends SubsystemBase {
     private TalonFX m_rightMotor;
 
     private MotionMagicVelocityVoltage m_velocityRequest;
+    private TalonFXConfiguration configs;
     
 
-    private double gearRatio = 3/1;
-    private int leftMotorID = 0;
-    private int rightMotorID = 0;
+    private int leftMotorID = 17;
+    private int rightMotorID = 18;
+
+
+    private double kP = .33;
+    private double kI = 0;
+    private double kD = 0;
+    private double kV = 0.1;
+    private double currentLimit = 70;
+    private double acceleration = 50;
+    private double leftFeederSpeed = -10;
+    private double rightFeederSpeed = 10;
 
 
   /** Creates a new Shooter. */
@@ -29,20 +41,38 @@ public class Feeder extends SubsystemBase {
     m_rightMotor = new TalonFX(rightMotorID);
 
     m_velocityRequest = new MotionMagicVelocityVoltage(0).withSlot(0);
+
+    configs = new TalonFXConfiguration();
+    configs.Slot0.kP = kP;
+    configs.Slot0.kI = kI;
+    configs.Slot0.kD = kD;
+    configs.Slot0.kV = kV;
+    configs.MotionMagic.MotionMagicAcceleration = acceleration;
+    configs.CurrentLimits.StatorCurrentLimitEnable = true;
+    configs.CurrentLimits.StatorCurrentLimit = currentLimit;
+    configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+    m_leftMotor.getConfigurator().apply(configs);
+    m_rightMotor.getConfigurator().apply(configs);
   }
 
-  public void setMotorSpeed( double leftMotorSpeed, double rightMotorSpeed) {
+  public void setFeederSpeed( double leftMotorSpeed, double rightMotorSpeed) {
 
     m_leftMotor.setControl(m_velocityRequest.withVelocity(leftMotorSpeed));  
     m_rightMotor.setControl(m_velocityRequest.withVelocity(rightMotorSpeed));
 
   };
 
-  public double getMotorSpeed ( double leftMotorSpeed, double rightMotorSpeed) {
 
-    return m_leftMotor.getVelocity().getValueAsDouble();
+  public double getLeftFeederSpeed()
+  {
+    return leftFeederSpeed;
+  }
 
-  };
+  public double getRightFeederSpeed()
+  {
+    return rightFeederSpeed;
+  }
 
 
   @Override
