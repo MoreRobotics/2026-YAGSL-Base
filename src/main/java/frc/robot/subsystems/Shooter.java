@@ -59,7 +59,7 @@ public class Shooter extends SubsystemBase {
     configs.Feedback.SensorToMechanismRatio = gearRatio;
     configs.CurrentLimits.StatorCurrentLimitEnable = true;
     configs.CurrentLimits.StatorCurrentLimit = currentLimit;
-    configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    configs.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
     m_LeftShooter.getConfigurator().apply(configs);
     m_RightShooter.getConfigurator().apply(configs);

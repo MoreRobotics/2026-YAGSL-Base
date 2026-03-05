@@ -343,6 +343,7 @@ import edu.wpi.first.networktables.StructPublisher;
 
         s_Swerve.m_PoseEstimator.update(s_Swerve.getHeading(), s_Swerve.getSwerveDrive().getModulePositions());
         estimatedRobotPosePublisher.set(s_Swerve.m_PoseEstimator.getEstimatedPosition());
+        s_Swerve.swerveDrive.updateOdometry();
 
 
 

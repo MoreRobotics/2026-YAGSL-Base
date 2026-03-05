@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.5467141162514837,
-        "y": 0.47908659549228905
+        "x": 4.030877817319099,
+        "y": 0.5221233689205222
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.904187425860025,
-        "y": 0.5113641755634626
+        "x": 8.388351126927631,
+        "y": 0.5544009489916958
       },
       "isLocked": false,
       "linkedName": null
@@ -28,15 +28,21 @@
       "linkedName": "Right Side Path 1 End"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.3126110124333932,
-      "rotationDegrees": 180.0
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
+    {
+      "name": "Move Intake",
+      "waypointRelativePos": 0.35320584926883875,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Move Intake"
+        }
+      }
+    },
     {
       "name": "Intake",
       "waypointRelativePos": 0.5556805399325128,
@@ -50,8 +56,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 2.0,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -65,7 +71,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 178.29018595585848
+    "rotation": 73.53998518795983
   },
   "useDefaultConstraints": true
 }

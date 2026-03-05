@@ -183,7 +183,7 @@ public class SwerveSubsystem extends SubsystemBase
       AutoBuilder.configure(
           this::getEstimatedPosition,
           // Robot pose supplier
-          this::resetOdometry,
+          this::resetEstimatedPose,
           // Method to reset odometry (will be called if your auto has a starting pose)
           this::getRobotVelocity,
           // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
@@ -534,7 +534,14 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public void resetOdometry(Pose2d initialHolonomicPose)
   {
-    swerveDrive.resetOdometry(initialHolonomicPose);
+    // swerveDrive.resetOdometry(initialHolonomicPose);
+    swerveDrive.swerveDrivePoseEstimator.resetPose(initialHolonomicPose);
+  }
+
+  public void resetEstimatedPose(Pose2d pose)
+  {
+    m_PoseEstimator.resetPose(pose);
+    
   }
 
   /**

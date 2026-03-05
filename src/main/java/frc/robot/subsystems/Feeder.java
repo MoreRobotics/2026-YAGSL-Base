@@ -31,8 +31,8 @@ public class Feeder extends SubsystemBase {
     private double kV = 0.1;
     private double currentLimit = 70;
     private double acceleration = 50;
-    private double leftFeederSpeed = -10;
-    private double rightFeederSpeed = 10;
+    private double leftFeederSpeed = -40;
+    private double rightFeederSpeed = 5;
 
 
   /** Creates a new Shooter. */
@@ -50,7 +50,7 @@ public class Feeder extends SubsystemBase {
     configs.MotionMagic.MotionMagicAcceleration = acceleration;
     configs.CurrentLimits.StatorCurrentLimitEnable = true;
     configs.CurrentLimits.StatorCurrentLimit = currentLimit;
-    configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    configs.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
     m_leftMotor.getConfigurator().apply(configs);
     m_rightMotor.getConfigurator().apply(configs);
@@ -59,7 +59,7 @@ public class Feeder extends SubsystemBase {
   public void setFeederSpeed( double leftMotorSpeed, double rightMotorSpeed) {
 
     m_leftMotor.setControl(m_velocityRequest.withVelocity(leftMotorSpeed));  
-    m_rightMotor.setControl(m_velocityRequest.withVelocity(rightMotorSpeed));
+    // m_rightMotor.setControl(m_velocityRequest.withVelocity(rightMotorSpeed));
 
   };
 
