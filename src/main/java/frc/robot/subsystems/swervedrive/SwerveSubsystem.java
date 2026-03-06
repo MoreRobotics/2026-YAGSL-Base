@@ -27,6 +27,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.Odometry;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
@@ -70,6 +71,7 @@ public class SwerveSubsystem extends SubsystemBase
   
   // public StructPublisher<Pose2d> estimatedRobotPosePublisher;
    public SwerveDrivePoseEstimator m_PoseEstimator;
+   
   /**
    * PhotonVision class to keep an accurate odometry.
    */
@@ -131,8 +133,10 @@ public class SwerveSubsystem extends SubsystemBase
             getSwerveDrive().getModulePositions(),
             getPose(),
             VecBuilder.fill(0.1, 0.1, 0.1),
-            VecBuilder.fill(1.5, 1.5, 5)
+            VecBuilder.fill(.7, .7, 99)
             );
+
+    
   }
 
   /**
@@ -181,9 +185,9 @@ public class SwerveSubsystem extends SubsystemBase
       final boolean enableFeedforward = true;
       // Configure AutoBuilder last
       AutoBuilder.configure(
-          this::getEstimatedPosition,
+          this::getPose,
           // Robot pose supplier
-          this::resetEstimatedPose,
+          this::resetOdometry,
           // Method to reset odometry (will be called if your auto has a starting pose)
           this::getRobotVelocity,
           // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
@@ -532,10 +536,10 @@ public class SwerveSubsystem extends SubsystemBase
    *
    * @param initialHolonomicPose The pose to set the odometry to
    */
-  public void resetOdometry(Pose2d initialHolonomicPose)
+  public void resetOdometry(Pose2d pose)
   {
-    // swerveDrive.resetOdometry(initialHolonomicPose);
-    swerveDrive.swerveDrivePoseEstimator.resetPose(initialHolonomicPose);
+    swerveDrive.swerveDrivePoseEstimator.resetPose(pose);
+
   }
 
   public void resetEstimatedPose(Pose2d pose)

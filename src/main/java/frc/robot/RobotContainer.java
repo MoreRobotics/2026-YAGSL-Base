@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -141,7 +142,9 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     DriverStation.silenceJoystickConnectionWarning(true);
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
     //  NamedCommands.registerCommand("Auto Aim Blue", drivebase.aimAtTarget());
-    NamedCommands.registerCommand("Run HotDog", new RunHotDog(s_HotDog));
+    NamedCommands.registerCommand("Run HotDog", 
+    
+    new InstantCommand(() -> s_HotDog.setHotDogSpeed(s_HotDog.getHotDogSpeed())).raceWith(new WaitCommand(5)).alongWith(new InstantCommand(() -> s_HotDog.setIndexerSpeed(s_HotDog.getIndexerSpeed())).raceWith(new WaitCommand(5))));
     NamedCommands.registerCommand("Stop HotDog", new InstantCommand(() -> s_HotDog.setHotDogSpeed(0)).alongWith(new InstantCommand(() -> s_HotDog.setIndexerSpeed(0))));
      NamedCommands.registerCommand("Prepare Shooter", new PrepareShooter(s_Shooter));
      NamedCommands.registerCommand("Stop Shooter", new InstantCommand(() -> s_Shooter.setShooterSpeed(0)));
@@ -153,6 +156,21 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
         new InstantCommand(() -> s_Intake.changeState())
 
       )); 
+
+   NamedCommands.registerCommand("Pump Intake", new ParallelCommandGroup(
+    new InstantCommand(() -> s_Intake.setIntakeSpeed(s_Intake.getIntakeSpeed())),
+   new SequentialCommandGroup(
+        new InstantCommand(() -> s_Intake.setState(true)),
+        new InstantCommand(() -> s_Intake.setIntakeTarget(s_Intake.getIntakeMiddlePosition())),
+        new MoveIntake(s_Intake),
+        new InstantCommand(() -> s_Intake.setState(false)),
+        new InstantCommand(() -> s_Intake.changeTarget()),
+        new MoveIntake(s_Intake),
+        new InstantCommand(() -> s_Intake.changeState())
+
+
+
+      ))); 
 
     
      NamedCommands.registerCommand("Aim Shooter", new AimShooter(s_ShooterPivot));
@@ -213,13 +231,13 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
           () -> -driver.getLeftY(),
           () -> -driver.getLeftX(),
           () -> (s_Eyes.getTargetRotation()-drivebase.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.12)),
-              new AimShooter(s_ShooterPivot),
+               new AimShooter(s_ShooterPivot),
            new PrepareShooter(s_Shooter)
           ))
       .onFalse(
         new ParallelCommandGroup(
           driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity),
-              new StowShooter(s_ShooterPivot),
+               new StowShooter(s_ShooterPivot),
             new InstantCommand(() -> s_Shooter.setShooterSpeed(-5))
           )
       );
@@ -248,14 +266,25 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     );
 
     //home shooter
-    driver.povDown().onTrue(
+    driver.options().onTrue(
       new HomeShooter(s_ShooterPivot)
+    );
+
+    driver.povDown().whileTrue(
+      new ParallelCommandGroup(
+        new InstantCommand(() -> s_Shooter.setShooterSpeed(-47.166)),
+        new InstantCommand(() -> s_ShooterPivot.setShooterAngle(-0.143))
+      )
+    ).onFalse(
+      new ParallelCommandGroup(
+        new InstantCommand(() -> s_Shooter.setShooterSpeed(0)),
+        new InstantCommand(() -> s_ShooterPivot.setShooterAngle(0)))
     );
 
 //shoot
      driver.R2().whileTrue(
       new ParallelCommandGroup(
-        new InstantCommand(() -> s_Intake.setIntakeSpeed(s_Intake.getIntakeSpeed())),
+        new InstantCommand(() -> s_Intake.setIntakeSpeed(s_Intake.getIntakeSpeed()/2)),
         new RunHotDog(s_HotDog),
         new RunFeeder(s_Feeder)
         // new InstantCommand(() -> s_Intake.setSlowMode()),

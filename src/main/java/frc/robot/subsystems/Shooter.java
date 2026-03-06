@@ -78,15 +78,15 @@ public class Shooter extends SubsystemBase {
     double speed;
    
     speed = 
-    0.082675*Math.pow(s_Eyes.getTargetDistance(), 5)
-    -1.566589*Math.pow(s_Eyes.getTargetDistance(), 4)
-    +10.887974*Math.pow(s_Eyes.getTargetDistance(), 3)
-    -33.684491*Math.pow(s_Eyes.getTargetDistance(), 2)
-    +47.397441*s_Eyes.getTargetDistance()
-    +18.379658;
+    -0.017412*Math.pow(s_Eyes.getTargetDistance(), 5)
+    +0.417197*Math.pow(s_Eyes.getTargetDistance(), 4)
+    -3.820445*Math.pow(s_Eyes.getTargetDistance(), 3)
+    +16.622385*Math.pow(s_Eyes.getTargetDistance(), 2)
+    -30.727006*s_Eyes.getTargetDistance()
+    +61.756201;
 
 
-    return -speed*1.05;
+    return -speed;
     // return shooterSpeed;
   }
 

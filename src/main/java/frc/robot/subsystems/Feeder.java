@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -29,10 +30,10 @@ public class Feeder extends SubsystemBase {
     private double kI = 0;
     private double kD = 0;
     private double kV = 0.1;
-    private double currentLimit = 70;
+    private double currentLimit = 15;
     private double acceleration = 50;
     private double leftFeederSpeed = -40;
-    private double rightFeederSpeed = 5;
+    private double rightFeederSpeed = 40;
 
 
   /** Creates a new Shooter. */
@@ -59,7 +60,7 @@ public class Feeder extends SubsystemBase {
   public void setFeederSpeed( double leftMotorSpeed, double rightMotorSpeed) {
 
     m_leftMotor.setControl(m_velocityRequest.withVelocity(leftMotorSpeed));  
-    // m_rightMotor.setControl(m_velocityRequest.withVelocity(rightMotorSpeed));
+    m_rightMotor.setControl(m_velocityRequest.withVelocity(rightMotorSpeed));
 
   };
 
@@ -78,7 +79,10 @@ public class Feeder extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-
+    SmartDashboard.putNumber("Left Feeder Speed", m_leftMotor.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("Right Feeder Speed", m_rightMotor.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("Left Feeder Set Speed", getLeftFeederSpeed());
+    SmartDashboard.putNumber("Right Feeder Set Speed", getRightFeederSpeed());
   }
 
   @Override
