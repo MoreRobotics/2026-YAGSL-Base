@@ -364,7 +364,7 @@ import edu.wpi.first.networktables.StructPublisher;
         {
             doRejectUpdateRight = true;
         }
-        if(getLimelightRightPose().tagCount == 0)
+        if(LimelightHelpers.getTV("limelight-right"))
         {
             doRejectUpdateRight = true;
         }
@@ -382,7 +382,7 @@ import edu.wpi.first.networktables.StructPublisher;
         {
             doRejectUpdateLeft = true;
         }
-        if(getLimelightLeftPose().tagCount == 0)
+        if(LimelightHelpers.getTV("limelight-left"))
         {
             doRejectUpdateLeft = true;
         }
