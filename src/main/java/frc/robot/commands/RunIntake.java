@@ -21,6 +21,7 @@ public class RunIntake extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    s_Intake.setCurrentLimit(s_Intake.getActiveRollerCurrentLimit());
     s_Intake.setIntakeSpeed(s_Intake.getIntakeSpeed());
   }
 
@@ -31,6 +32,7 @@ public class RunIntake extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    s_Intake.setCurrentLimit(s_Intake.getIdleRollerCurrentLimit());
     s_Intake.setIntakeSpeed(20);
   }
 

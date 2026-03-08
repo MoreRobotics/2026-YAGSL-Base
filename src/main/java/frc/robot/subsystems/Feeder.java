@@ -83,6 +83,9 @@ public class Feeder extends SubsystemBase {
     SmartDashboard.putNumber("Right Feeder Speed", m_rightMotor.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("Left Feeder Set Speed", getLeftFeederSpeed());
     SmartDashboard.putNumber("Right Feeder Set Speed", getRightFeederSpeed());
+    SmartDashboard.putNumber("Left Feeder Current", m_leftMotor.getStatorCurrent().getValueAsDouble());
+    SmartDashboard.putNumber("Right Feeder Current", m_rightMotor.getStatorCurrent().getValueAsDouble());
+
   }
 
   @Override

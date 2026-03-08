@@ -101,6 +101,11 @@ public class HotDog extends SubsystemBase {
     return reverseHotDogSpeed;
   }
 
+  public double getHotDogMotorSpeed()
+  {
+    return m_HotDog.getVelocity().getValueAsDouble();
+  }
+
 
 
 

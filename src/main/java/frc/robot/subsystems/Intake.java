@@ -26,9 +26,9 @@ public class Intake extends SubsystemBase {
   private double forwardLimit = .168;
   private double reverseLimit = -.163;
   private double pivotCurrentLimit = 100;
-  private double intakeStowPosition = -.156;
-  private double intakeOutPosition = .161;
-  private double intakeMiddlePosition = 0;
+  private double intakeStowPosition = 0.01;
+  private double intakeOutPosition = 0.34;
+  private double intakeMiddlePosition = 0.11;
   private double target = 0;
   private boolean intakeOut = false;
   private double tolerance = 0.03;
@@ -38,6 +38,7 @@ public class Intake extends SubsystemBase {
   private double rollerD = 0;
   private double rollerV = 0.125;
   private double rollerCurrentLimit = 80;
+  private double idleRollerCurrentLimit = 30;
   private double intakeSpeed = 40;
   private double outakeSpeed = -40;
 
@@ -70,10 +71,10 @@ public class Intake extends SubsystemBase {
     pivotConfigs.Slot0.kD = pivotD;
     pivotConfigs.MotionMagic.MotionMagicAcceleration = pivotAcceleration;
     pivotConfigs.MotionMagic.MotionMagicCruiseVelocity = pivotVelocity;
-    pivotConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    pivotConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = forwardLimit;
-    pivotConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    pivotConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = reverseLimit;
+    // pivotConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    // pivotConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = forwardLimit;
+    // pivotConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    // pivotConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = reverseLimit;
     pivotConfigs.Feedback.SensorToMechanismRatio = gearRatio;
     pivotConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
     pivotConfigs.CurrentLimits.StatorCurrentLimit = pivotCurrentLimit;
@@ -90,7 +91,7 @@ public class Intake extends SubsystemBase {
 
     m_IntakePivot.getConfigurator().apply(pivotConfigs);
     m_IntakeRoller.getConfigurator().apply(rollerConfigs);
-     m_IntakePivot.setPosition(e_IntakePivot.getPosition().getValueAsDouble());
+     m_IntakePivot.setPosition(0);
     
     
   }
@@ -167,6 +168,24 @@ public class Intake extends SubsystemBase {
     SmartDashboard.putNumber("Intake Roller Commanded Speed", speed);
     m_IntakeRoller.setControl(m_VelocityRequest.withVelocity(speed));
   }
+
+  public void setCurrentLimit(double currentLimit)
+  {
+    rollerConfigs.CurrentLimits.StatorCurrentLimit = currentLimit;
+    m_IntakeRoller.getConfigurator().apply(rollerConfigs);
+  }
+
+  public double getIdleRollerCurrentLimit()
+  {
+    return idleRollerCurrentLimit;
+  }
+
+  public double getActiveRollerCurrentLimit()
+  {
+    return rollerCurrentLimit;
+  }
+
+
   
 
   public double getIntakeSpeed()
@@ -193,6 +212,7 @@ public class Intake extends SubsystemBase {
     SmartDashboard.putNumber("Intake Roller Speed", m_IntakeRoller.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("Intake Roller Current", m_IntakeRoller.getStatorCurrent().getValueAsDouble());
     SmartDashboard.putNumber("Intake Pivot Current", m_IntakePivot.getStatorCurrent().getValueAsDouble());
+    SmartDashboard.putNumber("Intake Roller Current Limit", rollerConfigs.CurrentLimits.StatorCurrentLimit);
 
     
   }
