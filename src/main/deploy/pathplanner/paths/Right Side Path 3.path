@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.537769869513642,
-        "y": 0.45756820877817406
+        "x": 7.656725978647687,
+        "y": 0.5328825622775799
       },
       "isLocked": false,
       "linkedName": "Right Side Path 2 End"
     },
     {
       "anchor": {
-        "x": 6.537769869513642,
-        "y": 3.0720521945432973
+        "x": 6.118161328588376,
+        "y": 5.18085409252669
       },
       "prevControl": {
-        "x": 6.527010676156584,
-        "y": 0.8879359430604983
+        "x": 7.011174377224199,
+        "y": 0.2208659549228944
       },
       "nextControl": null,
       "isLocked": false,
@@ -36,17 +36,15 @@
     {
       "waypointRelativePos": 0.1953818827708692,
       "rotationDegrees": 0.0
+    },
+    {
+      "waypointRelativePos": 0.5,
+      "rotationDegrees": 90.0
     }
   ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
-    {
-      "name": "",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
     {
       "name": "Intake",
       "waypointRelativePos": 0.5106861642294646,

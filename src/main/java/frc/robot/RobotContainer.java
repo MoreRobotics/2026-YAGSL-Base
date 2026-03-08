@@ -149,13 +149,16 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
      NamedCommands.registerCommand("Prepare Shooter", new PrepareShooter(s_Shooter));
      NamedCommands.registerCommand("Stop Shooter", new InstantCommand(() -> s_Shooter.setShooterSpeed(0)));
     NamedCommands.registerCommand("Intake", new RunIntake(s_Intake));
-    NamedCommands.registerCommand("Stop Intake", new InstantCommand(() -> s_Intake.setIntakeSpeed(0)));
+    NamedCommands.registerCommand("Stop Intake", new InstantCommand(() -> s_Intake.setIntakeSpeed(20)));
     NamedCommands.registerCommand("Move Intake", new SequentialCommandGroup(
         new InstantCommand(() -> s_Intake.changeTarget()),
         new MoveIntake(s_Intake),
         new InstantCommand(() -> s_Intake.changeState())
 
       )); 
+
+    NamedCommands.registerCommand("Aim Shooter", new AimShooter(s_ShooterPivot));
+    NamedCommands.registerCommand("Stow Shooter", new StowShooter(s_ShooterPivot));
 
    NamedCommands.registerCommand("Pump Intake", new ParallelCommandGroup(
     new InstantCommand(() -> s_Intake.setIntakeSpeed(s_Intake.getIntakeSpeed())),
@@ -173,8 +176,6 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
       ))); 
 
     
-     NamedCommands.registerCommand("Aim Shooter", new AimShooter(s_ShooterPivot));
-     NamedCommands.registerCommand("Stow Shooter", new StowShooter(s_ShooterPivot));
     
 
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -217,7 +218,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
         new ParallelCommandGroup(
           driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity),
             new StowShooter(s_ShooterPivot),
-            new InstantCommand(() -> s_Shooter.setShooterSpeed(-5))
+            new InstantCommand(() -> s_Shooter.setShooterVoltage(-1))
         )
       );
       
@@ -238,7 +239,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
         new ParallelCommandGroup(
           driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity),
                new StowShooter(s_ShooterPivot),
-            new InstantCommand(() -> s_Shooter.setShooterSpeed(-5))
+            new InstantCommand(() -> s_Shooter.setShooterVoltage(-1))
           )
       );
     }
@@ -270,7 +271,8 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
       new HomeShooter(s_ShooterPivot)
     );
 
-    driver.povDown().whileTrue(
+    //manual trench shot
+    driver.circle().whileTrue(
       new ParallelCommandGroup(
         new InstantCommand(() -> s_Shooter.setShooterSpeed(-47.166)),
         new InstantCommand(() -> s_ShooterPivot.setShooterAngle(-0.143))
@@ -284,7 +286,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
 //shoot
      driver.R2().whileTrue(
       new ParallelCommandGroup(
-        new InstantCommand(() -> s_Intake.setIntakeSpeed(s_Intake.getIntakeSpeed()/2)),
+        new InstantCommand(() -> s_Intake.setIntakeSpeed(20)),
         new RunHotDog(s_HotDog),
         new RunFeeder(s_Feeder)
         // new InstantCommand(() -> s_Intake.setSlowMode()),
@@ -295,7 +297,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
         .onFalse(
           new SequentialCommandGroup(
           new ParallelCommandGroup(
-          new InstantCommand(() -> s_Intake.setIntakeSpeed(0))
+          new InstantCommand(() -> s_Intake.setIntakeSpeed(20))
         // new InstantCommand(() -> s_Intake.setTarget(s_Intake.getIntakePosition())),
         // new MoveIntake(s_Intake),
         // new InstantCommand(() -> s_Intake.setNormalMode())

@@ -29,7 +29,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 7.0
+                  "waitTime": 15.0
                 }
               },
               {
@@ -74,7 +74,79 @@
                           {
                             "type": "wait",
                             "data": {
-                              "waitTime": 2.5
+                              "waitTime": 0.5
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Pump Intake"
+                            }
+                          },
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 1.0
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Pump Intake"
+                            }
+                          },
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 1.0
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Pump Intake"
+                            }
+                          },
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 1.0
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Pump Intake"
+                            }
+                          },
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 1.0
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Pump Intake"
+                            }
+                          },
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 1.0
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Pump Intake"
+                            }
+                          },
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 1.0
                             }
                           },
                           {
@@ -107,7 +179,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Stow Shooter"
+            "name": "Stop HotDog"
           }
         },
         {
@@ -119,7 +191,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Stop HotDog"
+            "name": "Stow Shooter"
           }
         },
         {

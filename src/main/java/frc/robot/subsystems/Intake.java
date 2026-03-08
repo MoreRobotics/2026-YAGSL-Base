@@ -26,9 +26,9 @@ public class Intake extends SubsystemBase {
   private double forwardLimit = .168;
   private double reverseLimit = -.163;
   private double pivotCurrentLimit = 100;
-  private double intakeStowPosition = -.162;
-  private double intakeOutPosition = .167;
-  private double intakeMiddlePosition = .002;
+  private double intakeStowPosition = -.156;
+  private double intakeOutPosition = .161;
+  private double intakeMiddlePosition = 0;
   private double target = 0;
   private boolean intakeOut = false;
   private double tolerance = 0.03;
@@ -36,9 +36,10 @@ public class Intake extends SubsystemBase {
   private double rollerP = .25;//.5 too much
   private double rollerI = 0;
   private double rollerD = 0;
-  private double rollerCurrentLimit = 100;
-  private double intakeSpeed = 60;
-  private double outakeSpeed = -60;
+  private double rollerV = 0.125;
+  private double rollerCurrentLimit = 80;
+  private double intakeSpeed = 40;
+  private double outakeSpeed = -40;
 
   private double gearRatio = 87.5/1;
   private int intakePivotID = 12;
@@ -82,13 +83,14 @@ public class Intake extends SubsystemBase {
     rollerConfigs.Slot0.kP = rollerP;
     rollerConfigs.Slot0.kI = rollerI;
     rollerConfigs.Slot0.kD = rollerD;
+    rollerConfigs.Slot0.kV = rollerV;
     rollerConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
     rollerConfigs.CurrentLimits.StatorCurrentLimit = rollerCurrentLimit;
 
 
     m_IntakePivot.getConfigurator().apply(pivotConfigs);
     m_IntakeRoller.getConfigurator().apply(rollerConfigs);
-    m_IntakePivot.setPosition(e_IntakePivot.getPosition().getValueAsDouble());
+     m_IntakePivot.setPosition(e_IntakePivot.getPosition().getValueAsDouble());
     
     
   }
@@ -189,6 +191,9 @@ public class Intake extends SubsystemBase {
     SmartDashboard.putNumber("Intake Pivot Motor Velocity", m_IntakePivot.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("Intake Pivot CANCoder Position", e_IntakePivot.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("Intake Roller Speed", m_IntakeRoller.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("Intake Roller Current", m_IntakeRoller.getStatorCurrent().getValueAsDouble());
+    SmartDashboard.putNumber("Intake Pivot Current", m_IntakePivot.getStatorCurrent().getValueAsDouble());
+
     
   }
 

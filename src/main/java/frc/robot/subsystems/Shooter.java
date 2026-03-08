@@ -73,6 +73,12 @@ public class Shooter extends SubsystemBase {
     m_RightShooter.setControl(m_Follower.withLeaderID(leftShooterID));
   }
 
+  public void setShooterVoltage(double voltage)
+  {
+    m_LeftShooter.setVoltage(voltage);
+    m_RightShooter.setControl(m_Follower.withLeaderID(leftShooterID));
+  }
+
   public double getShooterSpeed()
   {
     double speed;
@@ -86,7 +92,7 @@ public class Shooter extends SubsystemBase {
     +61.756201;
 
 
-    return -speed;
+    return -speed*1.02;
     // return shooterSpeed;
   }
 

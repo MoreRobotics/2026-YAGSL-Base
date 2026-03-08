@@ -35,7 +35,7 @@ public class ShooterPivot extends SubsystemBase {
   public double homingCurrentLimit = currentLimit / 2;
   public double homingPosition = 0;
 
-  public double forwardLimit = 0.0;
+  public double forwardLimit = 0.01;
   public double reverseLimit = -0.278;
 
 
@@ -67,8 +67,8 @@ public class ShooterPivot extends SubsystemBase {
     configs.MotionMagic.MotionMagicCruiseVelocity = velocity;
     // configs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     // configs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = forwardLimit;
-    // configs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    // configs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = reverseLimit;
+    configs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    configs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = reverseLimit;
     configs.Feedback.SensorToMechanismRatio = gearRatio;
     configs.CurrentLimits.StatorCurrentLimitEnable = true;
     configs.CurrentLimits.StatorCurrentLimit = currentLimit;

@@ -31,7 +31,7 @@ public class RunIntake extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    s_Intake.setIntakeSpeed(0);
+    s_Intake.setIntakeSpeed(20);
   }
 
   // Returns true when the command should end.

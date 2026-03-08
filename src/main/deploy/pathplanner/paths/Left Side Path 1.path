@@ -3,35 +3,72 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.600510083036774,
-        "y": 7.580154211150653
+        "x": 4.02,
+        "y": 7.53711743772242
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.95737841043891,
-        "y": 7.332692763938315
+        "x": 7.8611506524317925,
+        "y": 7.429525504151838
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.710521945432978,
-        "y": 5.331482799525504
+        "x": 7.904,
+        "y": 4.546061684460261
       },
       "prevControl": {
-        "x": 7.387746144721235,
-        "y": 6.827010676156583
+        "x": 7.947036773428234,
+        "y": 6.084626334519573
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Left Side Path 1 End"
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.665916760404943,
+      "maxWaypointRelativePos": 1.0,
+      "constraints": {
+        "maxVelocity": 2.0,
+        "maxAcceleration": 2.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "Move Intake",
+      "waypointRelativePos": 0.15523059617547957,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Move Intake"
+        }
+      }
+    },
+    {
+      "name": "Intake",
+      "waypointRelativePos": 0.23172103487064438,
+      "endWaypointRelativePos": 1.0,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Intake"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -42,7 +79,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -81.63411387596764
+    "rotation": -90.0
   },
   "reversed": false,
   "folder": null,
