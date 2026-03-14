@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AimShooter;
+import frc.robot.commands.HomeIntake;
 import frc.robot.commands.HomeShooter;
 import frc.robot.commands.MoveIntake;
 import frc.robot.commands.Outake;
@@ -312,7 +313,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
 
 
 //outake
-    driver.R1().whileTrue(
+    driver.R1().onTrue(
       new Outake(s_Intake, s_HotDog));
 
 
@@ -326,9 +327,6 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
         new InstantCommand(() -> s_Intake.changeTarget()),
         new MoveIntake(s_Intake),
         new InstantCommand(() -> s_Intake.changeState())
-
-
-
       )
     );
 
@@ -340,6 +338,10 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     // driver.square().onTrue(
     // new InstantCommand(() -> s_Climber.setServo(s_Climber.getServoMid()))
     // );
+
+    driver.povRight().whileTrue(
+      new HomeIntake(s_Intake)
+    );
 
   }
 

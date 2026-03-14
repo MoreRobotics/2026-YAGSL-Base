@@ -27,11 +27,11 @@ public class Intake extends SubsystemBase {
   private double reverseLimit = -.163;
   private double pivotCurrentLimit = 100;
   private double intakeStowPosition = 0.01;
-  private double intakeOutPosition = 0.34;
+  private double intakeOutPosition = 0.345;
   private double intakeMiddlePosition = 0.11;
   private double target = 0;
   private boolean intakeOut = false;
-  private double tolerance = 0.03;
+  private double tolerance = 0.005;
 
   private double rollerP = .25;//.5 too much
   private double rollerI = 0;
@@ -49,20 +49,23 @@ public class Intake extends SubsystemBase {
 
   private TalonFX m_IntakePivot;
   private TalonFX m_IntakeRoller;
-  private CANcoder e_IntakePivot;
+  //private CANcoder e_IntakePivot;
   private MotionMagicVoltage m_Request;
   private TalonFXConfiguration pivotConfigs;
   private TalonFXConfiguration rollerConfigs;
   private VelocityVoltage m_VelocityRequest;
+  private VelocityVoltage m_PivotVelocityRequest;
 
   /** Creates a new Intake. */
   public Intake() {
     m_IntakePivot = new TalonFX(intakePivotID);
     m_IntakeRoller = new TalonFX(intakeRollerID);
-    e_IntakePivot =  new CANcoder(intakePivotCANCoderID);
+    //e_IntakePivot =  new CANcoder(intakePivotCANCoderID);
 
     m_Request = new MotionMagicVoltage(0).withSlot(0);
     m_VelocityRequest = new VelocityVoltage(0).withSlot(0);
+    m_VelocityRequest = new VelocityVoltage(0).withSlot(0);
+    
 
     pivotConfigs = new TalonFXConfiguration();
     pivotConfigs.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
@@ -96,8 +99,27 @@ public class Intake extends SubsystemBase {
     
   }
 
-  public void setIntakePosition(){
+  public void moveIntake(){
     m_IntakePivot.setControl(m_Request.withPosition(target));
+  }
+
+   public void setIntakePivotPosition(double setPosition)
+   {
+    m_IntakePivot.setPosition(setPosition);
+    pivotConfigs.Slot0.kP = pivotP;
+    m_IntakePivot.getConfigurator().apply(pivotConfigs);
+   }
+
+  public void homeIntakePivot()
+  {
+    pivotConfigs.Slot0.kP = .25;
+    m_IntakePivot.getConfigurator().apply(pivotConfigs);
+    m_IntakePivot.setControl(m_PivotVelocityRequest.withVelocity(3));
+  }
+
+  public void stopIntakePivot()
+  {
+    m_IntakePivot.setControl(m_PivotVelocityRequest.withVelocity(0));
   }
 
   public void changeTarget(){
@@ -127,9 +149,19 @@ public class Intake extends SubsystemBase {
     return intakeMiddlePosition;
   }
 
+  public double getIntakeOutPosition()
+  {
+    return intakeOutPosition;
+  }
+
   public double getIntakePosition()
   {
     return m_IntakePivot.getPosition().getValueAsDouble();
+  }
+
+  public double getIntakePivotCurrent()
+  {
+    return m_IntakePivot.getStatorCurrent().getValueAsDouble();
   }
 
   public boolean atPosition()
@@ -208,7 +240,7 @@ public class Intake extends SubsystemBase {
     SmartDashboard.putNumber("Intake Pivot Target", target);
     SmartDashboard.putNumber("Intake Pivot Motor Acceleration", m_IntakePivot.getAcceleration().getValueAsDouble());
     SmartDashboard.putNumber("Intake Pivot Motor Velocity", m_IntakePivot.getVelocity().getValueAsDouble());
-    SmartDashboard.putNumber("Intake Pivot CANCoder Position", e_IntakePivot.getPosition().getValueAsDouble());
+    //SmartDashboard.putNumber("Intake Pivot CANCoder Position", e_IntakePivot.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("Intake Roller Speed", m_IntakeRoller.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("Intake Roller Current", m_IntakeRoller.getStatorCurrent().getValueAsDouble());
     SmartDashboard.putNumber("Intake Pivot Current", m_IntakePivot.getStatorCurrent().getValueAsDouble());
