@@ -20,7 +20,7 @@ public class Shooter extends SubsystemBase {
 
   private int leftShooterID = 14;
   private int rightShooterID = 15;
-  private double kP = .7;
+  private double kP = .85;
   private double kI = 0;
   private double kD = 0;
   private double kV = 0.1;
@@ -30,7 +30,7 @@ public class Shooter extends SubsystemBase {
 
   private double kShooter = 1;
 
-  private double shooterSpeed = -57*.85;
+  private double shooterSpeed = -57*.7;
 
 
 
@@ -92,7 +92,7 @@ public class Shooter extends SubsystemBase {
     +61.756201;
 
 
-    return -speed*1.06;
+    return shooterSpeed;
     // return shooterSpeed;
   }
 

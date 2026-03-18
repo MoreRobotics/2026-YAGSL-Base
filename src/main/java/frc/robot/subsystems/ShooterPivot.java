@@ -93,15 +93,23 @@ public class ShooterPivot extends SubsystemBase {
       -0.641709*s_Eyes.getTargetDistance()
       +0.484218;
    
-    
-
-    return angle_Rotation;
+    if(angle_Rotation > 0.01)
+    {
+      return 0.0;
+    }
+    else if(angle_Rotation < -0.278)
+    {
+      return -0.278;
+    }
+    else{
+      return angle_Rotation;
+    }
   }
 
   public void setShooterAngle(double setpoint)
   {
 
-    m_ShooterPivot.setControl(m_Request.withPosition((setpoint*1.04)));
+    m_ShooterPivot.setControl(m_Request.withPosition((setpoint)));
      SmartDashboard.putNumber("Shooter Pivot Setpoint", (setpoint));
   }
 
