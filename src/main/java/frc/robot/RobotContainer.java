@@ -213,13 +213,13 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
           () -> driver.getLeftY(),
           () -> driver.getLeftX(),
           () -> (s_Eyes.getTargetRotation()) * (.12)),
-           // new AimShooter(s_ShooterPivot),
+            new AimShooter(s_ShooterPivot),
            new PrepareShooter(s_Shooter)
           ))
       .onFalse(
         new ParallelCommandGroup(
           driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity),
-          //  new StowShooter(s_ShooterPivot),
+            new StowShooter(s_ShooterPivot),
             new InstantCommand(() -> s_Shooter.setShooterVoltage(-1))
         )
       );
@@ -233,14 +233,14 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
           driveFieldOrientedDirectAngle = drivebase.driveCommand(
           () -> -driver.getLeftY(),
           () -> -driver.getLeftX(),
-          () -> (s_Eyes.getTargetRotation()-drivebase.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.12)),
-              // new AimShooter(s_ShooterPivot),
+          () -> ((s_Eyes.getTargetRotation()-drivebase.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.12)) - (drivebase.getRobotVelocity().vxMetersPerSecond * 0.1)),
+               new AimShooter(s_ShooterPivot),
            new PrepareShooter(s_Shooter)
           ))
       .onFalse(
         new ParallelCommandGroup(
           driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity),
-              // new StowShooter(s_ShooterPivot),
+               new StowShooter(s_ShooterPivot),
             new InstantCommand(() -> s_Shooter.setShooterVoltage(-1))
           )
       );
