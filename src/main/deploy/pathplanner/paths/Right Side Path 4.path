@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.118161328588376,
-        "y": 5.18085409252669
+        "x": 6.161198102016608,
+        "y": 3.997342823250296
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.15043890865796,
-        "y": 2.039169632265646
+        "x": 6.279549228944247,
+        "y": 2.1360023724792403
       },
       "isLocked": false,
       "linkedName": "Right Side Path 3 End"
     },
     {
       "anchor": {
-        "x": 3.1271055753262162,
-        "y": 0.6404744958481603
+        "x": 2.234092526690392,
+        "y": 2.5556109134045073
       },
       "prevControl": {
-        "x": 7.06497034400949,
-        "y": 0.5866785290628707
+        "x": 5.451091340450768,
+        "y": 2.5556109134045073
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,6 +31,10 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 0.5,
+      "rotationDegrees": 0.0
+    },
+    {
+      "waypointRelativePos": 0.8277087033747821,
       "rotationDegrees": 0.0
     }
   ],
@@ -58,7 +62,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 67.61986494804046
+    "rotation": 32.5740571345725
   },
   "reversed": false,
   "folder": null,

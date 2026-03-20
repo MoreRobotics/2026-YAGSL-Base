@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.5138315539739033,
-        "y": 0.6081969157769855
+        "x": 2.514,
+        "y": 0.66
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.656725978647687,
-        "y": 0.5328825622775799
+        "x": 7.45246975088968,
+        "y": 0.6277224199288266
       },
       "isLocked": false,
       "linkedName": "Right Side Path 2 End"
     },
     {
       "anchor": {
-        "x": 6.118161328588376,
-        "y": 5.18085409252669
+        "x": 6.161198102016608,
+        "y": 3.997342823250296
       },
       "prevControl": {
-        "x": 6.2903084223013055,
-        "y": 0.08099644128113859
+        "x": 6.26879003558719,
+        "y": 0.382253855278766
       },
       "nextControl": null,
       "isLocked": false,
@@ -73,7 +73,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 58.57043438516154
+    "rotation": 56.10328113393758
   },
   "useDefaultConstraints": false
 }

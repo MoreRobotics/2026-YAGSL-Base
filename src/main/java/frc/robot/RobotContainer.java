@@ -31,6 +31,8 @@ import frc.robot.commands.PrepareShooter;
 import frc.robot.commands.RunFeeder;
 import frc.robot.commands.RunHotDog;
 import frc.robot.commands.RunIntake;
+import frc.robot.commands.SetShooterAngle;
+import frc.robot.commands.SetShooterSpeed;
 import frc.robot.commands.StowShooter;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -147,7 +149,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     
     new InstantCommand(() -> s_HotDog.setHotDogSpeed(s_HotDog.getHotDogSpeed())).raceWith(new WaitCommand(5)).alongWith(new InstantCommand(() -> s_HotDog.setIndexerSpeed(s_HotDog.getIndexerSpeed())).raceWith(new WaitCommand(5))));
     NamedCommands.registerCommand("Stop HotDog", new InstantCommand(() -> s_HotDog.setHotDogSpeed(0)).alongWith(new InstantCommand(() -> s_HotDog.setIndexerSpeed(0))));
-     NamedCommands.registerCommand("Prepare Shooter", new PrepareShooter(s_Shooter));
+     NamedCommands.registerCommand("Prepare Shooter", new SetShooterSpeed(s_Shooter, -40.52));
      NamedCommands.registerCommand("Stop Shooter", new InstantCommand(() -> s_Shooter.setShooterVoltage(-1)));
     NamedCommands.registerCommand("Intake", new RunIntake(s_Intake));
     NamedCommands.registerCommand("Stop Intake", new InstantCommand(() -> s_Intake.setIntakeSpeed(20)));
@@ -158,7 +160,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
 
       )); 
 
-    NamedCommands.registerCommand("Aim Shooter", new AimShooter(s_ShooterPivot));
+    NamedCommands.registerCommand("Aim Shooter", new SetShooterAngle(s_ShooterPivot, -0.141));
     NamedCommands.registerCommand("Stow Shooter", new InstantCommand(() -> s_ShooterPivot.setShooterAngle(s_ShooterPivot.getShooterPivotSafePose())));
     NamedCommands.registerCommand("Run Feeder", new InstantCommand(() -> s_Feeder.setFeederSpeed(s_Feeder.getLeftFeederSpeed(),s_Feeder.getRightFeederSpeed())));
     NamedCommands.registerCommand("Stop Feeder", new InstantCommand(() -> s_Feeder.setFeederSpeed(0,0)));
@@ -233,7 +235,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
           driveFieldOrientedDirectAngle = drivebase.driveCommand(
           () -> -driver.getLeftY(),
           () -> -driver.getLeftX(),
-          () -> ((s_Eyes.getTargetRotation()-drivebase.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.12)) - (drivebase.getRobotVelocity().vxMetersPerSecond * 0.1)),
+          () -> (s_Eyes.getTargetRotation()-drivebase.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.12)),
                new AimShooter(s_ShooterPivot),
            new PrepareShooter(s_Shooter)
           ))
