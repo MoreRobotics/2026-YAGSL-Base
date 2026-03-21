@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 8.291518386714117,
-        "y": 3.4055871886121
+        "y": 4.406
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.366832740213523,
-        "y": 0.47908659549228894
+        "x": 8.420628706998816,
+        "y": -0.06963226571767578
       },
       "isLocked": false,
       "linkedName": "Right Side Path 1 End"
@@ -20,8 +20,8 @@
         "y": 0.66
       },
       "prevControl": {
-        "x": 6.8282680901542125,
-        "y": 0.5416488730723621
+        "x": 6.849786476868328,
+        "y": 0.6835112692763936
       },
       "nextControl": null,
       "isLocked": false,
@@ -66,6 +66,17 @@
     }
   ],
   "eventMarkers": [
+    {
+      "name": "Intake",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": 1.0,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Intake"
+        }
+      }
+    },
     {
       "name": "Prepare Shooter",
       "waypointRelativePos": 0.7581552305961766,

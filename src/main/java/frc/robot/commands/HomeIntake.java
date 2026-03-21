@@ -21,35 +21,36 @@ public class HomeIntake extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    finished = false;
     s_Intake.homeIntakePivot();
-    
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(s_Intake.getIntakePivotCurrent() >= 40)
-    {
-      s_Intake.stopIntakePivot();
-      s_Intake.setIntakePivotPosition(s_Intake.getIntakeOutPosition());
-      finished = true;
-    }
-    else
-    {
-      finished = false;
-    }
+    // if(s_Intake.getIntakePivotCurrent() >= 25)
+    // {
+    //   System.out.println("Working");
+    //   // s_Intake.stopIntakePivot();
+    //   s_Intake.setIntakePivotPosition(s_Intake.getIntakeOutPosition());
+    //   finished = true;
+    // }
+    // else
+    // {
+    //   finished = false;
+    // }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     s_Intake.stopIntakePivot();
-    s_Intake.setIntakePivotPosition(s_Intake.getIntakeOutPosition());
+     s_Intake.setIntakePivotPosition(s_Intake.getIntakeOutPosition());
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return finished;
+    return s_Intake.getIntakePivotCurrent() >= 25;
   }
 }

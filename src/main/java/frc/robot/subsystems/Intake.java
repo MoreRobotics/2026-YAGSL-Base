@@ -27,8 +27,8 @@ public class Intake extends SubsystemBase {
   private double reverseLimit = -.163;
   private double pivotCurrentLimit = 100;
   private double intakeStowPosition = 0.001;
-  private double intakeOutPosition = 0.335;
-  private double intakeMiddlePosition = 0.11;
+  private double intakeOutPosition = 0.336;
+  private double intakeMiddlePosition = 0.106;
   private double target = 0;
   private boolean intakeOut = false;
   private double tolerance = 0.005;
@@ -39,7 +39,7 @@ public class Intake extends SubsystemBase {
   private double rollerV = 0.125;
   private double rollerCurrentLimit = 80;
   private double idleRollerCurrentLimit = 20;
-  private double intakeSpeed = 40;
+  private double intakeSpeed = 44;
   private double outakeSpeed = -40;
 
   private double gearRatio = 87.5/1;
@@ -64,7 +64,7 @@ public class Intake extends SubsystemBase {
 
     m_Request = new MotionMagicVoltage(0).withSlot(0);
     m_VelocityRequest = new VelocityVoltage(0).withSlot(0);
-    m_VelocityRequest = new VelocityVoltage(0).withSlot(0);
+    m_PivotVelocityRequest = new VelocityVoltage(0).withSlot(0);
     
 
     pivotConfigs = new TalonFXConfiguration();
@@ -235,16 +235,16 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Intake Pivot Motor Position", getIntakePosition());
-    SmartDashboard.putNumber("Intake Pivot Acceleration Config", pivotConfigs.MotionMagic.MotionMagicAcceleration);
-    SmartDashboard.putNumber("Intake Pivot Velocity Config", m_Request.getPositionMeasure().baseUnitMagnitude());
+    //SmartDashboard.putNumber("Intake Pivot Acceleration Config", pivotConfigs.MotionMagic.MotionMagicAcceleration);
+    //SmartDashboard.putNumber("Intake Pivot Velocity Config", m_Request.getPositionMeasure().baseUnitMagnitude());
     SmartDashboard.putNumber("Intake Pivot Target", target);
-    SmartDashboard.putNumber("Intake Pivot Motor Acceleration", m_IntakePivot.getAcceleration().getValueAsDouble());
-    SmartDashboard.putNumber("Intake Pivot Motor Velocity", m_IntakePivot.getVelocity().getValueAsDouble());
+    // SmartDashboard.putNumber("Intake Pivot Motor Acceleration", m_IntakePivot.getAcceleration().getValueAsDouble());
+    // SmartDashboard.putNumber("Intake Pivot Motor Velocity", m_IntakePivot.getVelocity().getValueAsDouble());
     //SmartDashboard.putNumber("Intake Pivot CANCoder Position", e_IntakePivot.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("Intake Roller Speed", m_IntakeRoller.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("Intake Roller Current", m_IntakeRoller.getStatorCurrent().getValueAsDouble());
     SmartDashboard.putNumber("Intake Pivot Current", m_IntakePivot.getStatorCurrent().getValueAsDouble());
-    SmartDashboard.putNumber("Intake Roller Current Limit", rollerConfigs.CurrentLimits.StatorCurrentLimit);
+    // SmartDashboard.putNumber("Intake Roller Current Limit", rollerConfigs.CurrentLimits.StatorCurrentLimit);
 
     
   }

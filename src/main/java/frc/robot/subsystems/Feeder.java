@@ -81,8 +81,8 @@ public class Feeder extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Left Feeder Speed", m_leftMotor.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("Right Feeder Speed", m_rightMotor.getVelocity().getValueAsDouble());
-    SmartDashboard.putNumber("Left Feeder Set Speed", getLeftFeederSpeed());
-    SmartDashboard.putNumber("Right Feeder Set Speed", getRightFeederSpeed());
+    // SmartDashboard.putNumber("Left Feeder Set Speed", getLeftFeederSpeed());
+    // SmartDashboard.putNumber("Right Feeder Set Speed", getRightFeederSpeed());
     SmartDashboard.putNumber("Left Feeder Current", m_leftMotor.getStatorCurrent().getValueAsDouble());
     SmartDashboard.putNumber("Right Feeder Current", m_rightMotor.getStatorCurrent().getValueAsDouble());
 

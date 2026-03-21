@@ -277,8 +277,8 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     //manual trench shot
     driver.circle().whileTrue(
       new ParallelCommandGroup(
-        new InstantCommand(() -> s_Shooter.setShooterSpeed(-47.166)),
-        new InstantCommand(() -> s_ShooterPivot.setShooterAngle(-0.143))
+        new InstantCommand(() -> s_Shooter.setShooterSpeed(-40.412)),
+        new InstantCommand(() -> s_ShooterPivot.setShooterAngle(-0.137))
       )
     ).onFalse(
       new ParallelCommandGroup(
@@ -337,14 +337,23 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     //   new InstantCommand(() -> s_Climber.setServo(s_Climber.getServoIn()))
     // );
 
-    // driver.square().onTrue(
-    // new InstantCommand(() -> s_Climber.setServo(s_Climber.getServoMid()))
-    // );
+    driver.square().whileTrue(
+      new ParallelCommandGroup(
+        new InstantCommand(() -> s_Shooter.setShooterSpeed(-47.166)),
+        new InstantCommand(() -> s_ShooterPivot.setShooterAngle(-0.143))
+      )
+    ).onFalse(
+      new ParallelCommandGroup(
+        new InstantCommand(() -> s_Shooter.setShooterSpeed(0)),
+        new InstantCommand(() -> s_ShooterPivot.setShooterAngle(0)))
+    );
 
+    // home Intake
     driver.povRight().onTrue(
       new HomeIntake(s_Intake)
     );
 
+  
   }
 
    

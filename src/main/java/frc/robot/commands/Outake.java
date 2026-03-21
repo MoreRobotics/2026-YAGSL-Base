@@ -23,6 +23,7 @@ public class Outake extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    s_Intake.setCurrentLimit(s_Intake.getActiveRollerCurrentLimit());
     s_Intake.setIntakeSpeed(s_Intake.getOutakeSpeed());
     s_HotDog.setHotDogSpeed(s_HotDog.getReverseHotDogSpeed());
     s_HotDog.setIndexerSpeed(s_HotDog.getReverseIndexerSpeed());
@@ -35,7 +36,8 @@ public class Outake extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    s_Intake.setIntakeSpeed(0);
+    s_Intake.setCurrentLimit(s_Intake.getIdleRollerCurrentLimit());
+    s_Intake.setIntakeSpeed(20);
     s_HotDog.setHotDogSpeed(0);
     s_HotDog.setIndexerSpeed(0);
   }

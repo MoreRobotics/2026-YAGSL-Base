@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.io.ObjectInputFilter.Config;
+
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -20,9 +22,10 @@ public class ShooterPivot extends SubsystemBase {
 
   private int shooterPivotID = 16;
   private int canCoderID = 6;
-  private double kP = 60;
+  private double kP = 150;//135 error = 0.003//160 good
   private double kI = 0;
   private double kD = 0;
+  private double kV = 0;//2.8
   private double speedkP = 10;
   private double gearRatio = (16384/675)/1.062;
   private double currentLimit = 100;
@@ -33,7 +36,7 @@ public class ShooterPivot extends SubsystemBase {
 
   public double homingSpeed = 0.5;
   public double homingCurrentLimit = currentLimit / 2;
-  public double homingPosition = 0;
+  public double homingPosition = 0.001;
 
   public double forwardLimit = 0.01;
   public double reverseLimit = -0.278;
@@ -62,6 +65,7 @@ public class ShooterPivot extends SubsystemBase {
     configs.Slot0.kP = kP;
     configs.Slot0.kI = kI;
     configs.Slot0.kD = kD;
+    configs.Slot0.kV = kV;
     configs.Slot1.kP = speedkP;
     configs.MotionMagic.MotionMagicAcceleration = acceleration;
     configs.MotionMagic.MotionMagicCruiseVelocity = velocity;
