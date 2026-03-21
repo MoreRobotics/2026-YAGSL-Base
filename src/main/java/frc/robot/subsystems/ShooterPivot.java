@@ -93,13 +93,13 @@ public class ShooterPivot extends SubsystemBase {
       +0.27657703*s_Eyes.getTargetDistance()
       -0.16878591;
    
-    if(angle_Rotation > 0.01)
+    if(angle_Rotation > -0.02)
     {
-      return 0.0;
+      return -0.02;
     }
-    else if(angle_Rotation < -0.278)
+    else if(angle_Rotation < -0.276)
     {
-      return -0.278;
+      return -0.276;
     }
     else{
       return angle_Rotation;
