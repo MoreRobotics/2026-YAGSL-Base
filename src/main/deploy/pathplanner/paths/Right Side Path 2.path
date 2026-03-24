@@ -8,11 +8,27 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.420628706998816,
-        "y": -0.06963226571767578
+        "x": 6.44093712930012,
+        "y": 3.5562158956109133
       },
       "isLocked": false,
       "linkedName": "Right Side Path 1 End"
+    },
+    {
+      "anchor": {
+        "x": 7.5060972716488745,
+        "y": 0.8986951364175559
+      },
+      "prevControl": {
+        "x": 6.290308422301306,
+        "y": 2.9859786476868324
+      },
+      "nextControl": {
+        "x": 7.6319265316733444,
+        "y": 0.6826696811543063
+      },
+      "isLocked": false,
+      "linkedName": null
     },
     {
       "anchor": {
@@ -30,19 +46,27 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.40674955595026735,
+      "waypointRelativePos": 0.09946714031971446,
+      "rotationDegrees": -175.0
+    },
+    {
+      "waypointRelativePos": 0.5,
+      "rotationDegrees": -93.08787969223067
+    },
+    {
+      "waypointRelativePos": 1.0621669626998103,
       "rotationDegrees": 0.0
     },
     {
-      "waypointRelativePos": 0.93,
+      "waypointRelativePos": 1.85,
       "rotationDegrees": 0.0
     }
   ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.8076490438695164,
-      "maxWaypointRelativePos": 1.0,
+      "minWaypointRelativePos": 1.6,
+      "maxWaypointRelativePos": 2.0,
       "constraints": {
         "maxVelocity": 3.0,
         "maxAcceleration": 3.0,
@@ -60,8 +84,8 @@
         "y": 4.035
       },
       "rotationOffset": 0.0,
-      "minWaypointRelativePos": 0.9628796400449959,
-      "maxWaypointRelativePos": 1.0,
+      "minWaypointRelativePos": 2.9,
+      "maxWaypointRelativePos": 3.0,
       "name": "Point Towards Zone"
     }
   ],
@@ -79,7 +103,7 @@
     },
     {
       "name": "Prepare Shooter",
-      "waypointRelativePos": 0.7581552305961766,
+      "waypointRelativePos": 1.5,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
