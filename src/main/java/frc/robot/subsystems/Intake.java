@@ -19,7 +19,6 @@ public class Intake extends SubsystemBase {
   private double pivotP = 60;
   private double pivotI = 0;
   private double pivotD = 0;
-  private double homeP = .25;
   private double pivotAcceleration = 20.0;
   private double pivotVelocity = 2;
   private double pivotAccelerationSlow = 0.28125;
@@ -28,8 +27,8 @@ public class Intake extends SubsystemBase {
   private double reverseLimit = -.163;
   private double pivotCurrentLimit = 100;
   private double intakeStowPosition = 0.001;
-  private double intakeOutPosition = 0.34;
-  private double intakeMiddlePosition = 0.20;
+  private double intakeOutPosition = 0.336;
+  private double intakeMiddlePosition = 0.106;
   private double target = 0;
   private boolean intakeOut = false;
   private double tolerance = 0.005;
@@ -65,7 +64,7 @@ public class Intake extends SubsystemBase {
 
     m_Request = new MotionMagicVoltage(0).withSlot(0);
     m_VelocityRequest = new VelocityVoltage(0).withSlot(0);
-    m_PivotVelocityRequest = new VelocityVoltage(0).withSlot(1);
+    m_PivotVelocityRequest = new VelocityVoltage(0).withSlot(0);
     
 
     pivotConfigs = new TalonFXConfiguration();
@@ -73,7 +72,6 @@ public class Intake extends SubsystemBase {
     pivotConfigs.Slot0.kP = pivotP;
     pivotConfigs.Slot0.kI = pivotI;
     pivotConfigs.Slot0.kD = pivotD;
-    pivotConfigs.Slot1.kP = homeP;
     pivotConfigs.MotionMagic.MotionMagicAcceleration = pivotAcceleration;
     pivotConfigs.MotionMagic.MotionMagicCruiseVelocity = pivotVelocity;
     // pivotConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
@@ -114,6 +112,8 @@ public class Intake extends SubsystemBase {
 
   public void homeIntakePivot()
   {
+    pivotConfigs.Slot0.kP = .25;
+    m_IntakePivot.getConfigurator().apply(pivotConfigs);
     m_IntakePivot.setControl(m_PivotVelocityRequest.withVelocity(3));
   }
 
@@ -245,7 +245,6 @@ public class Intake extends SubsystemBase {
     SmartDashboard.putNumber("Intake Roller Current", m_IntakeRoller.getStatorCurrent().getValueAsDouble());
     SmartDashboard.putNumber("Intake Pivot Current", m_IntakePivot.getStatorCurrent().getValueAsDouble());
     // SmartDashboard.putNumber("Intake Roller Current Limit", rollerConfigs.CurrentLimits.StatorCurrentLimit);
-    SmartDashboard.putNumber("Intake Pivot Velocity", m_IntakePivot.getVelocity().getValueAsDouble());
 
     
   }
