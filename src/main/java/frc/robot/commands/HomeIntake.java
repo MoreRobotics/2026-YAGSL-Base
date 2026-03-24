@@ -45,7 +45,7 @@ public class HomeIntake extends Command {
   @Override
   public void end(boolean interrupted) {
     s_Intake.stopIntakePivot();
-     s_Intake.setIntakePivotPosition(s_Intake.getIntakeOutPosition());
+    s_Intake.setIntakePivotPosition(s_Intake.getIntakeOutPosition() + 0.0131);
   }
 
   // Returns true when the command should end.
