@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.io.ObjectInputFilter.Config;
+
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -20,9 +22,10 @@ public class ShooterPivot extends SubsystemBase {
 
   private int shooterPivotID = 16;
   private int canCoderID = 6;
-  private double kP = 60;
+  private double kP = 150;//135 error = 0.003//160 good
   private double kI = 0;
   private double kD = 0;
+  private double kV = 0;//2.8
   private double speedkP = 10;
   private double gearRatio = (16384/675)/1.062;
   private double currentLimit = 100;
@@ -33,9 +36,9 @@ public class ShooterPivot extends SubsystemBase {
 
   public double homingSpeed = 0.5;
   public double homingCurrentLimit = currentLimit / 2;
-  public double homingPosition = 0;
+  public double homingPosition = 0.001;
 
-  public double forwardLimit = 0.0;
+  public double forwardLimit = 0.01;
   public double reverseLimit = -0.278;
 
 
@@ -62,13 +65,14 @@ public class ShooterPivot extends SubsystemBase {
     configs.Slot0.kP = kP;
     configs.Slot0.kI = kI;
     configs.Slot0.kD = kD;
+    configs.Slot0.kV = kV;
     configs.Slot1.kP = speedkP;
     configs.MotionMagic.MotionMagicAcceleration = acceleration;
     configs.MotionMagic.MotionMagicCruiseVelocity = velocity;
     // configs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     // configs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = forwardLimit;
-    // configs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    // configs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = reverseLimit;
+    configs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    configs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = reverseLimit;
     configs.Feedback.SensorToMechanismRatio = gearRatio;
     configs.CurrentLimits.StatorCurrentLimitEnable = true;
     configs.CurrentLimits.StatorCurrentLimit = currentLimit;
@@ -85,37 +89,31 @@ public class ShooterPivot extends SubsystemBase {
   public double getShooterAngle()
   {
     double angle_Rotation;
-
-    if(s_Eyes.getTargetDistance() <= 4)
-    {
       angle_Rotation = 
-      0.024836*Math.pow(s_Eyes.getTargetDistance(), 3)
-      -0.197232*Math.pow(s_Eyes.getTargetDistance(), 2)
-      +0.412449*s_Eyes.getTargetDistance()
-      -0.290895;
-    }
-    else
+      0.00033697*Math.pow(s_Eyes.getTargetDistance(), 5)
+      -0.00710695*Math.pow(s_Eyes.getTargetDistance(), 4)
+      +0.0556223*Math.pow(s_Eyes.getTargetDistance(), 3)
+      -0.19830578*Math.pow(s_Eyes.getTargetDistance(), 2)
+      +0.27657703*s_Eyes.getTargetDistance()
+      -0.16878591;
+   
+    if(angle_Rotation > -0.02)
     {
-      angle_Rotation = 
-      -0.009240*Math.pow(s_Eyes.getTargetDistance(), 2)
-      +0.112713*s_Eyes.getTargetDistance()
-      -0.600534;
+      return -0.02;
     }
-    
-    // angle_Rotation = 
-    // -0.001402*Math.pow(s_Eyes.getTargetDistance(), 4)
-    // +0.024743*Math.pow(s_Eyes.getTargetDistance(), 3)
-    // -0.141838*Math.pow(s_Eyes.getTargetDistance(), 2)
-    // +0.247402*s_Eyes.getTargetDistance()
-    // -0.16659;
-
-    return angle_Rotation;
+    else if(angle_Rotation < -0.276)
+    {
+      return -0.276;
+    }
+    else{
+      return angle_Rotation;
+    }
   }
 
   public void setShooterAngle(double setpoint)
   {
 
-    m_ShooterPivot.setControl(m_Request.withPosition((setpoint*1.04)));
+    m_ShooterPivot.setControl(m_Request.withPosition((setpoint)));
      SmartDashboard.putNumber("Shooter Pivot Setpoint", (setpoint));
   }
 

@@ -5,46 +5,52 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.HotDog;
 import frc.robot.subsystems.Intake;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class Outake extends Command {
+public class HomeIntake extends Command {
   Intake s_Intake;
-  HotDog s_HotDog;
-  /** Creates a new Outake. */
-  public Outake(Intake s_Intake, HotDog s_HotDog) {
+  boolean finished = false;
+  /** Creates a new HomeIntake. */
+  public HomeIntake(Intake s_Intake) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.s_Intake = s_Intake;
-    this.s_HotDog = s_HotDog;
-    addRequirements(s_HotDog,s_Intake);
+    addRequirements(s_Intake);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    s_Intake.setCurrentLimit(s_Intake.getActiveRollerCurrentLimit());
-    s_Intake.setIntakeSpeed(s_Intake.getOutakeSpeed());
-    s_HotDog.setHotDogSpeed(s_HotDog.getReverseHotDogSpeed());
-    s_HotDog.setIndexerSpeed(s_HotDog.getReverseIndexerSpeed());
+    finished = false;
+    s_Intake.homeIntakePivot();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    // if(s_Intake.getIntakePivotCurrent() >= 25)
+    // {
+    //   System.out.println("Working");
+    //   // s_Intake.stopIntakePivot();
+    //   s_Intake.setIntakePivotPosition(s_Intake.getIntakeOutPosition());
+    //   finished = true;
+    // }
+    // else
+    // {
+    //   finished = false;
+    // }
+  }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    s_Intake.setCurrentLimit(s_Intake.getIdleRollerCurrentLimit());
-    s_Intake.setIntakeSpeed(20);
-    s_HotDog.setHotDogSpeed(0);
-    s_HotDog.setIndexerSpeed(0);
+    s_Intake.stopIntakePivot();
+    s_Intake.setIntakePivotPosition(s_Intake.getIntakeOutPosition() + 0.0131);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return s_Intake.getIntakePivotCurrent() >= 25;
   }
 }

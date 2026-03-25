@@ -5,43 +5,35 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Lights;
+import frc.robot.subsystems.ShooterPivot;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class RunIntake extends Command {
-  Intake s_Intake;
-  Lights s_Lights;
-  /** Creates a new RunIntake. */
-  public RunIntake(Intake s_Intake, Lights s_Lights) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    this.s_Intake = s_Intake;
-    this.s_Lights = s_Lights;
-    addRequirements(s_Intake, s_Lights);
-
+public class SetShooterAngle extends Command {
+  ShooterPivot s_ShooterPivot;
+  double setpoint;
+  /** Creates a new SetShooterAngle. */
+  public SetShooterAngle(ShooterPivot s_ShooterPivot, double setpoint) {
+    // Use addRequirements() here to declare subsystem dependencies.\
+    this.s_ShooterPivot = s_ShooterPivot;
+    this.setpoint = setpoint;
+    addRequirements(s_ShooterPivot);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    s_Intake.setCurrentLimit(s_Intake.getActiveRollerCurrentLimit());
-    s_Intake.setIntakeSpeed(s_Intake.getIntakeSpeed());
-    s_Lights.Intake();
+    s_ShooterPivot.setShooterAngle(setpoint);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    s_ShooterPivot.setShooterAngle(setpoint);
+  }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    
-    s_Intake.setCurrentLimit(s_Intake.getIdleRollerCurrentLimit());
-    s_Intake.setIntakeSpeed(20);
-    s_Lights.ClearLights();
-    
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override

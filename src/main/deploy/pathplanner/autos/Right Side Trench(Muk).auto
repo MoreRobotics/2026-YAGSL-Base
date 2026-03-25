@@ -7,13 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Left Side Path 1"
+            "pathName": "Right Side Path 1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Left Side Path 2"
+            "pathName": "Right Side Path 2(Muk)"
           }
         },
         {
@@ -33,13 +33,13 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "Prepare Shooter"
+                        "name": "Aim Shooter"
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "Aim Shooter"
+                        "name": "Prepare Shooter"
                       }
                     },
                     {
@@ -53,9 +53,22 @@
                             }
                           },
                           {
-                            "type": "named",
+                            "type": "parallel",
                             "data": {
-                              "name": "Run HotDog"
+                              "commands": [
+                                {
+                                  "type": "named",
+                                  "data": {
+                                    "name": "Run HotDog"
+                                  }
+                                },
+                                {
+                                  "type": "named",
+                                  "data": {
+                                    "name": "Run Feeder"
+                                  }
+                                }
+                              ]
                             }
                           }
                         ]
@@ -160,12 +173,6 @@
                             "data": {
                               "name": "Pump Intake"
                             }
-                          },
-                          {
-                            "type": "wait",
-                            "data": {
-                              "waitTime": 1.0
-                            }
                           }
                         ]
                       }
@@ -210,13 +217,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Left Side Path 3"
+            "pathName": "Right Side Path 3"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Left Side Path 4"
+            "pathName": "Right Side Path 4"
           }
         }
       ]

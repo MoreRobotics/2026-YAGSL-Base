@@ -20,7 +20,7 @@ public class MoveIntake extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    s_Intake.setIntakePosition();
+    s_Intake.moveIntake();
   }
 
   // Called every time the scheduler runs while the command is scheduled.

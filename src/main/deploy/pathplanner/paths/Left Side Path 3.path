@@ -3,45 +3,49 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.45,
-        "y": 7.43
+        "x": 2.514,
+        "y": 7.36
       },
       "prevControl": null,
       "nextControl": {
-        "x": 9.195290628707,
-        "y": 7.440284697508897
+        "x": 9.184531435349943,
+        "y": 7.3434519572953745
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Left Side Path 2 End"
     },
     {
       "anchor": {
-        "x": 8.302277580071175,
-        "y": 3.6100118623962043
+        "x": 5.85,
+        "y": 4.0
       },
       "prevControl": {
-        "x": 8.27,
-        "y": 6.79473309608541
+        "x": 5.807071174377225,
+        "y": 7.821281138790035
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Left Side Path 1 End"
+      "linkedName": "Left Side Path 3 End"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.10657193605683822,
+      "waypointRelativePos": 0.03907637655417641,
       "rotationDegrees": 0.0
     },
     {
-      "waypointRelativePos": 0.44760213143872174,
-      "rotationDegrees": -110.0
+      "waypointRelativePos": 0.3516873889875669,
+      "rotationDegrees": 0.0
+    },
+    {
+      "waypointRelativePos": 0.5701598579040882,
+      "rotationDegrees": -90.0
     }
   ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.48818897637795466,
+      "minWaypointRelativePos": 0.7941507311586129,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 2.0,
@@ -56,19 +60,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "Move Intake",
-      "waypointRelativePos": 0.08,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "Move Intake"
-        }
-      }
-    },
-    {
       "name": "Intake",
-      "waypointRelativePos": 0.12,
+      "waypointRelativePos": 0.08323959505061902,
       "endWaypointRelativePos": 1.0,
       "command": {
         "type": "named",
@@ -88,13 +81,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -110.53
+    "rotation": -90.0
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -61.798134325181856
   },
   "useDefaultConstraints": true
 }

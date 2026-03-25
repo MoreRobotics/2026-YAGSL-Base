@@ -5,21 +5,9 @@
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "Move Intake"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "Right Side Path 1"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Stop Intake"
           }
         },
         {
@@ -45,13 +33,13 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "Prepare Shooter"
+                        "name": "Aim Shooter"
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "Aim Shooter"
+                        "name": "Prepare Shooter"
                       }
                     },
                     {
@@ -61,13 +49,129 @@
                           {
                             "type": "wait",
                             "data": {
+                              "waitTime": 0.2
+                            }
+                          },
+                          {
+                            "type": "parallel",
+                            "data": {
+                              "commands": [
+                                {
+                                  "type": "named",
+                                  "data": {
+                                    "name": "Run HotDog"
+                                  }
+                                },
+                                {
+                                  "type": "named",
+                                  "data": {
+                                    "name": "Run Feeder"
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "sequential",
+                      "data": {
+                        "commands": [
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 2.0
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Pump Intake"
+                            }
+                          },
+                          {
+                            "type": "wait",
+                            "data": {
                               "waitTime": 1.0
                             }
                           },
                           {
                             "type": "named",
                             "data": {
-                              "name": "Run HotDog"
+                              "name": "Pump Intake"
+                            }
+                          },
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 1.0
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Pump Intake"
+                            }
+                          },
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 1.0
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Pump Intake"
+                            }
+                          },
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 1.0
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Pump Intake"
+                            }
+                          },
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 1.0
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Pump Intake"
+                            }
+                          },
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 1.0
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Pump Intake"
+                            }
+                          },
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 1.0
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Pump Intake"
                             }
                           }
                         ]
@@ -80,33 +184,46 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "Move Intake"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Stow Shooter"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Stop Shooter"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Stop HotDog"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Stop HotDog"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Stop Shooter"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Stow Shooter"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Stop Feeder"
+                }
+              }
+            ]
           }
         },
         {
           "type": "path",
           "data": {
             "pathName": "Right Side Path 3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right Side Path 4"
           }
         }
       ]

@@ -21,10 +21,11 @@ public class HotDog extends SubsystemBase {
   private double hotDogD = 0;
   private double hotDogV = .15;
   
-  private double currentLimit = 100;
+  private double currentLimit = 80;
+  private double hotDogCurrentLimit = 40;
   private double indexerSpeed = 85*.9;
-  private double hotDogSpeed = 85;
-  private double reverseHotDogSpeed = -40;
+  private double hotDogSpeed = -85 * 2/3;
+  private double reverseHotDogSpeed = 40;
   private double reverseIndexerSpeed = -40;
   private double acceleration = 500;
 
@@ -61,7 +62,7 @@ public class HotDog extends SubsystemBase {
     hotDogConfigs.Slot0.kV = hotDogV;
     hotDogConfigs.MotionMagic.MotionMagicAcceleration = acceleration;
     hotDogConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
-    hotDogConfigs.CurrentLimits.SupplyCurrentLimit = currentLimit;
+    hotDogConfigs.CurrentLimits.SupplyCurrentLimit = hotDogCurrentLimit;
 
      m_Indexer.getConfigurator().apply(indexerConfigs);
     m_HotDog.getConfigurator().apply(hotDogConfigs);
@@ -98,6 +99,11 @@ public class HotDog extends SubsystemBase {
   public double getReverseHotDogSpeed()
   {
     return reverseHotDogSpeed;
+  }
+
+  public double getHotDogMotorSpeed()
+  {
+    return m_HotDog.getVelocity().getValueAsDouble();
   }
 
 

@@ -20,7 +20,7 @@ public class Shooter extends SubsystemBase {
 
   private int leftShooterID = 14;
   private int rightShooterID = 15;
-  private double kP = .7;
+  private double kP = .85;
   private double kI = 0;
   private double kD = 0;
   private double kV = 0.1;
@@ -30,7 +30,7 @@ public class Shooter extends SubsystemBase {
 
   private double kShooter = 1;
 
-  private double shooterSpeed = -57*.85;
+  private double shooterSpeed = -57*.6;
 
 
 
@@ -59,7 +59,7 @@ public class Shooter extends SubsystemBase {
     configs.Feedback.SensorToMechanismRatio = gearRatio;
     configs.CurrentLimits.StatorCurrentLimitEnable = true;
     configs.CurrentLimits.StatorCurrentLimit = currentLimit;
-    configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    configs.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
     m_LeftShooter.getConfigurator().apply(configs);
     m_RightShooter.getConfigurator().apply(configs);
@@ -73,20 +73,31 @@ public class Shooter extends SubsystemBase {
     m_RightShooter.setControl(m_Follower.withLeaderID(leftShooterID));
   }
 
+  public void setShooterVoltage(double voltage)
+  {
+    m_LeftShooter.setVoltage(voltage);
+    m_RightShooter.setControl(m_Follower.withLeaderID(leftShooterID));
+  }
+
   public double getShooterSpeed()
   {
     double speed;
    
     speed = 
-    0.082675*Math.pow(s_Eyes.getTargetDistance(), 5)
-    -1.566589*Math.pow(s_Eyes.getTargetDistance(), 4)
-    +10.887974*Math.pow(s_Eyes.getTargetDistance(), 3)
-    -33.684491*Math.pow(s_Eyes.getTargetDistance(), 2)
-    +47.397441*s_Eyes.getTargetDistance()
-    +18.379658;
+    2.393631*s_Eyes.getTargetDistance()
+    +31.625928;
+    if(speed > 48.165)
+    {
+      return -48.165;
+    }
+    else if(speed < 34.2)
+    {
+      return -34.2;
+    }
+    else{
+      return -speed;
+    }
 
-
-    return -speed*1.05;
     // return shooterSpeed;
   }
 

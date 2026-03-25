@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.763107947805457,
-        "y": 3.943546856465006
+        "x": 5.85,
+        "y": 4.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.226358244365363,
-        "y": 2.1682799525504155
+        "x": 7.195007117437722,
+        "y": 5.5403321470937135
       },
       "isLocked": false,
-      "linkedName": "Right Side Path 3 End"
+      "linkedName": "Left Side Path 3 End"
     },
     {
       "anchor": {
         "x": 2.234,
-        "y": 2.5556109134045073
+        "y": 5.444
       },
       "prevControl": {
-        "x": 5.827570581257413,
-        "y": 2.5018149466192163
+        "x": 5.902977461447213,
+        "y": 5.439074733096086
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,11 +30,11 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.5,
+      "waypointRelativePos": 0.5523978685612844,
       "rotationDegrees": 0.0
     },
     {
-      "waypointRelativePos": 0.8721136767317956,
+      "waypointRelativePos": 0.8685612788632279,
       "rotationDegrees": 0.0
     }
   ],
@@ -46,7 +46,7 @@
         "y": 4.035
       },
       "rotationOffset": 0.0,
-      "minWaypointRelativePos": 0.9606299212598614,
+      "minWaypointRelativePos": 0.9178852643419632,
       "maxWaypointRelativePos": 1.0,
       "name": "Point Towards Zone"
     }
@@ -62,13 +62,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 32.5740571345725
+    "rotation": -31.25045627201554
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": -90.0
   },
   "useDefaultConstraints": true
 }
