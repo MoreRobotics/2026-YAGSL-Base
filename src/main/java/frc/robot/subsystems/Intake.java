@@ -39,7 +39,7 @@ public class Intake extends SubsystemBase {
   private double rollerV = 0.125;
   private double rollerCurrentLimit = 80;
   private double idleRollerCurrentLimit = 20;
-  private double intakeSpeed = 44;
+  private double intakeSpeed = 50;
   private double outakeSpeed = -40;
 
   private double gearRatio = 87.5/1;
