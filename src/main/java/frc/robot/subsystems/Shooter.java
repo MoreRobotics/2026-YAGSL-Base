@@ -79,6 +79,10 @@ public class Shooter extends SubsystemBase {
     m_RightShooter.setControl(m_Follower.withLeaderID(leftShooterID));
   }
 
+  public double getCurrentSpeed() {
+    return m_LeftShooter.getVelocity().getValueAsDouble();
+  }
+
   public double getShooterSpeed()
   {
     double speed;

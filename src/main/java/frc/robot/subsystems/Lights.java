@@ -29,7 +29,7 @@ public class Lights extends SubsystemBase {
     
     // Constants
     private static final int candleID = 0;
-    private static final int numLEDS = 8;
+    private static final int numLEDS = 40;
     private static final double brightness = 0.5;
     private static final int halfpoint = Math.round(numLEDS / 2);
     

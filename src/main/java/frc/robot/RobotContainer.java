@@ -40,7 +40,10 @@ import frc.robot.commands.RunIntake;
 import frc.robot.commands.SetShooterAngle;
 import frc.robot.commands.SetShooterSpeed;
 import frc.robot.commands.StowShooter;
+import frc.robot.commands.LightCommands.Aim;
+import frc.robot.commands.LightCommands.Clear;
 import frc.robot.commands.LightCommands.Idle;
+import frc.robot.commands.LightCommands.ReadyToFire;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShooterPivot;
@@ -195,7 +198,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
-    s_Lights.setDefaultCommand(new Idle(s_Lights, drivebase));
+    //s_Lights.setDefaultCommand(new Idle(s_Lights, drivebase));
   }
 
   /**
@@ -227,7 +230,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
           () -> driver.getLeftX(),
           () -> (s_Eyes.getTargetRotation()) * (.12)),
             new AimShooter(s_ShooterPivot),
-           new PrepareShooter(s_Shooter)
+            new PrepareShooter(s_Shooter, s_Lights)         
           ))
       .onFalse(
         new ParallelCommandGroup(
@@ -248,7 +251,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
           () -> -driver.getLeftX(),
           () -> (s_Eyes.getTargetRotation()-drivebase.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.12)),
                new AimShooter(s_ShooterPivot),
-           new PrepareShooter(s_Shooter)
+           new PrepareShooter(s_Shooter, s_Lights)
           ))
       .onFalse(
         new ParallelCommandGroup(
