@@ -36,6 +36,7 @@ public class RunIntake extends Command {
   @Override
   public void end(boolean interrupted) {
     s_Intake.setIntakeSpeed(0);
+    s_Lights.ClearLights();
   }
 
   // Returns true when the command should end.
