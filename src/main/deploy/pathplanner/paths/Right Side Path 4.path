@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.763107947805457,
-        "y": 3.943546856465006
+        "x": 6.0,
+        "y": 4.2
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.226358244365363,
-        "y": 2.1682799525504155
+        "x": 7.463250296559906,
+        "y": 2.4247330960854097
       },
       "isLocked": false,
       "linkedName": "Right Side Path 3 End"
@@ -68,7 +68,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": 115.0
   },
   "useDefaultConstraints": true
 }

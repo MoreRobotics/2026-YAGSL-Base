@@ -84,7 +84,10 @@ public class Lights extends SubsystemBase {
 
     public void ClearLights() {
         m_candle.setControl(new SolidColor(0, numLEDS).withColor(kBlack));
-        m_candle.setControl(new EmptyAnimation(candleID));
+        m_candle.setControl(new EmptyAnimation(0));
+        // m_candle.setControl(new LarsonAnimation(0, numLEDS));
+        // m_candle.setControl(new TwinkleAnimation(0, numLEDS));
+        // m_candle.setControl(new StrobeAnimation(0, 0));
     }
 
     public void Idle() {

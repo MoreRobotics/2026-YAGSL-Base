@@ -13,7 +13,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Right Side Path 2(Muk)"
+            "pathName": " Right Side Path 2(Muk)"
           }
         },
         {
@@ -81,7 +81,7 @@
                           {
                             "type": "wait",
                             "data": {
-                              "waitTime": 2.0
+                              "waitTime": 3.5
                             }
                           },
                           {

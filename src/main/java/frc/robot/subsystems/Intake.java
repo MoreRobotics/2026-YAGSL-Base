@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
-  private double pivotP = 60;
+  private double pivotP = 100;//60
   private double pivotI = 0;
   private double pivotD = 0;
   private double pivotAcceleration = 20.0;
@@ -27,7 +27,7 @@ public class Intake extends SubsystemBase {
   private double reverseLimit = -.163;
   private double pivotCurrentLimit = 100;
   private double intakeStowPosition = 0.001;
-  private double intakeOutPosition = 0.341;
+  private double intakeOutPosition = 0.341;//.341
   private double intakeMiddlePosition = 0.184;
   private double target = 0;
   private boolean intakeOut = false;
