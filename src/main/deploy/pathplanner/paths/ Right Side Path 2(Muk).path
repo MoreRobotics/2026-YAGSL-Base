@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.0,
-        "y": 4.406
+        "x": 7.625,
+        "y": 3.75
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.129110320284699,
-        "y": -0.06963226571767578
+        "x": 7.754110320284699,
+        "y": -0.7256322657176755
       },
       "isLocked": false,
       "linkedName": "Right Side Path 1 End"

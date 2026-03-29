@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.0,
-        "y": 3.6100118623962043
+        "x": 7.625,
+        "y": 4.61
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.611459074733096,
-        "y": 5.23465005931198
+        "x": 5.72164294187426,
+        "y": 5.030225385527876
       },
       "isLocked": false,
       "linkedName": "Left Side Path 1 End"
     },
     {
       "anchor": {
-        "x": 8.173167259786476,
-        "y": 7.19282325029656
+        "x": 6.0,
+        "y": 7.193
       },
       "prevControl": {
-        "x": 5.8814590747330975,
-        "y": 5.847924080664294
+        "x": 6.09664294187426,
+        "y": 4.922633451957295
       },
       "nextControl": {
-        "x": 8.388780811902565,
-        "y": 7.319357025012575
+        "x": 5.98936785072779,
+        "y": 7.442773812482121
       },
       "isLocked": false,
       "linkedName": null
@@ -47,11 +47,11 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 0.1207815275310749,
-      "rotationDegrees": 137.9218228865382
+      "rotationDegrees": 162.82503660787742
     },
     {
       "waypointRelativePos": 0.4333925399644757,
-      "rotationDegrees": 87.95695958595475
+      "rotationDegrees": 117.7093198626298
     },
     {
       "waypointRelativePos": 1.2717584369449348,
