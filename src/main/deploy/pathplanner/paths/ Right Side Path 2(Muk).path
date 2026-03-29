@@ -3,33 +3,17 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.291518386714117,
+        "x": 8.0,
         "y": 4.406
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.420628706998816,
+        "x": 8.129110320284699,
         "y": -0.06963226571767578
       },
       "isLocked": false,
       "linkedName": "Right Side Path 1 End"
     },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     {
       "anchor": {
         "x": 2.514,
@@ -47,14 +31,6 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 0.40674955595026735,
-
-
-
-
-
-
-
-
       "rotationDegrees": 0.0
     },
     {

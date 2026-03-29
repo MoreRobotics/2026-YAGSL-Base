@@ -26,7 +26,15 @@ public class RunFeeder extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    // if(s_Feeder.getRightFeederCurrent() > (s_Feeder.getFeederCurrentLimit() * .8))
+    // {
+    //   s_Feeder.setFeederSpeed(s_Feeder.getLeftFeederSpeed(), -s_Feeder.getRightFeederSpeed());
+    // }
+    // else{
+    //   s_Feeder.setFeederSpeed(s_Feeder.getLeftFeederSpeed(), s_Feeder.getRightFeederSpeed());
+    // }
+  }
 
   // Called once the command ends or is interrupted.
   @Override

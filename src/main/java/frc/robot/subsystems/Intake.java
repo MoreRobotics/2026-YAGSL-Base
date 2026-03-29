@@ -27,7 +27,7 @@ public class Intake extends SubsystemBase {
   private double reverseLimit = -.163;
   private double pivotCurrentLimit = 100;
   private double intakeStowPosition = 0.001;
-  private double intakeOutPosition = 0.341;//.341
+  private double intakeOutPosition = 0.338;//.341
   private double intakeMiddlePosition = 0.184;
   private double target = 0;
   private boolean intakeOut = false;
@@ -37,7 +37,7 @@ public class Intake extends SubsystemBase {
   private double rollerI = 0;
   private double rollerD = 0;
   private double rollerV = 0.125;
-  private double rollerCurrentLimit = 80;
+  private double rollerCurrentLimit = 85;
   private double idleRollerCurrentLimit = 20;
   private double intakeSpeed = 50;
   private double outakeSpeed = -40;

@@ -281,7 +281,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
         new MoveIntake(s_Intake),
         new InstantCommand(() -> s_Intake.changeState())
 
-      )
+      ).withTimeout(2.0)
     );
 
     //home shooter
@@ -355,6 +355,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     //   new InstantCommand(() -> s_Climber.setServo(s_Climber.getServoIn()))
     // );
 
+    //pass
     driver.square().whileTrue(
       new ParallelCommandGroup(
         new InstantCommand(() -> s_Shooter.setShooterSpeed(-47.166)),

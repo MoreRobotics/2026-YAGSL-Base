@@ -61,6 +61,8 @@ public class Feeder extends SubsystemBase {
 
     m_leftMotor.setControl(m_velocityRequest.withVelocity(leftMotorSpeed));  
     m_rightMotor.setControl(m_velocityRequest.withVelocity(rightMotorSpeed));
+    SmartDashboard.putNumber("Left Feeder Set Speed", leftMotorSpeed);
+    SmartDashboard.putNumber("Right Feeder Set Speed", rightMotorSpeed);
 
   };
 
@@ -73,6 +75,16 @@ public class Feeder extends SubsystemBase {
   public double getRightFeederSpeed()
   {
     return rightFeederSpeed;
+  }
+
+  public double getRightFeederCurrent()
+  {
+    return m_rightMotor.getStatorCurrent().getValueAsDouble();
+  }
+
+  public double getFeederCurrentLimit()
+  {
+    return currentLimit;
   }
 
 
