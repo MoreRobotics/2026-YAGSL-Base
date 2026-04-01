@@ -4,10 +4,13 @@
 
 package frc.robot;
 
+import java.util.Optional;
+
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -26,9 +29,12 @@ public class Robot extends TimedRobot
 
   private Timer disabledTimer;
 
+  private boolean flag;
+  private Optional<Alliance> alliance;
   public Robot()
   {
     instance = this;
+    flag = true;
   }
 
   public static Robot getInstance()
@@ -73,6 +79,15 @@ public class Robot extends TimedRobot
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+    if(flag)
+    {
+      alliance = DriverStation.getAlliance();
+      if(alliance.isPresent())
+      {
+        RobotContainer.getSwerveDrive().redAlliance = alliance.get() == DriverStation.Alliance.Red;
+        flag = false;
+      }
+    }
   }
 
   /**
@@ -103,6 +118,7 @@ public class Robot extends TimedRobot
   @Override
   public void autonomousInit()
   {
+    RobotContainer.getSwerveDrive().setupPathPlanner();
     m_robotContainer.setMotorBrake(true);
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 

@@ -88,28 +88,23 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public SwerveSubsystem(File directory)
   {
-    boolean blueAlliance;
+    redAlliance = false;
     // boolean blueAlliance = false;
     isRedAlliance();
-    if(redAlliance)
-    {
-      blueAlliance = false;
-    }
-    else{
-      blueAlliance = true;
-    }
-     Pose2d startingPose = 
-     blueAlliance ? new Pose2d(new Translation2d(Meter.of(1),
-                                                                      Meter.of(4)),
-                                                    Rotation2d.fromDegrees(0))
-                                       : new Pose2d(new Translation2d(Meter.of(16),
-                                                                      Meter.of(4)),
-                                                    Rotation2d.fromDegrees(180));
+    
+    //  Pose2d startingPose = 
+    //  !redAlliance ? new Pose2d(new Translation2d(Meter.of(1),
+    //                                                                   Meter.of(4)),
+    //                                                 Rotation2d.fromDegrees(0))
+    //                                    : new Pose2d(new Translation2d(Meter.of(16),
+    //                                                                   Meter.of(4)),
+    //                                                 Rotation2d.fromDegrees(180));
+
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
     try
     {
-      swerveDrive = new SwerveParser(directory).createSwerveDrive(Constants.MAX_SPEED, startingPose);
+      swerveDrive = new SwerveParser(directory).createSwerveDrive(Constants.MAX_SPEED, new Pose2d());
       // Alternative method if you don't want to supply the conversion factor via JSON files.
       // swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed, angleConversionFactor, driveConversionFactor);
     } catch (Exception e)
@@ -124,7 +119,6 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.setModuleEncoderAutoSynchronize(false,
                                                 1); // Enable if you want to resynchronize your absolute encoders and motor encoders periodically when they are not moving.
     // swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
-    setupPathPlanner();
     RobotModeTriggers.autonomous().onTrue(Commands.runOnce(this::zeroGyroWithAlliance));
 
     m_PoseEstimator = 
@@ -223,9 +217,10 @@ public class SwerveSubsystem extends SubsystemBase
             var alliance = DriverStation.getAlliance();
             if (alliance.isPresent())
             {
-              return alliance.get() == DriverStation.Alliance.Red;
+              redAlliance = alliance.get() == DriverStation.Alliance.Red;
+              return redAlliance;
             }
-            return false;
+            return redAlliance;
           },
           this
           // Reference to this subsystem to set requirements
@@ -600,7 +595,11 @@ public class SwerveSubsystem extends SubsystemBase
   public void isRedAlliance()
   {
     var alliance = DriverStation.getAlliance();
-    redAlliance = alliance.isPresent() ? alliance.get() == DriverStation.Alliance.Red : false;
+    if(alliance.isPresent())
+    {
+      redAlliance = alliance.get() == DriverStation.Alliance.Red;
+    }
+    
   }
 
 
