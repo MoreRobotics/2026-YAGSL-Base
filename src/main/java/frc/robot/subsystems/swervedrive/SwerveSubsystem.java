@@ -119,7 +119,7 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.setModuleEncoderAutoSynchronize(false,
                                                 1); // Enable if you want to resynchronize your absolute encoders and motor encoders periodically when they are not moving.
     // swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
-    RobotModeTriggers.autonomous().onTrue(Commands.runOnce(this::zeroGyroWithAlliance));
+    //RobotModeTriggers.autonomous().onTrue(Commands.runOnce(this::zeroGyroWithAlliance));
 
     m_PoseEstimator = 
         new SwerveDrivePoseEstimator(
@@ -532,17 +532,12 @@ public class SwerveSubsystem extends SubsystemBase
    *
    * @param initialHolonomicPose The pose to set the odometry to
    */
-  public void resetOdometry(Pose2d pose)
+  public void resetOdometry(Pose2d initialHolonomicPose)
   {
-    swerveDrive.swerveDrivePoseEstimator.resetPose(pose);
-
+    swerveDrive.resetOdometry(initialHolonomicPose);
+    m_PoseEstimator.resetPosition(swerveDrive.getOdometryHeading(),swerveDrive.getModulePositions(), initialHolonomicPose);
   }
 
-  public void resetEstimatedPose(Pose2d pose)
-  {
-    m_PoseEstimator.resetPose(pose);
-    
-  }
 
   /**
    * Gets the current pose (position and rotation) of the robot, as reported by odometry.
