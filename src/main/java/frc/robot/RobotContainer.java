@@ -4,22 +4,15 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.controls.SolidColor;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.estimator.PoseEstimator;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -40,10 +33,6 @@ import frc.robot.commands.RunIntake;
 import frc.robot.commands.SetShooterAngle;
 import frc.robot.commands.SetShooterSpeed;
 import frc.robot.commands.StowShooter;
-import frc.robot.commands.LightCommands.Aim;
-import frc.robot.commands.LightCommands.Clear;
-import frc.robot.commands.LightCommands.Idle;
-import frc.robot.commands.LightCommands.ReadyToFire;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShooterPivot;
@@ -155,14 +144,14 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     // Configure the trigger bindings
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
-    NamedCommands.registerCommand("test", Commands.print("I EXIST"));
-    //  NamedCommands.registerCommand("Auto Aim Blue", drivebase.aimAtTarget());
+
+    // Auto Commands
+
     NamedCommands.registerCommand("Run HotDog", 
-    
     new InstantCommand(() -> s_HotDog.setHotDogSpeed(s_HotDog.getHotDogSpeed())).raceWith(new WaitCommand(5)).alongWith(new InstantCommand(() -> s_HotDog.setIndexerSpeed(s_HotDog.getIndexerSpeed())).raceWith(new WaitCommand(5))));
     NamedCommands.registerCommand("Stop HotDog", new InstantCommand(() -> s_HotDog.setHotDogSpeed(0)).alongWith(new InstantCommand(() -> s_HotDog.setIndexerSpeed(0))));
-     NamedCommands.registerCommand("Prepare Shooter", new SetShooterSpeed(s_Shooter, -40.52));
-     NamedCommands.registerCommand("Stop Shooter", new InstantCommand(() -> s_Shooter.setShooterVoltage(-1)));
+    NamedCommands.registerCommand("Prepare Shooter", new SetShooterSpeed(s_Shooter, -40.52));
+    NamedCommands.registerCommand("Stop Shooter", new InstantCommand(() -> s_Shooter.setShooterVoltage(-1)));
     NamedCommands.registerCommand("Intake", new RunIntake(s_Intake, s_Lights));
     NamedCommands.registerCommand("Stop Intake", new InstantCommand(() -> s_Intake.setIntakeSpeed(20)));
     NamedCommands.registerCommand("Move Intake", new SequentialCommandGroup(
@@ -193,12 +182,11 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
 
     
     
-
+    // Shuffleboard Auto Chooser
     autoChooser = AutoBuilder.buildAutoChooser();
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
-    //s_Lights.setDefaultCommand(new Idle(s_Lights, drivebase));
   }
 
   /**
@@ -221,6 +209,9 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     //     driveDirectAngleKeyboard);
 
 
+    // Teleop Commands
+
+    // Aiming Command (Red Alliance)
     if (drivebase.redAlliance)
     { 
         driver.L2().whileTrue(
@@ -242,6 +233,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
       
       
     }
+    // Aiming Command (Blue Alliance)
     else
     {
       driver.L2().whileTrue(

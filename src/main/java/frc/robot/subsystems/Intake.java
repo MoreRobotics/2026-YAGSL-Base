@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
+
+  // Intake Constants
   private double pivotP = 100;//60
   private double pivotI = 0;
   private double pivotD = 0;
@@ -47,6 +49,7 @@ public class Intake extends SubsystemBase {
   private int intakeRollerID = 11;
   private int intakePivotCANCoderID = 12;
 
+  // Talon Classes
   private TalonFX m_IntakePivot;
   private TalonFX m_IntakeRoller;
   //private CANcoder e_IntakePivot;
@@ -66,7 +69,7 @@ public class Intake extends SubsystemBase {
     m_VelocityRequest = new VelocityVoltage(0).withSlot(0);
     m_PivotVelocityRequest = new VelocityVoltage(0).withSlot(0);
     
-
+    // Motor Config
     pivotConfigs = new TalonFXConfiguration();
     pivotConfigs.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
     pivotConfigs.Slot0.kP = pivotP;
@@ -94,9 +97,9 @@ public class Intake extends SubsystemBase {
 
     m_IntakePivot.getConfigurator().apply(pivotConfigs);
     m_IntakeRoller.getConfigurator().apply(rollerConfigs);
-     m_IntakePivot.setPosition(0);
-    
-    
+
+    // Set Intake RELATIVE
+    m_IntakePivot.setPosition(0);
   }
 
   public void moveIntake(){
@@ -234,6 +237,8 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
+    // Intake Logging
     SmartDashboard.putNumber("Intake Pivot Motor Position", getIntakePosition());
     //SmartDashboard.putNumber("Intake Pivot Acceleration Config", pivotConfigs.MotionMagic.MotionMagicAcceleration);
     //SmartDashboard.putNumber("Intake Pivot Velocity Config", m_Request.getPositionMeasure().baseUnitMagnitude());

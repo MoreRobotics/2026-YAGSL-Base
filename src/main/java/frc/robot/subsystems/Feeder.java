@@ -14,18 +14,10 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 
 public class Feeder extends SubsystemBase {
-
-    private TalonFX m_leftMotor;
-    private TalonFX m_rightMotor;
-
-    private MotionMagicVelocityVoltage m_velocityRequest;
-    private TalonFXConfiguration configs;
     
-
+    // Feeder Constants
     private int leftMotorID = 17;
     private int rightMotorID = 18;
-
-
     private double kP = .33;
     private double kI = 0;
     private double kD = 0;
@@ -35,6 +27,12 @@ public class Feeder extends SubsystemBase {
     private double leftFeederSpeed = -40;
     private double rightFeederSpeed = 40;
 
+    // Talon Classes
+    private TalonFX m_leftMotor;
+    private TalonFX m_rightMotor;
+    private MotionMagicVelocityVoltage m_velocityRequest;
+    private TalonFXConfiguration configs;
+
 
   /** Creates a new Shooter. */
   public Feeder() {
@@ -43,6 +41,7 @@ public class Feeder extends SubsystemBase {
 
     m_velocityRequest = new MotionMagicVelocityVoltage(0).withSlot(0);
 
+    // Motor Config
     configs = new TalonFXConfiguration();
     configs.Slot0.kP = kP;
     configs.Slot0.kI = kI;
@@ -91,6 +90,8 @@ public class Feeder extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
+    // Hot Dog Logging
     SmartDashboard.putNumber("Left Feeder Speed", m_leftMotor.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("Right Feeder Speed", m_rightMotor.getVelocity().getValueAsDouble());
     // SmartDashboard.putNumber("Left Feeder Set Speed", getLeftFeederSpeed());

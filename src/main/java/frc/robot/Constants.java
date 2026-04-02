@@ -21,6 +21,7 @@ import swervelib.math.Matter;
 public final class Constants
 {
 
+  // Drivetrain Constants
   public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
   public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
   public static final double LOOP_TIME  = 0.13; //s, 20ms + 110ms sprk max velocity lag
@@ -54,19 +55,23 @@ public final class Constants
 
   public static class Positions
   {
+
+    // Blue Hub Position
     public static final double hubBlueX = 4.62;
     public static final double hubBlueY = 4.035;
     public static final double hubBlueR = 0.0;
 
+    // Blue Human Player Station Position
     public static final double humanPlayerBlueX = 0;
     public static final double humanPlayerBlueY = 0;
     public static final double humanPlayerBlueR = 0;
 
-
+    // Red Hub Position
     public static final double hubRedX = 11.91;
     public static final double hubRedY = 4.035;
     public static final double hubRedR = 180.0;
 
+    // Red Human Player Station Position
     public static final double humanPlayerRedX = 0;
     public static final double humanPlayerRedY = 0;
     public static final double humanPlayerRedR = 0;

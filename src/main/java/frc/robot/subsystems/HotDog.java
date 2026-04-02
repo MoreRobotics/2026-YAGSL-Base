@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class HotDog extends SubsystemBase {
 
+  // Hot Dog Contants
   private double indexerP = .33;
   private double indexerI = 0;
   private double indexerD = 0;
@@ -32,7 +33,8 @@ public class HotDog extends SubsystemBase {
   private int indexerID = 13;
   private int hotDogID = 0;
 
-   private TalonFX m_Indexer;
+  // Talon Classes
+  private TalonFX m_Indexer;
   private TalonFX m_HotDog;
   private TalonFXConfiguration indexerConfigs;
   private TalonFXConfiguration hotDogConfigs;
@@ -43,10 +45,11 @@ public class HotDog extends SubsystemBase {
 
   /** Creates a new Shooter. */
   public HotDog() {
-     m_Indexer = new TalonFX(indexerID);
+    m_Indexer = new TalonFX(indexerID);
     m_HotDog = new TalonFX(hotDogID);
     m_velocityRequest = new MotionMagicVelocityVoltage(0).withSlot(0);
 
+    // Motor Configs
     indexerConfigs = new TalonFXConfiguration();
     indexerConfigs.Slot0.kP = indexerP;
     indexerConfigs.Slot0.kI = indexerI;
@@ -64,7 +67,7 @@ public class HotDog extends SubsystemBase {
     hotDogConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
     hotDogConfigs.CurrentLimits.SupplyCurrentLimit = hotDogCurrentLimit;
 
-     m_Indexer.getConfigurator().apply(indexerConfigs);
+    m_Indexer.getConfigurator().apply(indexerConfigs);
     m_HotDog.getConfigurator().apply(hotDogConfigs);
 
 
@@ -113,6 +116,8 @@ public class HotDog extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     // shooter.updateTelemetry();
+
+    // Hot Dog Logging
     SmartDashboard.putNumber("HotDog Speed", m_HotDog.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("HotDog Current", m_HotDog.getStatorCurrent().getValueAsDouble());
     SmartDashboard.putNumber("Indexer Current", m_Indexer.getStatorCurrent().getValueAsDouble());

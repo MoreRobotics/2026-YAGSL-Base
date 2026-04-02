@@ -18,6 +18,7 @@ import frc.robot.subsystems.swervedrive.Eyes;
 public class Shooter extends SubsystemBase {
   private final Eyes s_Eyes;
 
+  // Shooter Constants
   private int leftShooterID = 14;
   private int rightShooterID = 15;
   private double kP = .85;
@@ -29,14 +30,13 @@ public class Shooter extends SubsystemBase {
   private double acceleration = 250;
 
   private double kShooter = 1;
-
   private double shooterSpeed = -57*.6;
 
 
 
-
+  // Motor Classes
   private TalonFX m_LeftShooter;
-   private TalonFX m_RightShooter;
+  private TalonFX m_RightShooter;
   private TalonFXConfiguration configs;
   private MotionMagicVelocityVoltage m_Request;
   private Follower m_Follower;
@@ -46,10 +46,11 @@ public class Shooter extends SubsystemBase {
     this.s_Eyes = s_Eyes;
 
     m_LeftShooter = new TalonFX(leftShooterID);
-     m_RightShooter = new TalonFX(rightShooterID);
+    m_RightShooter = new TalonFX(rightShooterID);
     m_Request = new MotionMagicVelocityVoltage(0).withSlot(0);
     m_Follower = new Follower(leftShooterID, MotorAlignmentValue.Opposed);
 
+    // Motor Configs
     configs = new TalonFXConfiguration();
     configs.Slot0.kP = kP;
     configs.Slot0.kI = kI;
@@ -108,7 +109,8 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    // SmartDashboard.putNumber("Shooter Speed", getShooterSpeed());
+    
+    // Logging Variables
     SmartDashboard.putNumber("Left Shooter Motor Speed", m_LeftShooter.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("Right Shooter Motor Speed", m_RightShooter.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("Shooter Motor Current", m_LeftShooter.getStatorCurrent().getValueAsDouble());

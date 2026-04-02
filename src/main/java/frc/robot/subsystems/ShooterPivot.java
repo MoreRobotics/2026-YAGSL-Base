@@ -4,8 +4,6 @@
 
 package frc.robot.subsystems;
 
-import java.io.ObjectInputFilter.Config;
-
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -20,6 +18,7 @@ import frc.robot.subsystems.swervedrive.Eyes;
 public class ShooterPivot extends SubsystemBase {
   private final Eyes s_Eyes;
 
+  // Shooter Pivot Constants
   private int shooterPivotID = 16;
   private int canCoderID = 6;
   private double kP = 150;//135 error = 0.003//160 good
@@ -34,16 +33,18 @@ public class ShooterPivot extends SubsystemBase {
   private double acceleration = 250;
   private double velocity = 50;
 
+  // Homing Command Constants
   public double homingSpeed = 0.5;
   public double homingCurrentLimit = currentLimit / 2;
   public double homingPosition = 0.001;
 
+  // Pivot Limits
   public double forwardLimit = 0.01;
   public double reverseLimit = -0.278;
 
 
 
-
+  // Talon + Cancoder Classes
   public TalonFX m_ShooterPivot;
   public CANcoder e_ShooterPivot;
   private TalonFXConfiguration configs;
@@ -61,6 +62,7 @@ public class ShooterPivot extends SubsystemBase {
     e_ShooterPivot = new CANcoder(canCoderID);
     m_VelocityRequest = new VelocityVoltage(0).withSlot(1);
 
+    // Motor Configs
     configs = new TalonFXConfiguration();
     configs.Slot0.kP = kP;
     configs.Slot0.kI = kI;
@@ -78,14 +80,15 @@ public class ShooterPivot extends SubsystemBase {
     configs.CurrentLimits.StatorCurrentLimit = currentLimit;
     configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-
-
-
     m_ShooterPivot.getConfigurator().apply(configs);
+
+    // Set Shooter RELATIVE
     m_ShooterPivot.setPosition(0);
 
   }
 
+
+  // Shooter Angle Calculation
   public double getShooterAngle()
   {
     double angle_Rotation;
@@ -139,6 +142,7 @@ public class ShooterPivot extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
 
+    // Shooter Pivot Logging
     SmartDashboard.putNumber("Shooter Calculated angle", getShooterAngle());
     SmartDashboard.putNumber("Shooter Pivot Motor Position", m_ShooterPivot.getPosition().getValueAsDouble()); 
     SmartDashboard.putNumber("Shooter Pivot CANCoder Position", e_ShooterPivot.getPosition().getValueAsDouble());
