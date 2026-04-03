@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.754110320284699,
-        "y": -0.7256322657176755
+        "x": 7.592170818505339,
+        "y": 0.059478054567022376
       },
       "isLocked": false,
       "linkedName": "Right Side Path 1 End"
@@ -53,18 +53,7 @@
       }
     }
   ],
-  "pointTowardsZones": [
-    {
-      "fieldPosition": {
-        "x": 4.62,
-        "y": 4.035
-      },
-      "rotationOffset": 0.0,
-      "minWaypointRelativePos": 0.9628796400449959,
-      "maxWaypointRelativePos": 1.0,
-      "name": "Point Towards Zone"
-    }
-  ],
+  "pointTowardsZones": [],
   "eventMarkers": [
     {
       "name": "Intake",
@@ -99,7 +88,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 56.10328113393758
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": null,

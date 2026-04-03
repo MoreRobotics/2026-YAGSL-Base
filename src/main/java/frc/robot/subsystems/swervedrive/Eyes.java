@@ -427,6 +427,7 @@ import edu.wpi.first.networktables.StructPublisher;
         // SmartDashboard.putNumber("Theta M Negative", -(180 + s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()));
         SmartDashboard.putNumber("Distance to Hub", getTargetDistance());
         SmartDashboard.putNumber("Linear Velocity", s_Swerve.getSwerveDrive().getRobotVelocity().vxMetersPerSecond);
+        SmartDashboard.putNumber("Angular Velocity", s_Swerve.swerveDrive.getGyro().getYawAngularVelocity().in(DegreesPerSecond));
         
 
         targetHub.set(getTargetPose());

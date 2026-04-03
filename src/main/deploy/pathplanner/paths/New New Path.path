@@ -4,28 +4,28 @@
     {
       "anchor": {
         "x": 1.842,
-        "y": 4.02
+        "y": 3.02
       },
       "prevControl": null,
       "nextControl": {
         "x": 1.842,
-        "y": 4.27
+        "y": 4.02
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Auto Test Path 1 End"
     },
     {
       "anchor": {
         "x": 1.842,
-        "y": 3.02
+        "y": 4.02
       },
       "prevControl": {
         "x": 1.842,
-        "y": 2.77
+        "y": 3.0199999999999996
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Auto Test Path 1 End"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -47,7 +47,7 @@
   "reversed": false,
   "folder": null,
   "idealStartingState": {
-    "velocity": 0.0,
+    "velocity": 0,
     "rotation": 0.0
   },
   "useDefaultConstraints": true

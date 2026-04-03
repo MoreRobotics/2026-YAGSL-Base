@@ -29,7 +29,7 @@ public class Intake extends SubsystemBase {
   private double reverseLimit = -.163;
   private double pivotCurrentLimit = 100;
   private double intakeStowPosition = 0.001;
-  private double intakeOutPosition = 0.338;//.341
+  private double intakeOutPosition = 0.336;//.341
   private double intakeMiddlePosition = 0.184;
   private double target = 0;
   private boolean intakeOut = false;

@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -43,6 +44,8 @@ import frc.robot.subsystems.HotDog;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.swervedrive.Eyes;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+
+import static edu.wpi.first.units.Units.DegreesPerSecond;
 
 import java.io.File;
 import swervelib.SwerveInputStream;
@@ -150,7 +153,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     NamedCommands.registerCommand("Run HotDog", 
     new InstantCommand(() -> s_HotDog.setHotDogSpeed(s_HotDog.getHotDogSpeed())).raceWith(new WaitCommand(5)).alongWith(new InstantCommand(() -> s_HotDog.setIndexerSpeed(s_HotDog.getIndexerSpeed())).raceWith(new WaitCommand(5))));
     NamedCommands.registerCommand("Stop HotDog", new InstantCommand(() -> s_HotDog.setHotDogSpeed(0)).alongWith(new InstantCommand(() -> s_HotDog.setIndexerSpeed(0))));
-    NamedCommands.registerCommand("Prepare Shooter", new SetShooterSpeed(s_Shooter, -40.52));
+    NamedCommands.registerCommand("Prepare Shooter", new PrepareShooter(s_Shooter, s_Lights));//-40.52
     NamedCommands.registerCommand("Stop Shooter", new InstantCommand(() -> s_Shooter.setShooterVoltage(-1)));
     NamedCommands.registerCommand("Intake", new RunIntake(s_Intake, s_Lights));
     NamedCommands.registerCommand("Stop Intake", new InstantCommand(() -> s_Intake.setIntakeSpeed(20)));
@@ -160,8 +163,9 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
         new InstantCommand(() -> s_Intake.changeState())
 
       )); 
+    
 
-    NamedCommands.registerCommand("Aim Shooter", new SetShooterAngle(s_ShooterPivot, -0.141));
+    NamedCommands.registerCommand("Aim Shooter", new AimShooter(s_ShooterPivot));//-0.141
     NamedCommands.registerCommand("Stow Shooter", new InstantCommand(() -> s_ShooterPivot.setShooterAngle(s_ShooterPivot.getShooterPivotSafePose())));
     NamedCommands.registerCommand("Run Feeder", new InstantCommand(() -> s_Feeder.setFeederSpeed(s_Feeder.getLeftFeederSpeed(),s_Feeder.getRightFeederSpeed())));
     NamedCommands.registerCommand("Stop Feeder", new InstantCommand(() -> s_Feeder.setFeederSpeed(0,0)));
@@ -180,7 +184,16 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
 
       ))); 
 
-    
+    NamedCommands.registerCommand("Auto Aim", new ConditionalCommand(
+      drivebase.driveCommand(
+          () -> 0,
+          () -> 0,
+          () -> (s_Eyes.getTargetRotation()) * (.12)).repeatedly().withTimeout(1), 
+      drivebase.driveCommand(
+          () -> 0,
+          () -> 0,
+          () -> (s_Eyes.getTargetRotation()-drivebase.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.12)).repeatedly().withTimeout(1), 
+      () -> drivebase.redAlliance));
     
     // Shuffleboard Auto Chooser
     autoChooser = AutoBuilder.buildAutoChooser();
