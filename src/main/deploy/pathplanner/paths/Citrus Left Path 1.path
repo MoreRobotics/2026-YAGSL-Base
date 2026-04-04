@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 4.45,
-        "y": 0.63
+        "y": 7.43
       },
       "prevControl": null,
       "nextControl": {
         "x": 8.506216540494368,
-        "y": 0.7802943000246687
+        "y": 7.279705699975331
       },
       "isLocked": false,
       "linkedName": null
@@ -17,15 +17,15 @@
     {
       "anchor": {
         "x": 7.754,
-        "y": 2.75
+        "y": 5.292656
       },
       "prevControl": {
-        "x": 7.785841586136448,
-        "y": 0.769255919258544
+        "x": 7.754,
+        "y": 7.273656
       },
       "nextControl": {
-        "x": 7.749981627191261,
-        "y": 2.999967703273783
+        "x": 7.754,
+        "y": 5.042656
       },
       "isLocked": false,
       "linkedName": null
@@ -33,32 +33,32 @@
     {
       "anchor": {
         "x": 2.0,
-        "y": 2.242
+        "y": 5.800656
       },
       "prevControl": {
         "x": 4.67626322945433,
-        "y": 2.38347482698586
+        "y": 5.65918117301414
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Citrus Right Path 1 End"
+      "linkedName": "Citrus Left Path 1 End"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.6749555950266477,
-      "rotationDegrees": 105.00000000000001
+      "waypointRelativePos": 0.67,
+      "rotationDegrees": -105.00000000000001
     },
     {
-      "waypointRelativePos": 1.804618117229136,
-      "rotationDegrees": 90.0
+      "waypointRelativePos": 1.8,
+      "rotationDegrees": -90.0
     }
   ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.3824521934758227,
-      "maxWaypointRelativePos": 1.0978627671541135,
+      "minWaypointRelativePos": 0.38,
+      "maxWaypointRelativePos": 1.1,
       "constraints": {
         "maxVelocity": 1.5,
         "maxAcceleration": 1.5,
@@ -70,8 +70,8 @@
     },
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 1.1068616422947057,
-      "maxWaypointRelativePos": 1.5388076490438636,
+      "minWaypointRelativePos": 1.11,
+      "maxWaypointRelativePos": 1.54,
       "constraints": {
         "maxVelocity": 3.5,
         "maxAcceleration": 3.5,
@@ -86,7 +86,7 @@
   "eventMarkers": [
     {
       "name": "Move Intake",
-      "waypointRelativePos": 0.1349831271091114,
+      "waypointRelativePos": 0.13,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -97,7 +97,7 @@
     },
     {
       "name": "Intake",
-      "waypointRelativePos": 0.22497187851518444,
+      "waypointRelativePos": 0.22,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -108,7 +108,7 @@
     },
     {
       "name": "Prepare Shooter",
-      "waypointRelativePos": 0.3194600674915766,
+      "waypointRelativePos": 0.32,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -128,13 +128,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 34.13
+    "rotation": -34.13
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": -90.0
   },
   "useDefaultConstraints": true
 }

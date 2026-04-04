@@ -3,65 +3,89 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.45,
-        "y": 0.63
+        "x": 2.0,
+        "y": 5.801
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.506216540494368,
-        "y": 0.7802943000246687
+        "x": 1.362540134480829,
+        "y": 7.757785353546035
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Citrus Left Path 1 End"
     },
     {
       "anchor": {
-        "x": 7.754,
-        "y": 2.75
+        "x": 5.607,
+        "y": 7.369656
       },
       "prevControl": {
-        "x": 7.785841586136448,
-        "y": 0.769255919258544
+        "x": 2.046000000000001,
+        "y": 7.369656
       },
       "nextControl": {
-        "x": 7.749981627191261,
-        "y": 2.999967703273783
+        "x": 5.857,
+        "y": 7.369656
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.0,
-        "y": 2.242
+        "x": 5.607,
+        "y": 5.476656
       },
       "prevControl": {
-        "x": 4.67626322945433,
-        "y": 2.38347482698586
+        "x": 5.607,
+        "y": 6.423656
+      },
+      "nextControl": {
+        "x": 5.607,
+        "y": 5.226656
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.5,
+        "y": 5.801
+      },
+      "prevControl": {
+        "x": 3.7160605971953418,
+        "y": 5.86553239154274
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Citrus Right Path 1 End"
+      "linkedName": null
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.6749555950266477,
-      "rotationDegrees": 105.00000000000001
+      "waypointRelativePos": 0.63,
+      "rotationDegrees": 0.0
     },
     {
-      "waypointRelativePos": 1.804618117229136,
-      "rotationDegrees": 90.0
+      "waypointRelativePos": 0.93,
+      "rotationDegrees": 0.0
+    },
+    {
+      "waypointRelativePos": 1.49,
+      "rotationDegrees": -90.0
+    },
+    {
+      "waypointRelativePos": 2.75,
+      "rotationDegrees": -90.0
     }
   ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.3824521934758227,
-      "maxWaypointRelativePos": 1.0978627671541135,
+      "minWaypointRelativePos": 0,
+      "maxWaypointRelativePos": 0.76,
       "constraints": {
-        "maxVelocity": 1.5,
-        "maxAcceleration": 1.5,
+        "maxVelocity": 2.5,
+        "maxAcceleration": 2.5,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
@@ -70,11 +94,11 @@
     },
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 1.1068616422947057,
-      "maxWaypointRelativePos": 1.5388076490438636,
+      "minWaypointRelativePos": 1.17,
+      "maxWaypointRelativePos": 2.0,
       "constraints": {
-        "maxVelocity": 3.5,
-        "maxAcceleration": 3.5,
+        "maxVelocity": 2.0,
+        "maxAcceleration": 2.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
@@ -85,19 +109,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "Move Intake",
-      "waypointRelativePos": 0.1349831271091114,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "Move Intake"
-        }
-      }
-    },
-    {
       "name": "Intake",
-      "waypointRelativePos": 0.22497187851518444,
+      "waypointRelativePos": 0.92,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -108,7 +121,7 @@
     },
     {
       "name": "Prepare Shooter",
-      "waypointRelativePos": 0.3194600674915766,
+      "waypointRelativePos": 1.69,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -128,13 +141,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 34.13
+    "rotation": -29.45
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": -34.13
   },
   "useDefaultConstraints": true
 }
