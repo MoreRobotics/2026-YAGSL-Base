@@ -232,7 +232,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
             driveFieldOrientedDirectAngle = drivebase.driveCommand(
           () -> driver.getLeftY(),
           () -> driver.getLeftX(),
-          () -> (s_Eyes.getTargetRotation()) * (.12)),
+          () -> (s_Eyes.getTargetRotation()-drivebase.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.12)),
             new AimShooter(s_ShooterPivot),
             new PrepareShooter(s_Shooter, s_Lights)         
           ))
@@ -254,7 +254,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
           driveFieldOrientedDirectAngle = drivebase.driveCommand(
           () -> -driver.getLeftY(),
           () -> -driver.getLeftX(),
-          () -> (s_Eyes.getTargetRotation()-drivebase.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.12)),
+          () -> (s_Eyes.getTargetRotation()) * (.12)),
                new AimShooter(s_ShooterPivot),
            new PrepareShooter(s_Shooter, s_Lights)
           ))

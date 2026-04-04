@@ -221,13 +221,13 @@ import edu.wpi.first.networktables.StructPublisher;
 
          
         // SmartDashboard.putNumber(" inverted angle", -angle);
-         if (s_Swerve.redAlliance) {
-             if(s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees() > 0)
+         if (!s_Swerve.redAlliance) {
+             if(s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees() < 0)
              {
-                 return angle+(180 - s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees());
+                 return angle-(180 + s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees());
              }
              else {
-                 return angle + (-180 - s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees());
+                 return angle + (180 - s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees());
              }
          }
          else{
