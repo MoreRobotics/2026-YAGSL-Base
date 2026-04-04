@@ -155,7 +155,10 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     NamedCommands.registerCommand("Stop HotDog", new InstantCommand(() -> s_HotDog.setHotDogSpeed(0)).alongWith(new InstantCommand(() -> s_HotDog.setIndexerSpeed(0))));
     NamedCommands.registerCommand("Prepare Shooter", new PrepareShooter(s_Shooter, s_Lights));//-40.52
     NamedCommands.registerCommand("Stop Shooter", new InstantCommand(() -> s_Shooter.setShooterVoltage(-1)));
-    NamedCommands.registerCommand("Intake", new RunIntake(s_Intake, s_Lights));
+    NamedCommands.registerCommand("Intake", new ParallelCommandGroup(
+      new InstantCommand(() -> s_Intake.setIntakeSpeed(50)),
+      new InstantCommand(() -> s_Intake.setCurrentLimit(s_Intake.getActiveRollerCurrentLimit())))
+    );
     NamedCommands.registerCommand("Stop Intake", new InstantCommand(() -> s_Intake.setIntakeSpeed(20)));
     NamedCommands.registerCommand("Move Intake", new SequentialCommandGroup(
         new InstantCommand(() -> s_Intake.changeTarget()),
@@ -170,7 +173,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     NamedCommands.registerCommand("Run Feeder", new InstantCommand(() -> s_Feeder.setFeederSpeed(s_Feeder.getLeftFeederSpeed(),s_Feeder.getRightFeederSpeed())));
     NamedCommands.registerCommand("Stop Feeder", new InstantCommand(() -> s_Feeder.setFeederSpeed(0,0)));
    NamedCommands.registerCommand("Pump Intake", new ParallelCommandGroup(
-    new InstantCommand(() -> s_Intake.setIntakeSpeed(20)),
+    new InstantCommand(() -> s_Intake.setIntakeSpeed(40)),
    new SequentialCommandGroup(
         new InstantCommand(() -> s_Intake.setState(true)),
         new InstantCommand(() -> s_Intake.setIntakeTarget(s_Intake.getIntakeMiddlePosition())),
@@ -188,11 +191,11 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
       drivebase.driveCommand(
           () -> 0,
           () -> 0,
-          () -> (s_Eyes.getTargetRotation()) * (.12)).repeatedly().withTimeout(1), 
+          () -> (s_Eyes.getTargetRotation()) * (.12)).repeatedly().withTimeout(7), 
       drivebase.driveCommand(
           () -> 0,
           () -> 0,
-          () -> (s_Eyes.getTargetRotation()-drivebase.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.12)).repeatedly().withTimeout(1), 
+          () -> (s_Eyes.getTargetRotation()-drivebase.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.12)).repeatedly().withTimeout(7), 
       () -> drivebase.redAlliance));
     
     // Shuffleboard Auto Chooser

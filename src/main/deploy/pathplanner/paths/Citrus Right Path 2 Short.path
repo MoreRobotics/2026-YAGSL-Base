@@ -3,44 +3,44 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.0840688018979834,
-        "y": 2.673962040332148
+        "x": 2.0,
+        "y": 2.242
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.373962040332148,
-        "y": 0.382253855278766
+        "x": 1.3625978647686836,
+        "y": 0.2854211150652417
       },
       "isLocked": false,
       "linkedName": "Citrus Right Path 1 End"
     },
     {
       "anchor": {
-        "x": 6.107402135231317,
+        "x": 5.607,
         "y": 0.6727520759193351
       },
       "prevControl": {
-        "x": 2.524590747330962,
-        "y": 0.5759193357058123
+        "x": 2.0457069988137606,
+        "y": 0.6727520759193355
       },
       "nextControl": {
-        "x": 6.357310877699531,
-        "y": 0.6795063662563138
+        "x": 5.856999999999999,
+        "y": 0.6727520759193351
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.107402135231317,
+        "x": 5.607,
         "y": 2.566370106761566
       },
       "prevControl": {
-        "x": 6.107402135231317,
+        "x": 5.607,
         "y": 1.6195610913404503
       },
       "nextControl": {
-        "x": 6.107402135231317,
+        "x": 5.607,
         "y": 2.816370106761566
       },
       "isLocked": false,
@@ -48,21 +48,21 @@
     },
     {
       "anchor": {
-        "x": 3.0840688018979834,
-        "y": 2.673962040332148
+        "x": 1.5,
+        "y": 2.242
       },
       "prevControl": {
-        "x": 5.300462633451958,
-        "y": 2.6094068801897983
+        "x": 3.716393831553974,
+        "y": 2.1774448398576505
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Citrus Right Path 1 End"
+      "linkedName": null
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.5328596802841965,
+      "waypointRelativePos": 0.6341030195381887,
       "rotationDegrees": 0.0
     },
     {
@@ -72,6 +72,10 @@
     {
       "waypointRelativePos": 1.486678507992889,
       "rotationDegrees": 90.0
+    },
+    {
+      "waypointRelativePos": 2.754884547069267,
+      "rotationDegrees": 90.0
     }
   ],
   "constraintZones": [
@@ -80,8 +84,21 @@
       "minWaypointRelativePos": 0.0,
       "maxWaypointRelativePos": 0.7641196013289054,
       "constraints": {
-        "maxVelocity": 2.75,
-        "maxAcceleration": 2.75,
+        "maxVelocity": 2.5,
+        "maxAcceleration": 2.5,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    },
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 1.1743532058492676,
+      "maxWaypointRelativePos": 2.0,
+      "constraints": {
+        "maxVelocity": 2.0,
+        "maxAcceleration": 2.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
@@ -94,11 +111,22 @@
     {
       "name": "Intake",
       "waypointRelativePos": 0.9178852643419602,
-      "endWaypointRelativePos": 3.0,
+      "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
           "name": "Intake"
+        }
+      }
+    },
+    {
+      "name": "Prepare Shooter",
+      "waypointRelativePos": 1.6872890888638996,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Prepare Shooter"
         }
       }
     }
@@ -113,13 +141,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": 29.448300298005407
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": 34.129546318718255
   },
   "useDefaultConstraints": true
 }

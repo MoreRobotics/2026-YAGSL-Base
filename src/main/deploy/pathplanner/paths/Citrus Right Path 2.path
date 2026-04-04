@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.0840688018979834,
-        "y": 2.673962040332148
+        "x": 2.0,
+        "y": 2.242
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.944199288256229,
-        "y": 0.19934756820877864
+        "x": 1.8601304863582455,
+        "y": -0.23261447212336916
       },
       "isLocked": false,
       "linkedName": "Citrus Right Path 1 End"
@@ -20,12 +20,12 @@
         "y": 0.6727520759193351
       },
       "prevControl": {
-        "x": 3.116346381969158,
-        "y": 0.5436417556346379
+        "x": 3.084068801897983,
+        "y": 0.6835112692763932
       },
       "nextControl": {
-        "x": 6.357169553001932,
-        "y": 0.683533403305117
+        "x": 6.357400552186362,
+        "y": 0.6718624018376445
       },
       "isLocked": false,
       "linkedName": null
@@ -64,12 +64,12 @@
     },
     {
       "anchor": {
-        "x": 3.0840688018979834,
-        "y": 2.673962040332148
+        "x": 2.0,
+        "y": 2.242
       },
       "prevControl": {
-        "x": 5.214389086595492,
-        "y": 2.7923131672597865
+        "x": 4.130320284697509,
+        "y": 2.3603511269276387
       },
       "nextControl": null,
       "isLocked": false,
@@ -115,13 +115,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": 34.129546318718255
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": 34.129546318718255
   },
   "useDefaultConstraints": true
 }
