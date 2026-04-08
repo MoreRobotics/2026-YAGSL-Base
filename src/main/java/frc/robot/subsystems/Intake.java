@@ -28,9 +28,9 @@ public class Intake extends SubsystemBase {
   private double forwardLimit = .168;
   private double reverseLimit = -.163;
   private double pivotCurrentLimit = 100;
-  private double intakeStowPosition = 0.001;
-  private double intakeOutPosition = 0.336;//.341
-  private double intakeMiddlePosition = 0.184;
+  private double intakeStowPosition = -0.001;
+  private double intakeOutPosition = -0.336;//.341
+  private double intakeMiddlePosition = -0.1738;
   private double target = 0;
   private boolean intakeOut = false;
   private double tolerance = 0.005;
@@ -117,7 +117,7 @@ public class Intake extends SubsystemBase {
   {
     pivotConfigs.Slot0.kP = .25;
     m_IntakePivot.getConfigurator().apply(pivotConfigs);
-    m_IntakePivot.setControl(m_PivotVelocityRequest.withVelocity(3));
+    m_IntakePivot.setControl(m_PivotVelocityRequest.withVelocity(-3));
   }
 
   public void stopIntakePivot()

@@ -51,6 +51,6 @@ public class HomeIntake extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return s_Intake.getIntakePivotCurrent() >= 25;
+    return Math.abs(s_Intake.getIntakePivotCurrent()) >= 25;
   }
 }

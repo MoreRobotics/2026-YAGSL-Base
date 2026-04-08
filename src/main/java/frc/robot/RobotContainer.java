@@ -262,7 +262,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
         new ParallelCommandGroup(
           driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity),
                new StowShooter(s_ShooterPivot),
-            new InstantCommand(() -> s_Shooter.setShooterVoltage(-1))
+            new InstantCommand(() -> s_Shooter.setShooterVoltage(1))
           )
       );
     }
@@ -311,8 +311,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
       new ParallelCommandGroup(
         new InstantCommand(() -> s_Intake.setCurrentLimit(s_Intake.getIdleRollerCurrentLimit())),
         new InstantCommand(() -> s_Intake.setIntakeSpeed(20)),
-        new RunHotDog(s_HotDog),
-        new RunFeeder(s_Feeder)
+        new RunHotDog(s_HotDog)
         // new InstantCommand(() -> s_Intake.setSlowMode()),
         // new InstantCommand(() -> s_Intake.setIntakeTarget(s_Intake.getIntakeMiddlePosition())),
         // new MoveIntake(s_Intake)

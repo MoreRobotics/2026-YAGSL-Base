@@ -5,8 +5,11 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -30,24 +33,31 @@ public class HotDog extends SubsystemBase {
   private double reverseIndexerSpeed = -40;
   private double acceleration = 500;
 
-  private int indexerID = 13;
-  private int hotDogID = 0;
+  private int leftIndexerID = 22;
+  private int rightIndexerID = 28;
+  private int hotDogID = 13;
 
   // Talon Classes
-  private TalonFX m_Indexer;
+  private TalonFX m_LeftIndexer;
+  private TalonFX m_RightIndexer;
+
   private TalonFX m_HotDog;
   private TalonFXConfiguration indexerConfigs;
   private TalonFXConfiguration hotDogConfigs;
   private MotionMagicVelocityVoltage m_velocityRequest;
 
-
+  private Follower m_Follower;
   
 
   /** Creates a new Shooter. */
   public HotDog() {
-    m_Indexer = new TalonFX(indexerID);
+    m_LeftIndexer = new TalonFX(leftIndexerID);
+    m_RightIndexer = new TalonFX(rightIndexerID);
+
     m_HotDog = new TalonFX(hotDogID);
     m_velocityRequest = new MotionMagicVelocityVoltage(0).withSlot(0);
+
+    m_Follower = new Follower(leftIndexerID, MotorAlignmentValue.Opposed);
 
     // Motor Configs
     indexerConfigs = new TalonFXConfiguration();
@@ -67,7 +77,9 @@ public class HotDog extends SubsystemBase {
     hotDogConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
     hotDogConfigs.CurrentLimits.SupplyCurrentLimit = hotDogCurrentLimit;
 
-    m_Indexer.getConfigurator().apply(indexerConfigs);
+    m_LeftIndexer.getConfigurator().apply(indexerConfigs);
+    m_RightIndexer.getConfigurator().apply(indexerConfigs);
+
     m_HotDog.getConfigurator().apply(hotDogConfigs);
 
 
@@ -75,7 +87,8 @@ public class HotDog extends SubsystemBase {
 
   public void setIndexerSpeed(double setpoint)
   {
-    m_Indexer.setControl(m_velocityRequest.withVelocity(setpoint));
+    m_LeftIndexer.setControl(m_velocityRequest.withVelocity(-setpoint));
+    m_RightIndexer.setControl(m_Follower.withLeaderID(leftIndexerID));
   }
 
   public double getIndexerSpeed()
@@ -90,8 +103,8 @@ public class HotDog extends SubsystemBase {
 
   public void setHotDogSpeed(double setpoint)
   {
-    SmartDashboard.putNumber("HotDog Commanded Speed", setpoint);
-    m_HotDog.setControl(m_velocityRequest.withVelocity(setpoint));
+    SmartDashboard.putNumber("HotDog Commanded Speed", -setpoint);
+    m_HotDog.setControl(m_velocityRequest.withVelocity(-setpoint));
   }
 
   public double getHotDogSpeed()
@@ -120,7 +133,10 @@ public class HotDog extends SubsystemBase {
     // Hot Dog Logging
     SmartDashboard.putNumber("HotDog Speed", m_HotDog.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("HotDog Current", m_HotDog.getStatorCurrent().getValueAsDouble());
-    SmartDashboard.putNumber("Indexer Current", m_Indexer.getStatorCurrent().getValueAsDouble());
+
+    SmartDashboard.putNumber("Indexer Speed", m_LeftIndexer.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("Left Indexer Current", m_LeftIndexer.getStatorCurrent().getValueAsDouble());
+    SmartDashboard.putNumber("Right Indexer Current", m_RightIndexer.getStatorCurrent().getValueAsDouble());
   }
 
   @Override
