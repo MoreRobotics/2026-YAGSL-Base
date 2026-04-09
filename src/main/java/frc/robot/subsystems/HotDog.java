@@ -17,21 +17,22 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class HotDog extends SubsystemBase {
 
   // Hot Dog Contants
-  private double indexerP = .33;
+  private double indexerP = .25;
   private double indexerI = 0;
   private double indexerD = 0;
-  private double hotDogP = .33;
+  private double indexerV = .12;
+  private double hotDogP = .35;//.33
   private double hotDogI = 0;
   private double hotDogD = 0;
-  private double hotDogV = .15;
+  private double hotDogV = .15;//.15
   
   private double currentLimit = 80;
   private double hotDogCurrentLimit = 40;
-  private double indexerSpeed = 85*.9;
-  private double hotDogSpeed = -85 * 2/3;
+  private double indexerSpeed = 60;
+  private double hotDogSpeed = -30;
   private double reverseHotDogSpeed = 40;
   private double reverseIndexerSpeed = -40;
-  private double acceleration = 500;
+  private double acceleration = 280;
 
   private int leftIndexerID = 22;
   private int rightIndexerID = 28;
@@ -64,6 +65,7 @@ public class HotDog extends SubsystemBase {
     indexerConfigs.Slot0.kP = indexerP;
     indexerConfigs.Slot0.kI = indexerI;
     indexerConfigs.Slot0.kD = indexerD;
+    indexerConfigs.Slot0.kV = indexerV;
     indexerConfigs.MotionMagic.MotionMagicAcceleration = acceleration;
     indexerConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
     indexerConfigs.CurrentLimits.StatorCurrentLimit = currentLimit;
@@ -87,6 +89,7 @@ public class HotDog extends SubsystemBase {
 
   public void setIndexerSpeed(double setpoint)
   {
+    SmartDashboard.putNumber("Indexer Commanded Speed", -setpoint);
     m_LeftIndexer.setControl(m_velocityRequest.withVelocity(-setpoint));
     m_RightIndexer.setControl(m_Follower.withLeaderID(leftIndexerID));
   }
@@ -134,7 +137,8 @@ public class HotDog extends SubsystemBase {
     SmartDashboard.putNumber("HotDog Speed", m_HotDog.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("HotDog Current", m_HotDog.getStatorCurrent().getValueAsDouble());
 
-    SmartDashboard.putNumber("Indexer Speed", m_LeftIndexer.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("Left Indexer Speed", m_LeftIndexer.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("Right Indexer Speed", m_RightIndexer.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("Left Indexer Current", m_LeftIndexer.getStatorCurrent().getValueAsDouble());
     SmartDashboard.putNumber("Right Indexer Current", m_RightIndexer.getStatorCurrent().getValueAsDouble());
   }
