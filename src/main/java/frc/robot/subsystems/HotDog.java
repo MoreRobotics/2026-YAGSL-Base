@@ -26,11 +26,11 @@ public class HotDog extends SubsystemBase {
   private double hotDogD = 0;
   private double hotDogV = .15;//.15
   
-  private double currentLimit = 80;
+  private double currentLimit = 40;
   private double hotDogCurrentLimit = 40;
-  private double indexerSpeed = 60;
-  private double hotDogSpeed = -30;
-  private double reverseHotDogSpeed = 40;
+  private double indexerSpeed = 80;
+  private double hotDogSpeed = 27;
+  private double reverseHotDogSpeed = -30;
   private double reverseIndexerSpeed = -40;
   private double acceleration = 280;
 
@@ -48,10 +48,12 @@ public class HotDog extends SubsystemBase {
   private MotionMagicVelocityVoltage m_velocityRequest;
 
   private Follower m_Follower;
+
   
 
   /** Creates a new Shooter. */
   public HotDog() {
+ 
     m_LeftIndexer = new TalonFX(leftIndexerID);
     m_RightIndexer = new TalonFX(rightIndexerID);
 
@@ -106,12 +108,13 @@ public class HotDog extends SubsystemBase {
 
   public void setHotDogSpeed(double setpoint)
   {
-    SmartDashboard.putNumber("HotDog Commanded Speed", -setpoint);
-    m_HotDog.setControl(m_velocityRequest.withVelocity(-setpoint));
+    SmartDashboard.putNumber("HotDog Commanded Speed", setpoint);
+    m_HotDog.setControl(m_velocityRequest.withVelocity(setpoint));
   }
 
   public double getHotDogSpeed()
   {
+    
     return hotDogSpeed;
   }
 

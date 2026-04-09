@@ -64,9 +64,9 @@ public class RobotContainer
                                                                                 "swerve/falcon"));
   
   public final Eyes s_Eyes = new Eyes(drivebase);
-  public final HotDog s_HotDog = new HotDog();
   public final Intake s_Intake = new Intake();
   public final ShooterPivot s_ShooterPivot = new ShooterPivot(s_Eyes);
+  public final HotDog s_HotDog = new HotDog();
   public final Shooter s_Shooter = new Shooter(s_Eyes);
   public final Lights s_Lights = new Lights();
   // public final Feeder s_Feeder = new Feeder();
@@ -307,14 +307,16 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
 //shoot
      driver.R2().whileTrue(
       new ParallelCommandGroup(
+        
         new InstantCommand(() -> s_Intake.setCurrentLimit(s_Intake.getIdleRollerCurrentLimit())),
         new InstantCommand(() -> s_Intake.setIntakeSpeed(20)),
         new RunHotDog(s_HotDog)
-        // new InstantCommand(() -> s_Intake.setSlowMode()),
-        // new InstantCommand(() -> s_Intake.setIntakeTarget(s_Intake.getIntakeMiddlePosition())),
-        // new MoveIntake(s_Intake)
+        // new SequentialCommandGroup(
+        //   new WaitCommand(1),
+        //   new InstantCommand(() -> s_Intake.setSlowMode()),
+        //   new InstantCommand(() -> s_Intake.setIntakeTarget(s_Intake.getIntakeMiddlePosition())),
+        //   new MoveIntake(s_Intake))
         ))
-      
         .onFalse(
           new SequentialCommandGroup(
           new ParallelCommandGroup(
@@ -322,6 +324,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
           new InstantCommand(() -> s_Intake.setIntakeSpeed(20))
         // new InstantCommand(() -> s_Intake.setTarget(s_Intake.getIntakePosition())),
         // new MoveIntake(s_Intake),
+
         // new InstantCommand(() -> s_Intake.setNormalMode())
         )
         //  new InstantCommand(() -> s_Intake.changeTarget()),
