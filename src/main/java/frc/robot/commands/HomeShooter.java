@@ -34,7 +34,6 @@ public class HomeShooter extends Command {
     s_ShooterPivot.homeShooter();
     if (s_ShooterPivot.getCurrent() >= Math.abs(s_ShooterPivot.homingCurrentLimit)) {
         s_ShooterPivot.m_ShooterPivot.setPosition(s_ShooterPivot.homingPosition);
-        s_ShooterPivot.e_ShooterPivot.setPosition(s_ShooterPivot.homingPosition);
         finished = true;
     } else {
         finished = false;

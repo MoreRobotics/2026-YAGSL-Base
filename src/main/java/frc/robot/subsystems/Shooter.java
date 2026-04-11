@@ -19,36 +19,52 @@ public class Shooter extends SubsystemBase {
   private final Eyes s_Eyes;
 
   // Shooter Constants
-  private int leftShooterID = 14;
-  private int rightShooterID = 15;
-  private double kP = .85;
+  private int topLeftShooterID = 23;
+  private int topRightShooterID = 25;
+
+  private int bottomLeftShooterID = 14;
+  private int bottomRightShooterID = 24;
+
+  private double kP = .85 / 2;
   private double kI = 0;
   private double kD = 0;
   private double kV = 0.1;
   private double gearRatio = 0;
-  private double currentLimit = 70;
-  private double acceleration = 250;
+  private double currentLimit = 40;
+  private double acceleration = 52.84;
 
   private double kShooter = 1;
-  private double shooterSpeed = -57*.6;
+  private double shooterSpeed = -83*.675;
 
 
 
   // Motor Classes
-  private TalonFX m_LeftShooter;
-  private TalonFX m_RightShooter;
+  private TalonFX m_TopLeftShooter;
+  private TalonFX m_TopRightShooter;
+
+  private TalonFX m_BottomLeftShooter;
+  private TalonFX m_BottomRightShooter;
+
   private TalonFXConfiguration configs;
   private MotionMagicVelocityVoltage m_Request;
-  private Follower m_Follower;
+
+  private Follower m_LeftFollower;
+  private Follower m_RightFollower;
 
   /** Creates a new Shooter. */
   public Shooter(Eyes s_Eyes) {
     this.s_Eyes = s_Eyes;
 
-    m_LeftShooter = new TalonFX(leftShooterID);
-    m_RightShooter = new TalonFX(rightShooterID);
+    m_TopLeftShooter = new TalonFX(topLeftShooterID);
+    m_TopRightShooter = new TalonFX(topRightShooterID);
+    m_BottomLeftShooter = new TalonFX(bottomLeftShooterID);
+    m_BottomRightShooter = new TalonFX(bottomRightShooterID);
+
+
     m_Request = new MotionMagicVelocityVoltage(0).withSlot(0);
-    m_Follower = new Follower(leftShooterID, MotorAlignmentValue.Opposed);
+
+    m_LeftFollower = new Follower(bottomLeftShooterID, MotorAlignmentValue.Aligned);
+    m_RightFollower = new Follower(bottomRightShooterID, MotorAlignmentValue.Aligned);
 
     // Motor Configs
     configs = new TalonFXConfiguration();
@@ -62,48 +78,57 @@ public class Shooter extends SubsystemBase {
     configs.CurrentLimits.StatorCurrentLimit = currentLimit;
     configs.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-    m_LeftShooter.getConfigurator().apply(configs);
-    m_RightShooter.getConfigurator().apply(configs);
+    m_TopLeftShooter.getConfigurator().apply(configs);
+    m_TopRightShooter.getConfigurator().apply(configs);
+
+    m_BottomLeftShooter.getConfigurator().apply(configs);
+    m_BottomRightShooter.getConfigurator().apply(configs);
 
   }
 
   public void setShooterSpeed(double speed)
   {
     SmartDashboard.putNumber("Shooter Set Speed", speed);
-    m_LeftShooter.setControl(m_Request.withVelocity(speed));
-    m_RightShooter.setControl(m_Follower.withLeaderID(leftShooterID));
+    m_TopLeftShooter.setControl(m_Request.withVelocity(-speed));
+    m_BottomLeftShooter.setControl(m_LeftFollower.withLeaderID(topLeftShooterID));
+
+    m_TopRightShooter.setControl(m_Request.withVelocity(speed));
+    m_BottomRightShooter.setControl(m_RightFollower.withLeaderID(topRightShooterID));
   }
 
   public void setShooterVoltage(double voltage)
   {
-    m_LeftShooter.setVoltage(voltage);
-    m_RightShooter.setControl(m_Follower.withLeaderID(leftShooterID));
+    m_TopLeftShooter.setVoltage(voltage);
+    m_BottomLeftShooter.setControl(m_LeftFollower.withLeaderID(topLeftShooterID));
+
+    m_TopRightShooter.setVoltage(-voltage);
+    m_BottomRightShooter.setControl(m_RightFollower.withLeaderID(topRightShooterID));
   }
 
   public double getCurrentSpeed() {
-    return m_LeftShooter.getVelocity().getValueAsDouble();
+    return m_TopLeftShooter.getVelocity().getValueAsDouble();
   }
 
   public double getShooterSpeed()
   {
     double speed;
-   
-    speed = 
-    2.393631*s_Eyes.getTargetDistance()
-    +31.625928;
-    if(speed > 48.165)
+    speed = -4.15*s_Eyes.getTargetDistance()
+    -32.1625;
+
+    if(speed > -39.42)
     {
-      return -48.165;
+      return -39.42;
     }
-    else if(speed < 34.2)
+    else if(speed < -56.025)
     {
-      return -34.2;
+      return -56.025;
     }
     else{
-      return -speed;
+      return speed*1.05;
     }
+   
+    
 
-    // return shooterSpeed;
   }
 
   @Override
@@ -111,9 +136,16 @@ public class Shooter extends SubsystemBase {
     // This method will be called once per scheduler run
     
     // Logging Variables
-    SmartDashboard.putNumber("Left Shooter Motor Speed", m_LeftShooter.getVelocity().getValueAsDouble());
-    SmartDashboard.putNumber("Right Shooter Motor Speed", m_RightShooter.getVelocity().getValueAsDouble());
-    SmartDashboard.putNumber("Shooter Motor Current", m_LeftShooter.getStatorCurrent().getValueAsDouble());
+    SmartDashboard.putNumber("Top Left Shooter Motor Speed", m_TopLeftShooter.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("Bottom Left Shooter Motor Speed", m_BottomLeftShooter.getVelocity().getValueAsDouble());
+
+    SmartDashboard.putNumber("Top Right Shooter Motor Speed", m_TopRightShooter.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("Bottom Right Shooter Motor Speed", m_BottomRightShooter.getVelocity().getValueAsDouble());
+
+    SmartDashboard.putNumber("Top Left Shooter Motor Current", m_TopLeftShooter.getStatorCurrent().getValueAsDouble());
+    SmartDashboard.putNumber("Bottom Left Shooter Motor Current", m_BottomLeftShooter.getStatorCurrent().getValueAsDouble());
+    SmartDashboard.putNumber("Top Right Shooter Motor Current", m_TopRightShooter.getStatorCurrent().getValueAsDouble());
+    SmartDashboard.putNumber("Bottom Right Shooter Motor Current", m_BottomRightShooter.getStatorCurrent().getValueAsDouble());
     
   }
 }

@@ -28,7 +28,6 @@ import frc.robot.commands.HomeShooter;
 import frc.robot.commands.MoveIntake;
 import frc.robot.commands.Outake;
 import frc.robot.commands.PrepareShooter;
-import frc.robot.commands.RunFeeder;
 import frc.robot.commands.RunHotDog;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.SetShooterAngle;
@@ -37,7 +36,6 @@ import frc.robot.commands.StowShooter;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShooterPivot;
-import frc.robot.subsystems.Feeder;
 // import frc.robot.subsystems.Shooter;
 // import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.HotDog;
@@ -66,12 +64,12 @@ public class RobotContainer
                                                                                 "swerve/falcon"));
   
   public final Eyes s_Eyes = new Eyes(drivebase);
-  public final HotDog s_HotDog = new HotDog();
   public final Intake s_Intake = new Intake();
   public final ShooterPivot s_ShooterPivot = new ShooterPivot(s_Eyes);
+  public final HotDog s_HotDog = new HotDog();
   public final Shooter s_Shooter = new Shooter(s_Eyes);
   public final Lights s_Lights = new Lights();
-  public final Feeder s_Feeder = new Feeder();
+  // public final Feeder s_Feeder = new Feeder();
   // public final Climber s_Climber = new Climber();
   /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
@@ -170,8 +168,8 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
 
     NamedCommands.registerCommand("Aim Shooter", new AimShooter(s_ShooterPivot));//-0.141
     NamedCommands.registerCommand("Stow Shooter", new InstantCommand(() -> s_ShooterPivot.setShooterAngle(s_ShooterPivot.getShooterPivotSafePose())));
-    NamedCommands.registerCommand("Run Feeder", new InstantCommand(() -> s_Feeder.setFeederSpeed(s_Feeder.getLeftFeederSpeed(),s_Feeder.getRightFeederSpeed())));
-    NamedCommands.registerCommand("Stop Feeder", new InstantCommand(() -> s_Feeder.setFeederSpeed(0,0)));
+    // NamedCommands.registerCommand("Run Feeder", new InstantCommand(() -> s_Feeder.setFeederSpeed(s_Feeder.getLeftFeederSpeed(),s_Feeder.getRightFeederSpeed())));
+    // NamedCommands.registerCommand("Stop Feeder", new InstantCommand(() -> s_Feeder.setFeederSpeed(0,0)));
    NamedCommands.registerCommand("Pump Intake", new ParallelCommandGroup(
     new InstantCommand(() -> s_Intake.setIntakeSpeed(40)),
    new SequentialCommandGroup(
@@ -235,15 +233,15 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
             driveFieldOrientedDirectAngle = drivebase.driveCommand(
           () -> driver.getLeftY(),
           () -> driver.getLeftX(),
-          () -> (s_Eyes.getTargetRotation()) * (.12)),
+          () -> (s_Eyes.getTargetRotation()-drivebase.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.12)),
             new AimShooter(s_ShooterPivot),
-            new PrepareShooter(s_Shooter, s_Lights)         
+             new PrepareShooter(s_Shooter, s_Lights)         
           ))
       .onFalse(
         new ParallelCommandGroup(
           driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity),
             new StowShooter(s_ShooterPivot),
-            new InstantCommand(() -> s_Shooter.setShooterVoltage(-1))
+             new InstantCommand(() -> s_Shooter.setShooterVoltage(-1))
         )
       );
       
@@ -257,15 +255,15 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
           driveFieldOrientedDirectAngle = drivebase.driveCommand(
           () -> -driver.getLeftY(),
           () -> -driver.getLeftX(),
-          () -> (s_Eyes.getTargetRotation()-drivebase.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.12)),
-               new AimShooter(s_ShooterPivot),
-           new PrepareShooter(s_Shooter, s_Lights)
+          () -> (s_Eyes.getTargetRotation()) * (.12)),
+                new AimShooter(s_ShooterPivot),
+            new PrepareShooter(s_Shooter, s_Lights)
           ))
       .onFalse(
         new ParallelCommandGroup(
           driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity),
-               new StowShooter(s_ShooterPivot),
-            new InstantCommand(() -> s_Shooter.setShooterVoltage(-1))
+                new StowShooter(s_ShooterPivot),
+             new InstantCommand(() -> s_Shooter.setShooterVoltage(1))
           )
       );
     }
@@ -312,15 +310,16 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
 //shoot
      driver.R2().whileTrue(
       new ParallelCommandGroup(
+        
         new InstantCommand(() -> s_Intake.setCurrentLimit(s_Intake.getIdleRollerCurrentLimit())),
         new InstantCommand(() -> s_Intake.setIntakeSpeed(20)),
-        new RunHotDog(s_HotDog),
-        new RunFeeder(s_Feeder)
-        // new InstantCommand(() -> s_Intake.setSlowMode()),
-        // new InstantCommand(() -> s_Intake.setIntakeTarget(s_Intake.getIntakeMiddlePosition())),
-        // new MoveIntake(s_Intake)
+        new RunHotDog(s_HotDog)
+        // new SequentialCommandGroup(
+        //   new WaitCommand(1.5),
+        //   new InstantCommand(() -> s_Intake.setSlowMode()),
+        //   new InstantCommand(() -> s_Intake.setIntakeTarget(s_Intake.getIntakeMiddlePosition())),
+        //   new MoveIntake(s_Intake)
         ))
-      
         .onFalse(
           new SequentialCommandGroup(
           new ParallelCommandGroup(
@@ -328,6 +327,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
           new InstantCommand(() -> s_Intake.setIntakeSpeed(20))
         // new InstantCommand(() -> s_Intake.setTarget(s_Intake.getIntakePosition())),
         // new MoveIntake(s_Intake),
+
         // new InstantCommand(() -> s_Intake.setNormalMode())
         )
         //  new InstantCommand(() -> s_Intake.changeTarget()),
