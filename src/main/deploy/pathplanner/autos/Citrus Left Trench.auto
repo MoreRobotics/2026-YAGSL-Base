@@ -17,7 +17,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 6.0
+                  "waitTime": 2.5
                 }
               },
               {
@@ -61,12 +61,6 @@
                                   "data": {
                                     "name": "Run HotDog"
                                   }
-                                },
-                                {
-                                  "type": "named",
-                                  "data": {
-                                    "name": "Run Feeder"
-                                  }
                                 }
                               ]
                             }
@@ -82,30 +76,6 @@
                             "type": "wait",
                             "data": {
                               "waitTime": 1.75
-                            }
-                          },
-                          {
-                            "type": "named",
-                            "data": {
-                              "name": "Pump Intake"
-                            }
-                          },
-                          {
-                            "type": "wait",
-                            "data": {
-                              "waitTime": 0.75
-                            }
-                          },
-                          {
-                            "type": "named",
-                            "data": {
-                              "name": "Pump Intake"
-                            }
-                          },
-                          {
-                            "type": "wait",
-                            "data": {
-                              "waitTime": 0.75
                             }
                           },
                           {
@@ -131,12 +101,6 @@
                 "type": "named",
                 "data": {
                   "name": "Stop HotDog"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Stop Feeder"
                 }
               },
               {
@@ -157,7 +121,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Citrus Left Path 2"
+            "pathName": "Citrus Left Path 2 new Loop"
           }
         },
         {
@@ -167,7 +131,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 6.0
+                  "waitTime": 2.5
                 }
               },
               {
@@ -211,12 +175,6 @@
                                   "data": {
                                     "name": "Run HotDog"
                                   }
-                                },
-                                {
-                                  "type": "named",
-                                  "data": {
-                                    "name": "Run Feeder"
-                                  }
                                 }
                               ]
                             }
@@ -231,31 +189,7 @@
                           {
                             "type": "wait",
                             "data": {
-                              "waitTime": 1.75
-                            }
-                          },
-                          {
-                            "type": "named",
-                            "data": {
-                              "name": "Pump Intake"
-                            }
-                          },
-                          {
-                            "type": "wait",
-                            "data": {
-                              "waitTime": 0.75
-                            }
-                          },
-                          {
-                            "type": "named",
-                            "data": {
-                              "name": "Pump Intake"
-                            }
-                          },
-                          {
-                            "type": "wait",
-                            "data": {
-                              "waitTime": 0.75
+                              "waitTime": 1.25
                             }
                           },
                           {
@@ -281,12 +215,6 @@
                 "type": "named",
                 "data": {
                   "name": "Stop HotDog"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Stop Feeder"
                 }
               },
               {

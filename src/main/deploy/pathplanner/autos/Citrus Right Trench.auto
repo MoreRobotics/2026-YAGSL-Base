@@ -61,12 +61,6 @@
                                   "data": {
                                     "name": "Run HotDog"
                                   }
-                                },
-                                {
-                                  "type": "named",
-                                  "data": {
-                                    "name": "Run Feeder"
-                                  }
                                 }
                               ]
                             }
@@ -131,12 +125,6 @@
                 "type": "named",
                 "data": {
                   "name": "Stop HotDog"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Stop Feeder"
                 }
               },
               {
@@ -211,12 +199,6 @@
                                   "data": {
                                     "name": "Run HotDog"
                                   }
-                                },
-                                {
-                                  "type": "named",
-                                  "data": {
-                                    "name": "Run Feeder"
-                                  }
                                 }
                               ]
                             }
@@ -281,12 +263,6 @@
                 "type": "named",
                 "data": {
                   "name": "Stop HotDog"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Stop Feeder"
                 }
               },
               {

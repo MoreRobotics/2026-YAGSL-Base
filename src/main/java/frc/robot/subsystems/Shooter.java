@@ -98,10 +98,10 @@ public class Shooter extends SubsystemBase {
 
   public void setShooterVoltage(double voltage)
   {
-    m_TopLeftShooter.setVoltage(voltage);
+    m_TopLeftShooter.setVoltage(-voltage);
     m_BottomLeftShooter.setControl(m_LeftFollower.withLeaderID(topLeftShooterID));
 
-    m_TopRightShooter.setVoltage(-voltage);
+    m_TopRightShooter.setVoltage(voltage);
     m_BottomRightShooter.setControl(m_RightFollower.withLeaderID(topRightShooterID));
   }
 

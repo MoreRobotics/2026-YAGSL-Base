@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -189,17 +190,19 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
       drivebase.driveCommand(
           () -> 0,
           () -> 0,
-          () -> (s_Eyes.getTargetRotation()) * (.12)).repeatedly().withTimeout(7), 
+          () -> (s_Eyes.getTargetRotation()-drivebase.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.12)).repeatedly().withTimeout(7), 
       drivebase.driveCommand(
           () -> 0,
           () -> 0,
-          () -> (s_Eyes.getTargetRotation()-drivebase.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.12)).repeatedly().withTimeout(7), 
+          () -> (s_Eyes.getTargetRotation()) * (.12)).repeatedly().withTimeout(7), 
       () -> drivebase.redAlliance));
     
     // Shuffleboard Auto Chooser
     autoChooser = AutoBuilder.buildAutoChooser();
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
+    Command citrusRightTrench = new PathPlannerAuto("Citrus Left Trench", true);
+    autoChooser.addOption("Citrus Right Trench Mirror", citrusRightTrench);
 
   }
 
