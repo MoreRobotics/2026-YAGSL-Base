@@ -29,7 +29,7 @@ public class HotDog extends SubsystemBase {
   private double currentLimit = 40;
   private double hotDogCurrentLimit = 40;
   private double indexerSpeed = 80;
-  private double hotDogSpeed = 50;
+  private double hotDogSpeed = 30;
   private double reverseHotDogSpeed = -30;
   private double reverseIndexerSpeed = -40;
   private double acceleration = 280;

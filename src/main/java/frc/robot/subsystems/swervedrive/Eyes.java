@@ -246,7 +246,7 @@ import edu.wpi.first.networktables.StructPublisher;
         double robotY = robotPose.getY();
 
         double targetX = targetPose.getX();
-        double targetY = targetPose.getY();
+        double targetY = robotY;
 
         double angle =  (Math.atan((targetY - robotY) / (targetX - robotX)) * (180 / Math.PI));
 
@@ -260,7 +260,7 @@ import edu.wpi.first.networktables.StructPublisher;
 
          
         // SmartDashboard.putNumber(" inverted angle", -angle);
-         if (s_Swerve.redAlliance) {
+        if (s_Swerve.redAlliance) {
              if(s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees() > 0)
              {
                  return angle+(180 - s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees());

@@ -367,16 +367,48 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     // );
 
     //pass
-    driver.square().whileTrue(
-      new ParallelCommandGroup(
-        new InstantCommand(() -> s_Shooter.setShooterSpeed(-47.166)),
-        new InstantCommand(() -> s_ShooterPivot.setShooterAngle(-0.143))
-      )
-    ).onFalse(
-      new ParallelCommandGroup(
-        new InstantCommand(() -> s_Shooter.setShooterSpeed(0)),
-        new InstantCommand(() -> s_ShooterPivot.setShooterAngle(0)))
-    );
+
+     if (drivebase.redAlliance)
+    { 
+        driver.square().whileTrue(
+          new ParallelCommandGroup(
+            driveFieldOrientedDirectAngle = drivebase.driveCommand(
+          () -> driver.getLeftY(),
+          () -> driver.getLeftX(),
+          () -> (s_Eyes.getTargetPassRotation()) * (.12)),
+          new InstantCommand(() -> s_Shooter.setShooterSpeed(-56)),
+          new InstantCommand(() -> s_ShooterPivot.setShooterAngle(-0.065))      
+          ))
+      .onFalse(
+        new ParallelCommandGroup(
+          driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity),
+            new StowShooter(s_ShooterPivot),
+            new InstantCommand(() -> s_Shooter.setShooterVoltage(-1))
+        )
+      );
+      
+      
+    }
+    // Passing Command (Blue Alliance)
+    else
+    {
+      driver.L2().whileTrue(
+        new ParallelCommandGroup(
+          driveFieldOrientedDirectAngle = drivebase.driveCommand(
+          () -> -driver.getLeftY(),
+          () -> -driver.getLeftX(),
+          () -> (s_Eyes.getTargetPassRotation()-drivebase.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.12)),
+          new InstantCommand(() -> s_Shooter.setShooterSpeed(-56)),
+          new InstantCommand(() -> s_ShooterPivot.setShooterAngle(-0.065))    
+          ))
+      .onFalse(
+        new ParallelCommandGroup(
+          driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity),
+                new StowShooter(s_ShooterPivot),
+             new InstantCommand(() -> s_Shooter.setShooterVoltage(1))
+          )
+      );
+    }
 
     // home Intake
     driver.povRight().onTrue(

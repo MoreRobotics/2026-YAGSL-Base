@@ -72,7 +72,7 @@ public final class Constants
     public static final double hubRedR = 180.0;
 
     // Red Human Player Station Position
-    public static final double humanPlayerRedX = 0;
+    public static final double humanPlayerRedX = 16;
     public static final double humanPlayerRedY = 0;
     public static final double humanPlayerRedR = 0;
   }
