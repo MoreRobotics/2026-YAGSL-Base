@@ -89,12 +89,12 @@ public class ShooterPivot extends SubsystemBase {
   public double getShooterAngle()
   {
     double angle_Rotation;
-    angle_Rotation = 0.00043761*Math.pow(s_Eyes.getTargetDistance(), 5)
-    -0.00875508*Math.pow(s_Eyes.getTargetDistance(), 4)
-    +0.06796849*Math.pow(s_Eyes.getTargetDistance(), 3)
-    -0.25548432*Math.pow(s_Eyes.getTargetDistance(), 2)
-    +0.44574116*s_Eyes.getTargetDistance()
-    -0.28702085;
+    angle_Rotation = 
+    -0.00091667*Math.pow(s_Eyes.getTargetDistance(), 4)
+    +0.01425*Math.pow(s_Eyes.getTargetDistance(), 3)
+    -0.07805208*Math.pow(s_Eyes.getTargetDistance(), 2)
+    +0.15907812*s_Eyes.getTargetDistance()
+    -0.11112598;
     
     if(angle_Rotation <= -0.071)
     {
