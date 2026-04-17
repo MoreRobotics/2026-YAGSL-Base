@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 2.0,
-        "y": 5.801
+        "y": 5.75
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.416998813767892,
-        "y": 8.290260972722054
+        "x": 2.0,
+        "y": 8.5
       },
       "isLocked": false,
       "linkedName": "Citrus Left Path 1 End"
@@ -40,8 +40,8 @@
         "y": 3.351791221826809
       },
       "nextControl": {
-        "x": 7.933671176334058,
-        "y": 5.493510974999882
+        "x": 7.933671176334057,
+        "y": 5.493510974999885
       },
       "isLocked": false,
       "linkedName": null
@@ -62,11 +62,11 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.31438721136767545,
+      "waypointRelativePos": 0.346358792184726,
       "rotationDegrees": 0.0
     },
     {
-      "waypointRelativePos": 0.5275310834813476,
+      "waypointRelativePos": 0.5595026642984031,
       "rotationDegrees": 0.0
     },
     {
@@ -75,7 +75,7 @@
     },
     {
       "waypointRelativePos": 1.4067495559502683,
-      "rotationDegrees": -23.263639839599747
+      "rotationDegrees": -23.26363983959975
     },
     {
       "waypointRelativePos": 1.827708703374777,

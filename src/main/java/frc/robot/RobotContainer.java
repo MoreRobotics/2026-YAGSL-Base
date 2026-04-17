@@ -286,6 +286,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     //intake out
     driver.cross().onTrue(
       new SequentialCommandGroup(
+        // new InstantCommand(() -> s_Intake.setSlowMode()),
         new InstantCommand(() -> s_Intake.changeTarget()),
         new MoveIntake(s_Intake),
         new InstantCommand(() -> s_Intake.changeState())
@@ -348,6 +349,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
 //pump intake
     driver.povUp().onTrue(
       new SequentialCommandGroup(
+        // new InstantCommand(() -> s_Intake.setNormalMode()),
         new InstantCommand(() -> s_Intake.setState(true)),
         new InstantCommand(() -> s_Intake.setIntakeTarget(s_Intake.getIntakeMiddlePosition())),
         new MoveIntake(s_Intake)

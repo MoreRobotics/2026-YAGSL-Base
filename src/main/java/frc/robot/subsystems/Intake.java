@@ -18,19 +18,19 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Intake extends SubsystemBase {
 
   // Intake Constants
-  private double pivotP = 100;//160
+  private double pivotP = 200;//160
   private double pivotI = 0;
   private double pivotD = 0;
-  private double pivotAcceleration = 20.0;
+  private double pivotAcceleration = 10;
   private double pivotVelocity = 2;
-  private double pivotAccelerationSlow = 0.28125;
+  private double pivotAccelerationSlow = 2.5;
   private double pivotVelocitySlow = 0.05625;
   private double forwardLimit = .168;
   private double reverseLimit = -.163;
   private double pivotCurrentLimit = 100;
   private double intakeStowPosition = -0.001;
   private double intakeOutPosition = -0.329;//.341
-  private double intakeMiddlePosition = -0.229;//-0.165
+  private double intakeMiddlePosition = -0.176;//-0.165
   private double target = 0;
   private boolean intakeOut = false;
   private double tolerance = 0.005;
@@ -41,7 +41,7 @@ public class Intake extends SubsystemBase {
   private double rollerV = 0.125;
   private double rollerCurrentLimit = 85;
   private double idleRollerCurrentLimit = 20;
-  private double intakeSpeed = 60;
+  private double intakeSpeed = 75;//60
   private double outakeSpeed = -40;
 
   private double gearRatio = 87.5/1;
@@ -175,17 +175,17 @@ public class Intake extends SubsystemBase {
   public void setSlowMode()
   {
     pivotConfigs.MotionMagic.MotionMagicAcceleration = pivotAccelerationSlow;
-    pivotConfigs.MotionMagic.MotionMagicCruiseVelocity = pivotVelocitySlow;
+    // pivotConfigs.MotionMagic.MotionMagicCruiseVelocity = pivotVelocitySlow;
     m_IntakePivot.getConfigurator().apply(pivotConfigs);
-    intakeOut = true;
+    // intakeOut = true;
   }
 
   public void setNormalMode()
   {
     pivotConfigs.MotionMagic.MotionMagicAcceleration = pivotAcceleration;
-    pivotConfigs.MotionMagic.MotionMagicCruiseVelocity = pivotVelocity;
+    // pivotConfigs.MotionMagic.MotionMagicCruiseVelocity = pivotVelocity;
     m_IntakePivot.getConfigurator().apply(pivotConfigs);
-    intakeOut = false;
+    // intakeOut = false;
   }
 
   public void setTarget(double newTarget)
