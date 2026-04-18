@@ -301,13 +301,15 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
 
     //manual trench shot
     driver.circle().whileTrue(
+
       new ParallelCommandGroup(
-        new InstantCommand(() -> s_Shooter.setShooterSpeed(-40.412)),
-        new InstantCommand(() -> s_ShooterPivot.setShooterAngle(-0.137))
+        new InstantCommand(() -> s_Shooter.setShooterSpeed(-47.75)),
+        new 
+        InstantCommand(() -> s_ShooterPivot.setShooterAngle(-0.034))
       )
     ).onFalse(
       new ParallelCommandGroup(
-        new InstantCommand(() -> s_Shooter.setShooterSpeed(0)),
+        new InstantCommand(() -> s_Shooter.setShooterVoltage(-1)),
         new InstantCommand(() -> s_ShooterPivot.setShooterAngle(0)))
     );
 
@@ -369,48 +371,18 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     // );
 
     //pass
-
-     if (drivebase.redAlliance)
-    { 
         driver.square().whileTrue(
           new ParallelCommandGroup(
-            driveFieldOrientedDirectAngle = drivebase.driveCommand(
-            () -> driver.getLeftY(),
-            () -> driver.getLeftX(),
-            () -> (s_Eyes.getTargetPassRotation()) * (.12)),
           new InstantCommand(() -> s_Shooter.setShooterSpeed(-56)),
           new InstantCommand(() -> s_ShooterPivot.setShooterAngle(-0.065))      
           ))
       .onFalse(
         new ParallelCommandGroup(
-          driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity),
             new StowShooter(s_ShooterPivot),
             new InstantCommand(() -> s_Shooter.setShooterVoltage(-1))
         )
       );
       
-      
-    }
-    // Passing Command (Blue Alliance)
-    else
-    {
-      driver.square().whileTrue(
-        new ParallelCommandGroup(
-          driveFieldOrientedDirectAngle = drivebase.driveCommand(
-          () -> -driver.getLeftY(),
-          () -> -driver.getLeftX(),
-          () -> (s_Eyes.getTargetPassRotation()-drivebase.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.12)),
-          new InstantCommand(() -> s_Shooter.setShooterSpeed(-56)),
-          new InstantCommand(() -> s_ShooterPivot.setShooterAngle(-0.065))    
-          ))
-      .onFalse(
-        new ParallelCommandGroup(
-          driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity),
-                new StowShooter(s_ShooterPivot),
-             new InstantCommand(() -> s_Shooter.setShooterVoltage(-1))
-          )
-      );
-    }
 
     // home Intake
     driver.povRight().onTrue(
