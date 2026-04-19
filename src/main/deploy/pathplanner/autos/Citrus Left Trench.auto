@@ -17,7 +17,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 2.5
+                  "waitTime": 3.0
                 }
               },
               {
@@ -75,7 +75,7 @@
                           {
                             "type": "wait",
                             "data": {
-                              "waitTime": 1.75
+                              "waitTime": 1.25
                             }
                           },
                           {
@@ -189,7 +189,7 @@
                           {
                             "type": "wait",
                             "data": {
-                              "waitTime": 1.25
+                              "waitTime": 1.0
                             }
                           },
                           {

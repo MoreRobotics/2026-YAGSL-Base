@@ -231,7 +231,7 @@ import edu.wpi.first.networktables.StructPublisher;
              }
          }
          else{
-            return angle;
+            return angle - s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees();
          }
 
      }
@@ -428,6 +428,7 @@ import edu.wpi.first.networktables.StructPublisher;
         SmartDashboard.putNumber("Distance to Hub", getTargetDistance());
         SmartDashboard.putNumber("Linear Velocity", s_Swerve.getSwerveDrive().getRobotVelocity().vxMetersPerSecond);
         SmartDashboard.putNumber("Angular Velocity", s_Swerve.swerveDrive.getGyro().getYawAngularVelocity().in(DegreesPerSecond));
+        SmartDashboard.putBoolean("isRedAlliance", s_Swerve.redAlliance);
         
 
         targetHub.set(getTargetPose());

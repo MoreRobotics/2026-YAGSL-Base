@@ -186,16 +186,11 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
 
       ))); 
 
-    NamedCommands.registerCommand("Auto Aim", new ConditionalCommand(
+    NamedCommands.registerCommand("Auto Aim",
       drivebase.driveCommand(
           () -> 0,
           () -> 0,
-          () -> (s_Eyes.getTargetRotation()-drivebase.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.12)).repeatedly().withTimeout(7), 
-      drivebase.driveCommand(
-          () -> 0,
-          () -> 0,
-          () -> (s_Eyes.getTargetRotation()) * (.12)).repeatedly().withTimeout(7), 
-      () -> drivebase.redAlliance));
+          () -> (s_Eyes.getTargetRotation()) * (.12)).repeatedly().withTimeout(7));
     
     // Shuffleboard Auto Chooser
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -228,15 +223,13 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
 
     // Teleop Commands
 
-    // Aiming Command (Red Alliance)
-    if (drivebase.redAlliance)
-    { 
+    // Aiming Command 
         driver.L2().whileTrue(
           new ParallelCommandGroup(
             driveFieldOrientedDirectAngle = drivebase.driveCommand(
           () -> driver.getLeftY(),
           () -> driver.getLeftX(),
-          () -> (s_Eyes.getTargetRotation()-drivebase.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.12)),
+          () -> (s_Eyes.getTargetRotation()) * (.12)),
             new AimShooter(s_ShooterPivot),
              new PrepareShooter(s_Shooter, s_Lights)         
           ))
@@ -248,28 +241,6 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
         )
       );
       
-      
-    }
-    // Aiming Command (Blue Alliance)
-    else
-    {
-      driver.L2().whileTrue(
-        new ParallelCommandGroup(
-          driveFieldOrientedDirectAngle = drivebase.driveCommand(
-          () -> -driver.getLeftY(),
-          () -> -driver.getLeftX(),
-          () -> (s_Eyes.getTargetRotation()) * (.12)),
-                new AimShooter(s_ShooterPivot),
-            new PrepareShooter(s_Shooter, s_Lights)
-          ))
-      .onFalse(
-        new ParallelCommandGroup(
-          driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity),
-                new StowShooter(s_ShooterPivot),
-             new InstantCommand(() -> s_Shooter.setShooterVoltage(-1))
-          )
-      );
-    }
 
   
 
@@ -304,13 +275,13 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
 
       new ParallelCommandGroup(
         new InstantCommand(() -> s_Shooter.setShooterSpeed(-47.75)),
-        new 
-        InstantCommand(() -> s_ShooterPivot.setShooterAngle(-0.034))
+        new SetShooterAngle(s_ShooterPivot, -0.034)//-0.034
       )
     ).onFalse(
       new ParallelCommandGroup(
         new InstantCommand(() -> s_Shooter.setShooterVoltage(-1)),
-        new InstantCommand(() -> s_ShooterPivot.setShooterAngle(0)))
+        new StowShooter(s_ShooterPivot)
+        )
     );
 
 //shoot
@@ -374,7 +345,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
         driver.square().whileTrue(
           new ParallelCommandGroup(
           new InstantCommand(() -> s_Shooter.setShooterSpeed(-56)),
-          new InstantCommand(() -> s_ShooterPivot.setShooterAngle(-0.065))      
+          new SetShooterAngle(s_ShooterPivot, -0.065)//-0.065   
           ))
       .onFalse(
         new ParallelCommandGroup(

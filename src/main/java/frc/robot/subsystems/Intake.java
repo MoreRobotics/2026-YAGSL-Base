@@ -27,7 +27,7 @@ public class Intake extends SubsystemBase {
   private double pivotVelocitySlow = 0.05625;
   private double forwardLimit = .168;
   private double reverseLimit = -.163;
-  private double pivotCurrentLimit = 100;
+  private double pivotCurrentLimit = 50;
   private double intakeStowPosition = -0.001;
   private double intakeOutPosition = -0.329;//.341
   private double intakeMiddlePosition = -0.176;//-0.165

@@ -26,10 +26,10 @@ public class ShooterPivot extends SubsystemBase {
   private double kV = 0;//2.8
   private double speedkP = 10;
   private double gearRatio = 15500/180;
-  private double currentLimit = 100;
+  private double currentLimit = 35;
   private double safePosition = 0.0;
   private double extendedPose = -0.28;
-  private double acceleration = 250;
+  private double acceleration = 250;//250
   private double velocity = 50;
 
   // Homing Command Constants
