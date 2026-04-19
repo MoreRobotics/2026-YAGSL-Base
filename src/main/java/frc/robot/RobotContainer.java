@@ -40,7 +40,7 @@ import frc.robot.subsystems.ShooterPivot;
 // import frc.robot.subsystems.Shooter;
 // import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.HotDog;
-import frc.robot.subsystems.Lights;
+// import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.swervedrive.Eyes;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
@@ -69,7 +69,7 @@ public class RobotContainer
   public final ShooterPivot s_ShooterPivot = new ShooterPivot(s_Eyes);
   public final HotDog s_HotDog = new HotDog();
   public final Shooter s_Shooter = new Shooter(s_Eyes);
-  public final Lights s_Lights = new Lights();
+  // public final Lights s_Lights = new Lights();
   // public final Feeder s_Feeder = new Feeder();
   // public final Climber s_Climber = new Climber();
   /**
@@ -152,7 +152,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     NamedCommands.registerCommand("Run HotDog", 
     new InstantCommand(() -> s_HotDog.setHotDogSpeed(s_HotDog.getHotDogSpeed())).raceWith(new WaitCommand(5)).alongWith(new InstantCommand(() -> s_HotDog.setIndexerSpeed(s_HotDog.getIndexerSpeed())).raceWith(new WaitCommand(5))));
     NamedCommands.registerCommand("Stop HotDog", new InstantCommand(() -> s_HotDog.setHotDogSpeed(0)).alongWith(new InstantCommand(() -> s_HotDog.setIndexerSpeed(0))));
-    NamedCommands.registerCommand("Prepare Shooter", new PrepareShooter(s_Shooter, s_Lights));//-40.52
+    NamedCommands.registerCommand("Prepare Shooter", new PrepareShooter(s_Shooter));//-40.52
     NamedCommands.registerCommand("Stop Shooter", new InstantCommand(() -> s_Shooter.setShooterVoltage(-1)));
     NamedCommands.registerCommand("Intake", new ParallelCommandGroup(
       new InstantCommand(() -> s_Intake.setIntakeSpeed(50)),
@@ -231,7 +231,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
           () -> driver.getLeftX(),
           () -> (s_Eyes.getTargetRotation()) * (.12)),
             new AimShooter(s_ShooterPivot),
-             new PrepareShooter(s_Shooter, s_Lights)         
+             new PrepareShooter(s_Shooter)         
           ))
       .onFalse(
         new ParallelCommandGroup(
@@ -250,7 +250,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     driver.create().onTrue(new InstantCommand(() -> drivebase.zeroGyroWithAlliance()));
 
     //run intake
-    driver.L1().whileTrue(new RunIntake(s_Intake, s_Lights));
+    driver.L1().whileTrue(new RunIntake(s_Intake));
     // InstantCommand(() -> s_Intake.setIntakeSpeed(s_Intake.getIntakeSpeed())))
     // .onFalse(new InstantCommand(() -> s_Intake.setIntakeSpeed(0)));
 
