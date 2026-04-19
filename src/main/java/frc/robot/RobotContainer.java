@@ -158,7 +158,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
       new InstantCommand(() -> s_Intake.setIntakeSpeed(50)),
       new InstantCommand(() -> s_Intake.setCurrentLimit(s_Intake.getActiveRollerCurrentLimit())))
     );
-    NamedCommands.registerCommand("Stop Intake", new InstantCommand(() -> s_Intake.setIntakeSpeed(20)));
+    NamedCommands.registerCommand("Stop Intake", new InstantCommand(() -> s_Intake.setIntakeSpeed(0)));
     NamedCommands.registerCommand("Move Intake", new SequentialCommandGroup(
         new InstantCommand(() -> s_Intake.changeTarget()),
         new MoveIntake(s_Intake),
@@ -288,8 +288,8 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
      driver.R2().whileTrue(
       new ParallelCommandGroup(
         
-        new InstantCommand(() -> s_Intake.setCurrentLimit(s_Intake.getIdleRollerCurrentLimit())),
-        new InstantCommand(() -> s_Intake.setIntakeSpeed(20)),
+        //new InstantCommand(() -> s_Intake.setCurrentLimit(s_Intake.getIdleRollerCurrentLimit())),
+        //new InstantCommand(() -> s_Intake.setIntakeSpeed(20)),
         new RunHotDog(s_HotDog)
         // new SequentialCommandGroup(
         //   new WaitCommand(1.5),
@@ -300,8 +300,8 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
         .onFalse(
           new SequentialCommandGroup(
           new ParallelCommandGroup(
-          new InstantCommand(() -> s_Intake.setCurrentLimit(s_Intake.getIdleRollerCurrentLimit())),
-          new InstantCommand(() -> s_Intake.setIntakeSpeed(20))
+          // new InstantCommand(() -> s_Intake.setCurrentLimit(s_Intake.getIdleRollerCurrentLimit())),
+          // new InstantCommand(() -> s_Intake.setIntakeSpeed(20))
         // new InstantCommand(() -> s_Intake.setTarget(s_Intake.getIntakePosition())),
         // new MoveIntake(s_Intake),
 
@@ -321,18 +321,25 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
 
 //pump intake
     driver.povUp().onTrue(
-      new SequentialCommandGroup(
-        // new InstantCommand(() -> s_Intake.setNormalMode()),
-        new InstantCommand(() -> s_Intake.setState(true)),
-        new InstantCommand(() -> s_Intake.setIntakeTarget(s_Intake.getIntakeMiddlePosition())),
-        new MoveIntake(s_Intake)
+      new ParallelCommandGroup(
+        new InstantCommand(() -> s_Intake.setIntakeSpeed(40)),
+        new SequentialCommandGroup(
+          // new InstantCommand(() -> s_Intake.setNormalMode()),
+          new InstantCommand(() -> s_Intake.setState(true)),
+          new InstantCommand(() -> s_Intake.setIntakeTarget(s_Intake.getIntakeMiddlePosition())),
+          new MoveIntake(s_Intake)
+        )
       )
+        
     ).onFalse(
-       new SequentialCommandGroup(
-        new InstantCommand(() -> s_Intake.setState(false)),
-        new InstantCommand(() -> s_Intake.changeTarget()),
-        new MoveIntake(s_Intake),
-        new InstantCommand(() -> s_Intake.changeState())
+      new ParallelCommandGroup(
+        new InstantCommand(() -> s_Intake.setIntakeSpeed(0)),
+        new SequentialCommandGroup(
+            new InstantCommand(() -> s_Intake.setState(false)),
+            new InstantCommand(() -> s_Intake.changeTarget()),
+            new MoveIntake(s_Intake),
+            new InstantCommand(() -> s_Intake.changeState())
+        )
       )
     );
 

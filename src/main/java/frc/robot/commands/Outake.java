@@ -37,7 +37,7 @@ public class Outake extends Command {
   @Override
   public void end(boolean interrupted) {
     s_Intake.setCurrentLimit(s_Intake.getIdleRollerCurrentLimit());
-    s_Intake.setIntakeSpeed(20);
+    s_Intake.setIntakeSpeed(0);
     s_HotDog.setHotDogSpeed(0);
     s_HotDog.setIndexerSpeed(0);
   }

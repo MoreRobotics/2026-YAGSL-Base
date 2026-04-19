@@ -203,6 +203,7 @@ public class Intake extends SubsystemBase {
     SmartDashboard.putNumber("Intake Roller Commanded Speed", speed);
     m_IntakeRoller.setControl(m_VelocityRequest.withVelocity(speed));
   }
+  
 
   public void setCurrentLimit(double currentLimit)
   {

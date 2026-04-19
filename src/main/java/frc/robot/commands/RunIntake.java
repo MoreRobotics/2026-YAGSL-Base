@@ -38,7 +38,7 @@ public class RunIntake extends Command {
   public void end(boolean interrupted) {
     
     s_Intake.setCurrentLimit(s_Intake.getIdleRollerCurrentLimit());
-    s_Intake.setIntakeSpeed(20);
+    s_Intake.setIntakeSpeed(0);//20
     // s_Lights.ClearLights();
 
   }
