@@ -34,15 +34,16 @@ public class HotDog extends SubsystemBase {
   private double reverseIndexerSpeed = -40;
   private double acceleration = 280;
 
-  private int leftIndexerID = 22;
-  private int rightIndexerID = 28;
-  private int hotDogID = 13;
+  private int IndexerID = 22;
+  private int hotDogRightID = 28;
+  private int hotDogLeftID = 13;
 
   // Talon Classes
-  private TalonFX m_LeftIndexer;
-  private TalonFX m_RightIndexer;
+  private TalonFX m_Indexer;
 
-  private TalonFX m_HotDog;
+
+  private TalonFX m_HotDogLeft;
+  private TalonFX m_HotDogRight;
   private TalonFXConfiguration indexerConfigs;
   private TalonFXConfiguration hotDogConfigs;
   private MotionMagicVelocityVoltage m_velocityRequest;
@@ -54,13 +55,13 @@ public class HotDog extends SubsystemBase {
   /** Creates a new Shooter. */
   public HotDog() {
  
-    m_LeftIndexer = new TalonFX(leftIndexerID);
-    m_RightIndexer = new TalonFX(rightIndexerID);
+    m_Indexer = new TalonFX(IndexerID);
 
-    m_HotDog = new TalonFX(hotDogID);
+    m_HotDogLeft = new TalonFX(hotDogLeftID);
+    m_HotDogRight = new TalonFX(hotDogRightID);
     m_velocityRequest = new MotionMagicVelocityVoltage(0).withSlot(0);
 
-    m_Follower = new Follower(leftIndexerID, MotorAlignmentValue.Opposed);
+    m_Follower = new Follower(hotDogLeftID, MotorAlignmentValue.Opposed);
 
     // Motor Configs
     indexerConfigs = new TalonFXConfiguration();
@@ -81,10 +82,10 @@ public class HotDog extends SubsystemBase {
     hotDogConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
     hotDogConfigs.CurrentLimits.StatorCurrentLimit = hotDogCurrentLimit;
 
-    m_LeftIndexer.getConfigurator().apply(indexerConfigs);
-    m_RightIndexer.getConfigurator().apply(indexerConfigs);
+    m_Indexer.getConfigurator().apply(indexerConfigs);
 
-    m_HotDog.getConfigurator().apply(hotDogConfigs);
+    m_HotDogLeft.getConfigurator().apply(hotDogConfigs);
+    m_HotDogRight.getConfigurator().apply(hotDogConfigs);
 
 
   }
@@ -92,8 +93,7 @@ public class HotDog extends SubsystemBase {
   public void setIndexerSpeed(double setpoint)
   {
     SmartDashboard.putNumber("Indexer Commanded Speed", -setpoint);
-    m_LeftIndexer.setControl(m_velocityRequest.withVelocity(-setpoint));
-    m_RightIndexer.setControl(m_Follower.withLeaderID(leftIndexerID));
+    m_Indexer.setControl(m_velocityRequest.withVelocity(-setpoint));
   }
 
   public double getIndexerSpeed()
@@ -109,7 +109,8 @@ public class HotDog extends SubsystemBase {
   public void setHotDogSpeed(double setpoint)
   {
     SmartDashboard.putNumber("HotDog Commanded Speed", setpoint);
-    m_HotDog.setControl(m_velocityRequest.withVelocity(setpoint));
+    m_HotDogLeft.setControl(m_velocityRequest.withVelocity(setpoint));
+    m_HotDogRight.setControl(m_Follower.withLeaderID(hotDogLeftID));
   }
 
   public double getHotDogSpeed()
@@ -125,7 +126,7 @@ public class HotDog extends SubsystemBase {
 
   public double getHotDogMotorSpeed()
   {
-    return m_HotDog.getVelocity().getValueAsDouble();
+    return m_HotDogLeft.getVelocity().getValueAsDouble();
   }
 
 
@@ -137,13 +138,13 @@ public class HotDog extends SubsystemBase {
     // shooter.updateTelemetry();
 
     // Hot Dog Logging
-    SmartDashboard.putNumber("HotDog Speed", m_HotDog.getVelocity().getValueAsDouble());
-    SmartDashboard.putNumber("HotDog Current", m_HotDog.getStatorCurrent().getValueAsDouble());
+    SmartDashboard.putNumber("Right HotDog Speed", m_HotDogRight.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("Right HotDog Current", m_HotDogRight.getStatorCurrent().getValueAsDouble());
+    SmartDashboard.putNumber("Left HotDog Speed", m_HotDogLeft.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("Left HotDog Current", m_HotDogLeft.getStatorCurrent().getValueAsDouble());
 
-    SmartDashboard.putNumber("Left Indexer Speed", m_LeftIndexer.getVelocity().getValueAsDouble());
-    SmartDashboard.putNumber("Right Indexer Speed", m_RightIndexer.getVelocity().getValueAsDouble());
-    SmartDashboard.putNumber("Left Indexer Current", m_LeftIndexer.getStatorCurrent().getValueAsDouble());
-    SmartDashboard.putNumber("Right Indexer Current", m_RightIndexer.getStatorCurrent().getValueAsDouble());
+    SmartDashboard.putNumber("Left Indexer Speed", m_Indexer.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("Left Indexer Current", m_Indexer.getStatorCurrent().getValueAsDouble());
   }
 
   @Override
