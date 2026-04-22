@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -43,6 +44,7 @@ public class Intake extends SubsystemBase {
   private double idleRollerCurrentLimit = 20;
   private double intakeSpeed = 70;//60,75
   private double outakeSpeed = -40;
+  private double acceleration = 250;
 
   private double gearRatio = 87.5/1;
   private int intakePivotID = 12;
@@ -56,7 +58,7 @@ public class Intake extends SubsystemBase {
   private MotionMagicVoltage m_Request;
   private TalonFXConfiguration pivotConfigs;
   private TalonFXConfiguration rollerConfigs;
-  private VelocityVoltage m_VelocityRequest;
+  private MotionMagicVelocityVoltage m_VelocityRequest;
   private VelocityVoltage m_PivotVelocityRequest;
 
   /** Creates a new Intake. */
@@ -66,7 +68,7 @@ public class Intake extends SubsystemBase {
     //e_IntakePivot =  new CANcoder(intakePivotCANCoderID);
 
     m_Request = new MotionMagicVoltage(0).withSlot(0);
-    m_VelocityRequest = new VelocityVoltage(0).withSlot(0);
+    m_VelocityRequest = new MotionMagicVelocityVoltage(0).withSlot(0);
     m_PivotVelocityRequest = new VelocityVoltage(0).withSlot(0);
     
     // Motor Config
@@ -93,6 +95,7 @@ public class Intake extends SubsystemBase {
     rollerConfigs.Slot0.kV = rollerV;
     rollerConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
     rollerConfigs.CurrentLimits.StatorCurrentLimit = rollerCurrentLimit;
+    rollerConfigs.MotionMagic.MotionMagicAcceleration = acceleration;
 
 
     m_IntakePivot.getConfigurator().apply(pivotConfigs);

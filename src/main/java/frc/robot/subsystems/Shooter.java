@@ -36,6 +36,8 @@ public class Shooter extends SubsystemBase {
   private double kShooter = 1;
   private double shooterSpeed = -83*.675;
 
+  private double targetSpeed;
+
 
 
   // Motor Classes
@@ -88,6 +90,7 @@ public class Shooter extends SubsystemBase {
 
   public void setShooterSpeed(double speed)
   {
+    targetSpeed = speed;
     SmartDashboard.putNumber("Shooter Set Speed", speed);
     m_TopLeftShooter.setControl(m_Request.withVelocity(-speed));
     m_BottomLeftShooter.setControl(m_LeftFollower.withLeaderID(topLeftShooterID));
@@ -126,10 +129,20 @@ public class Shooter extends SubsystemBase {
     else{
       return speed*1.03;
     }
-   
-    
-
+     
   }
+
+  public boolean isReadyToShoot()
+    {
+      if(m_TopRightShooter.getVelocity().getValueAsDouble() > targetSpeed * .9)
+      {
+        return true;
+      }
+      else
+      {
+        return false;
+      }
+    }
 
   @Override
   public void periodic() {
@@ -146,6 +159,8 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Bottom Left Shooter Motor Current", m_BottomLeftShooter.getStatorCurrent().getValueAsDouble());
     SmartDashboard.putNumber("Top Right Shooter Motor Current", m_TopRightShooter.getStatorCurrent().getValueAsDouble());
     SmartDashboard.putNumber("Bottom Right Shooter Motor Current", m_BottomRightShooter.getStatorCurrent().getValueAsDouble());
+
+    SmartDashboard.putBoolean("Ready To Shoot", isReadyToShoot());
     
   }
 }

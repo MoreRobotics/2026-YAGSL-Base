@@ -6,11 +6,13 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -199,6 +201,8 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     Command citrusRightTrench = new PathPlannerAuto("Citrus Left Trench", true);
     autoChooser.addOption("Citrus Right Trench Mirror", citrusRightTrench);
 
+    FollowPathCommand.warmupCommand();
+
   }
 
   /**
@@ -231,13 +235,18 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
           () -> driver.getLeftX(),
           () -> (s_Eyes.getTargetRotation()) * (.12)),
             new AimShooter(s_ShooterPivot),
-             new PrepareShooter(s_Shooter)         
+            new PrepareShooter(s_Shooter),
+            new ConditionalCommand(
+              new InstantCommand(() -> driver.setRumble(RumbleType.kBothRumble, 1)),
+              new InstantCommand(() -> driver.setRumble(RumbleType.kBothRumble, 0)),
+              () -> s_Shooter.isReadyToShoot())        
           ))
       .onFalse(
         new ParallelCommandGroup(
           driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity),
             new StowShooter(s_ShooterPivot),
-             new InstantCommand(() -> s_Shooter.setShooterVoltage(-1))
+             new InstantCommand(() -> s_Shooter.setShooterVoltage(-1)),
+             new InstantCommand(() -> driver.setRumble(RumbleType.kBothRumble, 0))
         )
       );
       
@@ -369,8 +378,6 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
 
   
   }
-
-   
 
   
 

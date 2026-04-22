@@ -20,7 +20,7 @@ public class RunHotDog extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    s_HotDog.setHotDogSpeed(s_HotDog.getHotDogSpeed());
+    // s_HotDog.setHotDogSpeed(s_HotDog.getHotDogSpeed());
     s_HotDog.setIndexerSpeed(s_HotDog.getIndexerSpeed());
   }
 
@@ -31,7 +31,7 @@ public class RunHotDog extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    s_HotDog.setHotDogSpeed(0);
+    // s_HotDog.setHotDogSpeed(0);
     s_HotDog.setIndexerSpeed(0);
   }
 
