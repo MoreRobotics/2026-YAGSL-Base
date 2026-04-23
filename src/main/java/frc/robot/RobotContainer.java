@@ -235,11 +235,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
           () -> driver.getLeftX(),
           () -> (s_Eyes.getTargetRotation()) * (.12)),
             new AimShooter(s_ShooterPivot),
-            new PrepareShooter(s_Shooter),
-            new ConditionalCommand(
-              new InstantCommand(() -> driver.setRumble(RumbleType.kBothRumble, 1)),
-              new InstantCommand(() -> driver.setRumble(RumbleType.kBothRumble, 0)),
-              () -> s_Shooter.isReadyToShoot())        
+            new PrepareShooter(s_Shooter)       
           ))
       .onFalse(
         new ParallelCommandGroup(
@@ -381,6 +377,16 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
 
   
 
+   public void rumbleControllers() {
+        if (s_Shooter.readyToShoot == true)
+        {
+            driver.setRumble(RumbleType.kBothRumble, 1);
+        } 
+        else 
+        {
+            driver.setRumble(RumbleType.kBothRumble, 0);
+        } 
+    }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *

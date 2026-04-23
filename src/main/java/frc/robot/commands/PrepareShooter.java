@@ -38,11 +38,15 @@ public class PrepareShooter extends Command {
   public void execute() {
     s_Shooter.setShooterSpeed(s_Shooter.getShooterSpeed());
 
-    // if(Math.abs(s_Shooter.getShooterSpeed() - s_Shooter.getCurrentSpeed()) < shooterTolerance) {
-    //   s_Lights.ReadyToFire();
-    // } else {
-    //   s_Lights.Aim();
-    // }
+
+    if(s_Shooter.isReadyToShoot())
+    {
+      s_Shooter.readyToShoot = true;
+    }
+    else
+    {
+      s_Shooter.readyToShoot = false;
+    }
   }
 
   // Called once the command ends or is interrupted.
