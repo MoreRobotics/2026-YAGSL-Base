@@ -27,7 +27,7 @@ public class ShooterPivot extends SubsystemBase {
   private double speedkP = 10;
   private double gearRatio = 15500/180;
   private double currentLimit = 45;//35
-  private double safePosition = 0.0;
+  private double safePosition = -0.004;
   private double extendedPose = -0.28;
   private double acceleration = 125;//250
   private double velocity = 50;

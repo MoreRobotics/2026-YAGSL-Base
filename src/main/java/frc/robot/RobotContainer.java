@@ -12,6 +12,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -378,13 +379,13 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
   
 
    public void rumbleControllers() {
-        if (s_Shooter.readyToShoot == true)
+        if (s_Shooter.isReadyToShoot())
         {
-            driver.setRumble(RumbleType.kBothRumble, 1);
+            driver.setRumble(GenericHID.RumbleType.kRightRumble, 1.0);
         } 
         else 
         {
-            driver.setRumble(RumbleType.kBothRumble, 0);
+            driver.setRumble(GenericHID.RumbleType.kRightRumble, 0.0);
         } 
     }
   /**
