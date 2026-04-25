@@ -14,6 +14,7 @@
 
  import frc.robot.Constants;
 import frc.robot.subsystems.swervedrive.LimelightHelpers.PoseEstimate;
+import limelight.Limelight;
 
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 
@@ -29,6 +30,11 @@ import edu.wpi.first.math.geometry.Pose2d;
  import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.networktables.StructPublisher;
+
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
  
  
  
@@ -61,6 +67,8 @@ import edu.wpi.first.networktables.StructPublisher;
      public double closestDistance;
      public boolean doRejectUpdateRight;
      public boolean doRejectUpdateLeft;
+
+     private static final HttpClient client = HttpClient.newHttpClient();
      
 
      // constuctor
@@ -331,6 +339,20 @@ import edu.wpi.first.networktables.StructPublisher;
         double thetaY = targetY - robotY;
         double distance = Math.sqrt(Math.pow(thetaX, 2) + Math.pow(thetaY, 2));
         return distance;
+     }
+
+     public void ResetLimelight() {
+        try {
+            System.out.println("limelight reset");
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("http://limelight-right.local:5801/"))
+                .POST(HttpRequest.BodyPublishers.noBody())
+                .build();
+
+            client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
      }
      
  
