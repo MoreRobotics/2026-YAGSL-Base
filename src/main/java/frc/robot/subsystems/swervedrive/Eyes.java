@@ -342,19 +342,8 @@ import java.net.http.HttpResponse;
      }
 
      public void ResetLimelight() {
-        System.out.println("limelight reset");
-        LimelightHelpers.setPipelineIndex("limelight-left", 0);
-        // try {
-        //     System.out.println("limelight reset");
-        //     HttpRequest request = HttpRequest.newBuilder()
-        //         .uri(URI.create("http://limelight-left.local:5801/"))
-        //         .POST(HttpRequest.BodyPublishers.noBody())
-        //         .build();
-
-        //     client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-        // } catch (Exception e) {
-        //     e.printStackTrace();
-        // }
+        LimelightHelpers.setPipelineIndex("limelight-left", 1);
+        
      }
      
  
@@ -453,6 +442,7 @@ import java.net.http.HttpResponse;
         SmartDashboard.putNumber("Linear Velocity", s_Swerve.getSwerveDrive().getRobotVelocity().vxMetersPerSecond);
         SmartDashboard.putNumber("Angular Velocity", s_Swerve.swerveDrive.getGyro().getYawAngularVelocity().in(DegreesPerSecond));
         SmartDashboard.putBoolean("isRedAlliance", s_Swerve.redAlliance);
+        SmartDashboard.putNumber("pipeline", LimelightHelpers.getCurrentPipelineIndex("limelight-left"));
         
 
         targetHub.set(getTargetPose());
