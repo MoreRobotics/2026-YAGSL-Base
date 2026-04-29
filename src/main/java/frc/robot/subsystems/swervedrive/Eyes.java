@@ -342,17 +342,19 @@ import java.net.http.HttpResponse;
      }
 
      public void ResetLimelight() {
-        try {
-            System.out.println("limelight reset");
-            HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://limelight-right.local:5801/"))
-                .POST(HttpRequest.BodyPublishers.noBody())
-                .build();
+        System.out.println("limelight reset");
+        LimelightHelpers.setPipelineIndex("limelight-left", 0);
+        // try {
+        //     System.out.println("limelight reset");
+        //     HttpRequest request = HttpRequest.newBuilder()
+        //         .uri(URI.create("http://limelight-left.local:5801/"))
+        //         .POST(HttpRequest.BodyPublishers.noBody())
+        //         .build();
 
-            client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        //     client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        // } catch (Exception e) {
+        //     e.printStackTrace();
+        // }
      }
      
  
