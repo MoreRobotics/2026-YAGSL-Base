@@ -201,7 +201,10 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
     Command citrusRightTrench = new PathPlannerAuto("Citrus Left Trench", true);
+    Command delayedRightBump = new PathPlannerAuto("Delayed Left Bump", true);
     autoChooser.addOption("Citrus Right Trench Mirror", citrusRightTrench);
+    autoChooser.addOption("Delayed Right Bump", delayedRightBump);
+    
 
     FollowPathCommand.warmupCommand();
 
