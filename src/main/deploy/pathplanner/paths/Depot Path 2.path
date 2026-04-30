@@ -1,0 +1,66 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 0.575,
+        "y": 5.955
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.7369928825622778,
+        "y": 5.428315539739027
+      },
+      "isLocked": false,
+      "linkedName": "Depot Path 1 End"
+    },
+    {
+      "anchor": {
+        "x": 2.3309252669039155,
+        "y": 4.029620403321471
+      },
+      "prevControl": {
+        "x": 1.8467615658362995,
+        "y": 5.008706998813759
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Depot Path 2 End"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Prepare Shooter",
+      "waypointRelativePos": 0.7199100112485982,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Prepare Shooter"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 180.0
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 180.0
+  },
+  "useDefaultConstraints": true
+}

@@ -1,0 +1,138 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.535954922894425,
+        "y": 6.04158956109134
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 0.815329238449976,
+        "y": 7.819424166767911
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 0.46958481613285974,
+        "y": 6.04158956109134
+      },
+      "prevControl": {
+        "x": 0.532044994529581,
+        "y": 7.790474556199552
+      },
+      "nextControl": {
+        "x": 0.4249704029923447,
+        "y": 4.792385993156903
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.3309252669039155,
+        "y": 4.029620403321471
+      },
+      "prevControl": {
+        "x": 1.8067110162854076,
+        "y": 5.541308009756238
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Depot Path 2 End"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.5,
+      "rotationDegrees": -105.00000000000001
+    },
+    {
+      "waypointRelativePos": 1.4600355239786904,
+      "rotationDegrees": -105.00000000000001
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.6614173228346494,
+      "maxWaypointRelativePos": 1.4758155230596193,
+      "constraints": {
+        "maxVelocity": 0.75,
+        "maxAcceleration": 0.75,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Move Intake",
+      "waypointRelativePos": 0.16647919010124007,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Move Intake"
+        }
+      }
+    },
+    {
+      "name": "Intake",
+      "waypointRelativePos": 0.35545556805399514,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Intake"
+        }
+      }
+    },
+    {
+      "name": "Stop Intake",
+      "waypointRelativePos": 1.579302587176605,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Stop Intake"
+        }
+      }
+    },
+    {
+      "name": "Prepare Shooter",
+      "waypointRelativePos": 1.7367829021372327,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Prepare Shooter"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 180.0
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 180.0
+  },
+  "useDefaultConstraints": true
+}

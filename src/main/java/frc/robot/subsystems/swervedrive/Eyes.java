@@ -342,7 +342,9 @@ import java.net.http.HttpResponse;
      }
 
      public void ResetLimelight() {
-        LimelightHelpers.setPipelineIndex("limelight-left", 1);
+        //LimelightHelpers.setPipelineIndex("limelight-left", 1);
+        NetworkTableInstance.getDefault().getTable("limelight-left").getEntry("reboot").setBoolean(true);
+        System.out.println("limelight reset");
         
      }
      
