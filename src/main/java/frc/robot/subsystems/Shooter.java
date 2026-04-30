@@ -32,6 +32,7 @@ public class Shooter extends SubsystemBase {
   private double gearRatio = 0;
   private double currentLimit = 40;
   private double acceleration = 52.84;
+  private double speedOffset = 1;
 
   private double kShooter = 1;
   private double shooterSpeed = -83*.675;
@@ -91,12 +92,12 @@ public class Shooter extends SubsystemBase {
 
   public void setShooterSpeed(double speed)
   {
-    targetSpeed = speed;
+    targetSpeed = speed * speedOffset;
     SmartDashboard.putNumber("Shooter Set Speed", speed);
-    m_TopLeftShooter.setControl(m_Request.withVelocity(-speed));
+    m_TopLeftShooter.setControl(m_Request.withVelocity(-speed * speedOffset));
     m_BottomLeftShooter.setControl(m_LeftFollower.withLeaderID(topLeftShooterID));
 
-    m_TopRightShooter.setControl(m_Request.withVelocity(speed));
+    m_TopRightShooter.setControl(m_Request.withVelocity(speed * speedOffset));
     m_BottomRightShooter.setControl(m_RightFollower.withLeaderID(topRightShooterID));
   }
 
@@ -144,6 +145,22 @@ public class Shooter extends SubsystemBase {
         return false;
       }
     }
+
+    public void increaseShooterSpeed()
+    {
+      speedOffset += 0.01;
+    }
+
+    public void decreaseShooterSpeed()
+    {
+      speedOffset -= 0.01;
+    }
+
+    public void resetShooterSpeed()
+    {
+      speedOffset = 1;
+    }
+
 
   @Override
   public void periodic() {

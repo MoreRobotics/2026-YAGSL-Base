@@ -63,6 +63,7 @@ public class RobotContainer
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final         CommandPS5Controller driver = new CommandPS5Controller(0);
+  final CommandPS5Controller operator = new CommandPS5Controller(1);
   //final         CommandPS5Controller operator = new CommandPS5Controller(1);
   // The robot's subsystems and commands are defined here...
   private static final SwerveSubsystem       drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
@@ -377,10 +378,30 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
       new HomeIntake(s_Intake)
     );
 
+
+    //operator conctrols
+
     //reset Limelight
-    driver.touchpad().onTrue(
+    operator.touchpad().onTrue(
       new InstantCommand(() -> s_Eyes.ResetLimelight())
     );
+
+    //increase shooter speed
+    operator.povUp().onTrue(
+      new InstantCommand(() -> s_Shooter.increaseShooterSpeed())
+    );
+
+    //decrease shooter speed
+    operator.povDown().onTrue(
+      new InstantCommand(() -> s_Shooter.decreaseShooterSpeed())
+    );
+
+    //reset shooter speed
+    operator.cross().onTrue(
+      new InstantCommand(() -> s_Shooter.resetShooterSpeed())
+    );
+
+
 
   
   }
