@@ -88,6 +88,8 @@ public class Shooter extends SubsystemBase {
     m_BottomLeftShooter.getConfigurator().apply(configs);
     m_BottomRightShooter.getConfigurator().apply(configs);
 
+    
+
   }
 
   public void setShooterSpeed(double speed)

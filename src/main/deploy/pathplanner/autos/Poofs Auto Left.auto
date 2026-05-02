@@ -1,0 +1,68 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Move Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Poofs Path 1"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Fart Shooter"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Run HotDog"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shooter Pivot Fart"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Lock Wheels"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Worlds Autos",
+  "choreoAuto": false
+}

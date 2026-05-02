@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 2.0,
-        "y": 5.75
+        "y": 5.3
       },
       "prevControl": null,
       "nextControl": {
         "x": 2.01890865954923,
-        "y": 7.948762752075918
+        "y": 7.498762752075918
       },
       "isLocked": false,
       "linkedName": "Citrus Left Path 1 End"

@@ -64,11 +64,11 @@
     },
     {
       "anchor": {
-        "x": 2.0,
+        "x": 1.6,
         "y": 4.5
       },
       "prevControl": {
-        "x": 2.7290154211150655,
+        "x": 2.329015421115066,
         "y": 5.040984578884934
       },
       "nextControl": null,
@@ -123,17 +123,6 @@
   ],
   "pointTowardsZones": [],
   "eventMarkers": [
-    {
-      "name": "Move Intake",
-      "waypointRelativePos": 0.23622047244094846,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "Move Intake"
-        }
-      }
-    },
     {
       "name": "Intake",
       "waypointRelativePos": 0.39145106861642487,

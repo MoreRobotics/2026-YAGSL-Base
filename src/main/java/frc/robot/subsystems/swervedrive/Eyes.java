@@ -245,6 +245,49 @@ import java.net.http.HttpResponse;
      }
 
 
+    public double getDefenseRotation() {
+        Pose2d robotPose = s_Swerve.m_PoseEstimator.getEstimatedPosition();
+
+        Pose2d targetPose = getDefensePose();
+
+        double robotX = robotPose.getX();
+        double robotY = robotPose.getY();
+
+        double targetX = targetPose.getX();
+        double targetY = targetPose.getY();
+
+        double angle =  (Math.atan((targetY - robotY) / (targetX - robotX)) * (180 / Math.PI));
+        SmartDashboard.putNumber("RobotX", robotX);
+        SmartDashboard.putNumber("RobotY", robotY);
+        SmartDashboard.putNumber("TargetX", targetX);
+        SmartDashboard.putNumber("TagretY", targetY);
+
+
+
+        // if (robotX > targetX) {
+
+        //     angle = angle + 180;
+
+        // }
+
+         
+        // SmartDashboard.putNumber(" inverted angle", -angle);
+         if (s_Swerve.redAlliance) {
+             if(s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees() < 0)
+             {
+                 return angle-(180 + s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees());
+             }
+             else {
+                 return angle + (180 - s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees());
+             }
+         }
+         else{
+            return angle - s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees();
+         }
+
+     }
+
+
      public double getTargetPassRotation() {
         Pose2d robotPose = s_Swerve.m_PoseEstimator.getEstimatedPosition();
 
@@ -305,6 +348,27 @@ import java.net.http.HttpResponse;
         return pose;
      }
 
+     public Pose2d getDefensePose() {
+        Pose2d pose;
+        Pose2d robotPose = s_Swerve.m_PoseEstimator.getEstimatedPosition();
+
+
+        if(s_Swerve.redAlliance) {
+
+            // get pose of red speaker
+            pose = new Pose2d(Constants.Positions.hubBlueX, Constants.Positions.hubBlueY, new Rotation2d(Constants.Positions.hubBlueR));
+
+        // if robot is on blue alliance
+        } else {
+
+            // get pose of blue speaker
+            pose = new Pose2d(Constants.Positions.hubRedX, Constants.Positions.hubRedY, new Rotation2d(Constants.Positions.hubRedR));
+
+        }
+        
+        return pose;
+     }
+
      public Pose2d getTargetPassPose() {
         Pose2d pose;
         
@@ -341,9 +405,10 @@ import java.net.http.HttpResponse;
         return distance;
      }
 
-     public void ResetLimelight() {
+     public static void ResetLimelight() {
         //LimelightHelpers.setPipelineIndex("limelight-left", 1);
-        NetworkTableInstance.getDefault().getTable("limelight-left").getEntry("reboot").setBoolean(true);
+        NetworkTable left = NetworkTableInstance.getDefault().getTable("limelight-left");
+        left.getEntry("restart").setNumber(1);
         System.out.println("limelight reset");
         
      }
