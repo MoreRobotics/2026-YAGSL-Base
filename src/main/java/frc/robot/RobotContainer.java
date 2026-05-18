@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AimShooter;
@@ -254,8 +253,8 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
         new ParallelCommandGroup(
           driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity),
             new StowShooter(s_ShooterPivot),
-             new InstantCommand(() -> s_Shooter.setShooterVoltage(-1)),
-             new InstantCommand(() -> driver.setRumble(RumbleType.kBothRumble, 0))
+              new InstantCommand(() -> s_Shooter.setShooterVoltage(-1))
+            //  new InstantCommand(() -> driver.setRumble(GenericHID.RumbleType.kBothRumble, 1.0))
         )
       );
 
@@ -460,11 +459,13 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
    public void rumbleControllers() {
         if (s_Shooter.isReadyToShoot())
         {
-            driver.setRumble(GenericHID.RumbleType.kRightRumble, 1.0);
+            driver.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 1.0);
+            // driver.getHID().setOutput(1, true);
         } 
         else 
         {
-            driver.setRumble(GenericHID.RumbleType.kRightRumble, 0.0);
+            driver.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 0.0);
+            // driver.getHID().setOutput(0, false);
         } 
     }
   /**

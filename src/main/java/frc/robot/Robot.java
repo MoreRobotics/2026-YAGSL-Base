@@ -97,6 +97,8 @@ public class Robot extends TimedRobot
         flag = false;
       }
     }
+
+     m_robotContainer.rumbleControllers();
   }
 
   /**
@@ -171,7 +173,6 @@ public class Robot extends TimedRobot
   @Override
   public void teleopPeriodic()
   {
-    m_robotContainer.rumbleControllers();
   }
 
   @Override

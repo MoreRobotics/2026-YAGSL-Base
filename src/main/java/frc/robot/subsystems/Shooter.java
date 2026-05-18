@@ -140,6 +140,7 @@ public class Shooter extends SubsystemBase {
     {
       if(m_TopRightShooter.getVelocity().getValueAsDouble() < (targetSpeed * .9))
       {
+        //System.out.println("Is ready");
         return true;
       }
       else
