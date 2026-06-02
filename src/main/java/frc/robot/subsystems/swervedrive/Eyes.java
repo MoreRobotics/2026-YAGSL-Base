@@ -219,16 +219,6 @@ import java.net.http.HttpResponse;
         SmartDashboard.putNumber("TargetX", targetX);
         SmartDashboard.putNumber("TagretY", targetY);
 
-
-
-        // if (robotX > targetX) {
-
-        //     angle = angle + 180;
-
-        // }
-
-         
-        // SmartDashboard.putNumber(" inverted angle", -angle);
          if (!s_Swerve.redAlliance) {
              if(s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees() < 0)
              {
