@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.subsystems.HotDog;
 // import frc.robot.commands.LightCommands.Aim;
 // import frc.robot.commands.LightCommands.Clear;
 // import frc.robot.subsystems.Lights;

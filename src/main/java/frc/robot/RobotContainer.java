@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AimShooter;
@@ -63,7 +64,7 @@ public class RobotContainer
   
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  final         CommandPS5Controller driver = new CommandPS5Controller(0);
+  final         CommandXboxController driver = new CommandXboxController(0);
   final CommandPS5Controller operator = new CommandPS5Controller(1);
   //final         CommandPS5Controller operator = new CommandPS5Controller(1);
   // The robot's subsystems and commands are defined here...
@@ -240,20 +241,23 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     // Teleop Commands
 
     // Aiming Command 
-        driver.L2().whileTrue(
+        driver.leftTrigger().whileTrue(
           new ParallelCommandGroup(
             driveFieldOrientedDirectAngle = drivebase.driveCommand(
           () -> driver.getLeftY(),
           () -> driver.getLeftX(),
           () -> (s_Eyes.getTargetRotation()) * (.12)),
             new AimShooter(s_ShooterPivot),
-            new PrepareShooter(s_Shooter)       
+            new PrepareShooter(s_Shooter),
+            new InstantCommand(() -> s_HotDog.setIndexerSpeed(s_HotDog.getIndexerSpeed()))      
           ))
       .onFalse(
         new ParallelCommandGroup(
           driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity),
             new StowShooter(s_ShooterPivot),
-              new InstantCommand(() -> s_Shooter.setShooterVoltage(-1))
+            new InstantCommand(() -> s_Shooter.setShooterVoltage(-1)),
+            new InstantCommand(() -> s_HotDog.setIndexerSpeed(0))      
+
             //  new InstantCommand(() -> driver.setRumble(GenericHID.RumbleType.kBothRumble, 1.0))
         )
       );
@@ -280,15 +284,15 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
 
     
     //zero gyro
-    driver.create().onTrue(new InstantCommand(() -> drivebase.zeroGyroWithAlliance()));
+    driver.start().onTrue(new InstantCommand(() -> drivebase.zeroGyroWithAlliance()));
 
     //run intake
-    driver.L1().whileTrue(new RunIntake(s_Intake));
+    driver.leftBumper().whileTrue(new RunIntake(s_Intake));
     // InstantCommand(() -> s_Intake.setIntakeSpeed(s_Intake.getIntakeSpeed())))
     // .onFalse(new InstantCommand(() -> s_Intake.setIntakeSpeed(0)));
 
     //intake out
-    driver.cross().onTrue(
+    driver.a().onTrue(
       new SequentialCommandGroup(
         // new InstantCommand(() -> s_Intake.setSlowMode()),
         new InstantCommand(() -> s_Intake.changeTarget()),
@@ -299,12 +303,12 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     );
 
     //home shooter
-    driver.options().onTrue(
-      new HomeShooter(s_ShooterPivot)
-    );
+    // driver.options().onTrue(
+    //   new HomeShooter(s_ShooterPivot)
+    // );
 
     //manual trench shot
-    driver.circle().whileTrue(
+    driver.b().whileTrue(
 
       new ParallelCommandGroup(
         new InstantCommand(() -> s_Shooter.setShooterSpeed(-47.75)),
@@ -318,7 +322,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     );
 
 //shoot
-     driver.R2().whileTrue(
+     driver.rightTrigger().whileTrue(
       new ParallelCommandGroup(
         
         //new InstantCommand(() -> s_Intake.setCurrentLimit(s_Intake.getIdleRollerCurrentLimit())),
@@ -378,7 +382,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
 
 
     //Block
-    driver.R1().onTrue(
+    driver.rightBumper().onTrue(
       new ParallelCommandGroup(
         //new InstantCommand(() -> s_Intake.setIntakeSpeed(40)),
         new SequentialCommandGroup(
@@ -407,7 +411,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     // );
 
     //pass
-        driver.square().whileTrue(
+        driver.x().whileTrue(
           new ParallelCommandGroup(
           new InstantCommand(() -> s_Shooter.setShooterSpeed(-56)),
           new SetShooterAngle(s_ShooterPivot, -0.065)//-0.065   
