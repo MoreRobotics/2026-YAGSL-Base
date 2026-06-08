@@ -312,12 +312,14 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
 
       new ParallelCommandGroup(
         new InstantCommand(() -> s_Shooter.setShooterSpeed(-47.75)),
-        new SetShooterAngle(s_ShooterPivot, -0.034)//-0.034
+        new SetShooterAngle(s_ShooterPivot, -0.034),//-0.034
+        new InstantCommand(() -> s_HotDog.setIndexerSpeed(s_HotDog.getIndexerSpeed()))
       )
     ).onFalse(
       new ParallelCommandGroup(
         new InstantCommand(() -> s_Shooter.setShooterVoltage(-1)),
-        new StowShooter(s_ShooterPivot)
+        new StowShooter(s_ShooterPivot),
+        new InstantCommand(() -> s_HotDog.setIndexerSpeed(0))
         )
     );
 
@@ -414,12 +416,14 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
         driver.x().whileTrue(
           new ParallelCommandGroup(
           new InstantCommand(() -> s_Shooter.setShooterSpeed(-56)),
-          new SetShooterAngle(s_ShooterPivot, -0.065)//-0.065   
+          new SetShooterAngle(s_ShooterPivot, -0.065),//-0.065
+          new InstantCommand(() -> s_HotDog.setIndexerSpeed(s_HotDog.getIndexerSpeed()))     
           ))
       .onFalse(
         new ParallelCommandGroup(
             new StowShooter(s_ShooterPivot),
-            new InstantCommand(() -> s_Shooter.setShooterVoltage(-1))
+            new InstantCommand(() -> s_Shooter.setShooterVoltage(-1)),
+            new InstantCommand(() -> s_HotDog.setIndexerSpeed(0))  
         )
       );
       
