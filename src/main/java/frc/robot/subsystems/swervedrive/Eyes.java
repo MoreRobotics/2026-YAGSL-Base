@@ -443,7 +443,8 @@ import java.net.http.HttpResponse;
             // s_Swerve.m_PoseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
             s_Swerve.m_PoseEstimator.addVisionMeasurement(
                 getLimelightRightPose().pose,
-                getLimelightRightPose().timestampSeconds);
+                getLimelightRightPose().timestampSeconds,
+                VecBuilder.fill(.2,.2,9));
         }
 
 
@@ -461,7 +462,9 @@ import java.net.http.HttpResponse;
             // s_Swerve.m_PoseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
             s_Swerve.m_PoseEstimator.addVisionMeasurement(
                 getLimelightLeftPose().pose,
-                getLimelightLeftPose().timestampSeconds);
+                getLimelightLeftPose().timestampSeconds,
+                VecBuilder.fill(.2,.2,9)
+                );
         }
 
 
@@ -491,7 +494,7 @@ import java.net.http.HttpResponse;
 
         SmartDashboard.putNumber("Robot Angle", s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees());
         // SmartDashboard.putNumber("Robot Angle Red", s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees() + 180);
-        SmartDashboard.putNumber("Target Angle", getTargetRotation());
+        SmartDashboard.putNumber("Target Angle", (Math.atan((getTargetPose().getY() - s_Swerve.m_PoseEstimator.getEstimatedPosition().getY()) / (getTargetPose().getX() - s_Swerve.m_PoseEstimator.getEstimatedPosition().getX())) * (180 / Math.PI)));
         // SmartDashboard.putNumber("Velocity Command", (getTargetRotation()-s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()) * (.12));
         // SmartDashboard.putNumber("Velocity Command Red", (getTargetRotation()+(s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees() + 180)) * (-.1));
         // SmartDashboard.putNumber("Theta M Negative", -(180 + s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees()));
