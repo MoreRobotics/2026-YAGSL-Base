@@ -214,7 +214,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     autoChooser.addOption("Delayed Right Bump", delayedRightBump);
     
 
-    FollowPathCommand.warmupCommand();
+    // FollowPathCommand.warmupCommand();
 
   }
 

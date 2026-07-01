@@ -99,6 +99,7 @@ public class Robot extends TimedRobot
     }
 
      m_robotContainer.rumbleControllers();
+     
   }
 
   /**
@@ -129,7 +130,7 @@ public class Robot extends TimedRobot
   @Override
   public void autonomousInit()
   {
-    RobotContainer.getSwerveDrive().setupPathPlanner();
+    // RobotContainer.getSwerveDrive().setupPathPlanner();
     m_robotContainer.setMotorBrake(true);
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
@@ -139,7 +140,7 @@ public class Robot extends TimedRobot
       CommandScheduler.getInstance().schedule(m_autonomousCommand);
     }
     
-    RobotContainer.getSwerveDrive();
+    //RobotContainer.getSwerveDrive();
   }
 
   /**
