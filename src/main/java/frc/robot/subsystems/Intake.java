@@ -12,6 +12,7 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.controls.VoltageOut;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -41,8 +42,11 @@ public class Intake extends SubsystemBase {
   private double rollerI = 0;
   private double rollerD = 0;
   private double rollerV = 0.125;
+
   private double rollerCurrentLimit = 85;
   private double idleRollerCurrentLimit = 20;
+  private double rollerSupplyLimit = 50;
+  
   private double intakeSpeed = 70;//60,75
   private double outakeSpeed = -40;
   private double acceleration = 250;
@@ -51,6 +55,9 @@ public class Intake extends SubsystemBase {
   private int intakePivotID = 12;
   private int intakeRollerID = 11;
   private int intakePivotCANCoderID = 12;
+
+  private double intakeVoltage = 12.0;
+  private double intakeVoltageIdle = 4.5;
 
   // Talon Classes
   private TalonFX m_IntakePivot;
@@ -61,6 +68,7 @@ public class Intake extends SubsystemBase {
   private TalonFXConfiguration rollerConfigs;
   private MotionMagicVelocityVoltage m_VelocityRequest;
   private VelocityVoltage m_PivotVelocityRequest;
+  private VoltageOut voltageRequest;
 
   /** Creates a new Intake. */
   public Intake() {
@@ -96,11 +104,18 @@ public class Intake extends SubsystemBase {
     rollerConfigs.Slot0.kV = rollerV;
     rollerConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
     rollerConfigs.CurrentLimits.StatorCurrentLimit = rollerCurrentLimit;
+    configs.CurrentLimits.SupplyCurrentLimitEnable = true;
+    rollerConfigs.CurrentLimits.SupplyCurrentLimit = rollerSupplyLimit;
     rollerConfigs.MotionMagic.MotionMagicAcceleration = acceleration;
 
 
     m_IntakePivot.getConfigurator().apply(pivotConfigs);
     m_IntakeRoller.getConfigurator().apply(rollerConfigs);
+
+    voltageRequest = new VoltageOut(intakeVoltage);
+    voltageRequestOutake = new VoltageOut(-intakeVoltage);
+    voltageRequestStop = new VoltageOut(0.0);
+    voltageRequestIdle = new VoltageOut(intakeVoltageIdle);
 
     // Set Intake RELATIVE
     m_IntakePivot.setPosition(0);
@@ -212,11 +227,24 @@ public class Intake extends SubsystemBase {
     SmartDashboard.putNumber("Intake Roller Commanded Speed", speed);
     m_IntakeRoller.setControl(m_VelocityRequest.withVelocity(speed));
   }
-  
+
+  public void setIntakeVoltage(){
+    m_IntakeRoller.setControl(voltageRequest);
+  }
+  public void setOutakeVoltage() {
+    m_IntakeRoller.setControl(voltageRequestOutake);
+  }
+  public void setIdleVoltage(){
+    m_IntakeRoller.setControl(voltageRequestIdle);
+  }
+  public void stopIntakeVoltage() {
+    m_IntakeRoller.setControl(voltageRequestStop);
+  }
 
   public void setCurrentLimit(double currentLimit)
   {
-    rollerConfigs.CurrentLimits.StatorCurrentLimit = currentLimit;
+    rollerConfigs.CurrentLimits.StatorCurrentLimit = rollerCurrentLimit;
+    rollerConfigs.CurrentLimits.SupplyCurrentLimit = rollerSupplyLimit;
     m_IntakeRoller.getConfigurator().apply(rollerConfigs);
   }
 

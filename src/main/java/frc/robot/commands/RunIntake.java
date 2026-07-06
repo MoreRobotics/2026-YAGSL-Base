@@ -25,7 +25,8 @@ public class RunIntake extends Command {
   @Override
   public void initialize() {
     s_Intake.setCurrentLimit(s_Intake.getActiveRollerCurrentLimit());
-    s_Intake.setIntakeSpeed(s_Intake.getIntakeSpeed());
+    //s_Intake.setIntakeSpeed(s_Intake.getIntakeSpeed());
+    s_Intake.setIntakeVoltage();
     // s_Lights.Intake();
   }
 
@@ -37,8 +38,10 @@ public class RunIntake extends Command {
   @Override
   public void end(boolean interrupted) {
     
-    s_Intake.setCurrentLimit(s_Intake.getIdleRollerCurrentLimit());
-    s_Intake.setIntakeSpeed(0);//20
+    //s_Intake.setCurrentLimit(s_Intake.getIdleRollerCurrentLimit());
+    s_Intake.setCurrentLimit(s_Intake.getActiveRollerCurrentLimit());
+    s_Intake.setIdleVoltage();
+    //s_Intake.setIntakeSpeed(0);//20
     // s_Lights.ClearLights();
 
   }
