@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import java.io.SyncFailedException;
 import java.util.Optional;
 
 import com.pathplanner.lib.commands.FollowPathCommand;
@@ -16,6 +17,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import com.pathplanner.lib.util.PathPlannerLogging;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to each mode, as
@@ -68,8 +70,11 @@ public class Robot extends TimedRobot
     FollowPathCommand.warmupCommand().schedule();
     PathfindingCommand.warmupCommand().schedule();
     DataLogManager.start();
+
+    PathPlannerLogging.setLogActivePathCallback(poses -> System.out.println("active path @ " + Timer.getFPGATimestamp()));
   }
 
+  
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics that you want ran
    * during disabled, autonomous, teleoperated and test.
@@ -130,6 +135,7 @@ public class Robot extends TimedRobot
   @Override
   public void autonomousInit()
   {
+    System.out.print("auto enabled @" + Timer.getFPGATimestamp()); 
     // RobotContainer.getSwerveDrive().setupPathPlanner();
     m_robotContainer.setMotorBrake(true);
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
