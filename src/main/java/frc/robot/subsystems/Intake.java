@@ -5,12 +5,14 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -30,7 +32,7 @@ public class Intake extends SubsystemBase {
   private double reverseLimit = -.163;
   private double pivotCurrentLimit = 50;
   private double intakeStowPosition = -0.001;
-  private double intakeOutPosition = -0.334;//-0.3139
+  private double intakeOutPosition = -0.330;//-0.334
   private double intakeMiddlePosition = -0.1525;//-0.165
   private double intakePumpPosition = -0.181;
   private double target = 0;
@@ -43,35 +45,40 @@ public class Intake extends SubsystemBase {
   private double rollerV = 0.125;
   private double rollerCurrentLimit = 85;
   private double idleRollerCurrentLimit = 20;
-  private double intakeSpeed = 70;//60,75
-  private double outakeSpeed = -40;
+  private double intakeSpeed = -70;//60,75
+  private double outakeSpeed = 40;
   private double acceleration = 250;
 
   private double gearRatio = 87.5/1;
   private int intakePivotID = 12;
-  private int intakeRollerID = 11;
-  private int intakePivotCANCoderID = 12;
+  private int rightIntakePowerID = 11;
+  private int leftIntakePowerID = 29;
 
   // Talon Classes
   private TalonFX m_IntakePivot;
-  private TalonFX m_IntakeRoller;
-  //private CANcoder e_IntakePivot;
+  private TalonFX m_RightIntakeRoller;
+  private TalonFX m_LeftIntakeRoller;
   private MotionMagicVoltage m_Request;
   private TalonFXConfiguration pivotConfigs;
   private TalonFXConfiguration rollerConfigs;
   private MotionMagicVelocityVoltage m_VelocityRequest;
   private VelocityVoltage m_PivotVelocityRequest;
+  private Follower m_RollerFollower;
 
   /** Creates a new Intake. */
   public Intake() {
     m_IntakePivot = new TalonFX(intakePivotID);
-    m_IntakeRoller = new TalonFX(intakeRollerID);
+    m_RightIntakeRoller = new TalonFX(rightIntakePowerID);
+    m_LeftIntakeRoller = new TalonFX(leftIntakePowerID);
     //e_IntakePivot =  new CANcoder(intakePivotCANCoderID);
 
     m_Request = new MotionMagicVoltage(0).withSlot(0);
     m_VelocityRequest = new MotionMagicVelocityVoltage(0).withSlot(0);
     m_PivotVelocityRequest = new VelocityVoltage(0).withSlot(0);
     
+    //Left motor follows the right
+
+    m_RollerFollower = new Follower(rightIntakePowerID, MotorAlignmentValue.Opposed);
     // Motor Config
     pivotConfigs = new TalonFXConfiguration();
     pivotConfigs.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
@@ -100,7 +107,8 @@ public class Intake extends SubsystemBase {
 
 
     m_IntakePivot.getConfigurator().apply(pivotConfigs);
-    m_IntakeRoller.getConfigurator().apply(rollerConfigs);
+    m_RightIntakeRoller.getConfigurator().apply(rollerConfigs);
+    m_LeftIntakeRoller.getConfigurator().apply(rollerConfigs);
 
     // Set Intake RELATIVE
     m_IntakePivot.setPosition(0);
@@ -210,14 +218,16 @@ public class Intake extends SubsystemBase {
 
   public void setIntakeSpeed(double speed){
     SmartDashboard.putNumber("Intake Roller Commanded Speed", speed);
-    m_IntakeRoller.setControl(m_VelocityRequest.withVelocity(speed));
+    m_RightIntakeRoller.setControl(m_VelocityRequest.withVelocity(speed));
+    m_LeftIntakeRoller.setControl(m_RollerFollower);
   }
   
 
   public void setCurrentLimit(double currentLimit)
   {
     rollerConfigs.CurrentLimits.StatorCurrentLimit = currentLimit;
-    m_IntakeRoller.getConfigurator().apply(rollerConfigs);
+     m_RightIntakeRoller.getConfigurator().apply(rollerConfigs);
+    m_LeftIntakeRoller.getConfigurator().apply(rollerConfigs);
   }
 
   public double getIdleRollerCurrentLimit()
@@ -256,8 +266,10 @@ public class Intake extends SubsystemBase {
     // SmartDashboard.putNumber("Intake Pivot Motor Acceleration", m_IntakePivot.getAcceleration().getValueAsDouble());
      SmartDashboard.putNumber("Intake Pivot Motor Velocity", m_IntakePivot.getVelocity().getValueAsDouble());
     //SmartDashboard.putNumber("Intake Pivot CANCoder Position", e_IntakePivot.getPosition().getValueAsDouble());
-    SmartDashboard.putNumber("Intake Roller Speed", m_IntakeRoller.getVelocity().getValueAsDouble());
-    SmartDashboard.putNumber("Intake Roller Current", m_IntakeRoller.getStatorCurrent().getValueAsDouble());
+    SmartDashboard.putNumber("Right Intake Roller Speed", m_RightIntakeRoller.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("Left Intake Roller Speed", m_LeftIntakeRoller.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("Right Intake Roller Current", m_RightIntakeRoller.getStatorCurrent().getValueAsDouble());
+    SmartDashboard.putNumber("Left Intake Roller Current", m_LeftIntakeRoller.getStatorCurrent().getValueAsDouble());
     SmartDashboard.putNumber("Intake Pivot Current", m_IntakePivot.getStatorCurrent().getValueAsDouble());
     // SmartDashboard.putNumber("Intake Roller Current Limit", rollerConfigs.CurrentLimits.StatorCurrentLimit);
 
