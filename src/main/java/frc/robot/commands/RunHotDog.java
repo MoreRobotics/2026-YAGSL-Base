@@ -20,8 +20,10 @@ public class RunHotDog extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-     s_HotDog.setHotDogSpeed(s_HotDog.getHotDogSpeed());
+    //s_HotDog.setHotDogSpeed(s_HotDog.getHotDogSpeed());
     // s_HotDog.setIndexerSpeed(s_HotDog.getIndexerSpeed());
+    s_HotDog.setHotDogVoltageOutake();
+    s_HotDog.setIndexerVoltageOutake();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -31,8 +33,10 @@ public class RunHotDog extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-     s_HotDog.setHotDogSpeed(0);
+    // s_HotDog.setHotDogSpeed(0);
     // s_HotDog.setIndexerSpeed(0);
+    s_HotDog.stopHotDogVoltage();
+    s_HotDog.stopIndexerVoltage();
   }
 
   // Returns true when the command should end.

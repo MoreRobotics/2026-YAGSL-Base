@@ -108,7 +108,7 @@ public class Intake extends SubsystemBase {
     rollerConfigs.CurrentLimits.SupplyCurrentLimit = rollerSupplyLimit;
     rollerConfigs.MotionMagic.MotionMagicAcceleration = acceleration;
 
-
+    m_IntakeRoller.getConfigurator().apply(rollerConfigs);
     m_IntakePivot.getConfigurator().apply(pivotConfigs);
     m_IntakeRoller.getConfigurator().apply(rollerConfigs);
 

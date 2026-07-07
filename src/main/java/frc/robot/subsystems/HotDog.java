@@ -26,8 +26,12 @@ public class HotDog extends SubsystemBase {
   private double hotDogD = 0;
   private double hotDogV = .13;//.15
   
-  private double currentLimit = 80;
-  private double hotDogCurrentLimit = 65;
+  private double indexerCurrentLimit = 80;
+  private double hotDogCurrentLimit = 80;
+
+  private double indexerSupplyLimit = 50;
+  private double hotDogSupplyLimit = 50;
+
   private double indexerSpeed = 80;//80, 60
   private double hotDogSpeed = 60;//can go to 60
   private double reverseHotDogSpeed = -30;
@@ -39,6 +43,9 @@ public class HotDog extends SubsystemBase {
   private int IndexerID = 22;
   private int hotDogRightID = 28;
   private int hotDogLeftID = 13;
+
+  private double indexerVoltage = 12.0;
+  private double hotDogVoltage = 12.0;
 
   // Talon Classes
   private TalonFX m_Indexer;
@@ -52,7 +59,7 @@ public class HotDog extends SubsystemBase {
 
   private Follower m_Follower;
 
-  
+  private VoltageOut voltageRequest;
 
   /** Creates a new Shooter. */
   public HotDog() {
@@ -71,24 +78,39 @@ public class HotDog extends SubsystemBase {
     indexerConfigs.Slot0.kI = indexerI;
     indexerConfigs.Slot0.kD = indexerD;
     indexerConfigs.Slot0.kV = indexerV;
+
     indexerConfigs.MotionMagic.MotionMagicAcceleration = acceleration;
     indexerConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
-    indexerConfigs.CurrentLimits.StatorCurrentLimit = currentLimit;
+    indexerConfigs.CurrentLimits.StatorCurrentLimit = indexerCurrentLimit;
+
+    indexerConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
+    indexerConfigs.CurrentLimits.SupplyCurrentLimit = indexerSupplyLimit;
 
     hotDogConfigs = new TalonFXConfiguration();
     hotDogConfigs.Slot0.kP = hotDogP;
     hotDogConfigs.Slot0.kI = hotDogI;
     hotDogConfigs.Slot0.kD = hotDogD;
     hotDogConfigs.Slot0.kV = hotDogV;
+
     hotDogConfigs.MotionMagic.MotionMagicAcceleration = hotDogAcceleration;
     hotDogConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
     hotDogConfigs.CurrentLimits.StatorCurrentLimit = hotDogCurrentLimit;
+
+    hotDogConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
+    hotDogConfigs.CurrentLimits.SupplyCurrentLimit = hotDogSupplyLimit;
 
     m_Indexer.getConfigurator().apply(indexerConfigs);
 
     m_HotDogLeft.getConfigurator().apply(hotDogConfigs);
     m_HotDogRight.getConfigurator().apply(hotDogConfigs);
 
+    indexerVoltageRequest = new VoltageOut(indexerVoltage);
+    indexerVoltageRequestOutake = new VoltageOut(-indexerVoltage);
+    indexerVoltageRequestStop = new VoltageOut(0.0);
+
+    hotDogVoltageRequest = new VoltageOut(hotDogVoltage);
+    hotDogVoltageRequestOutake = new VoltageOut(-hotDogVoltage);
+    hotDogVoltageRequestStop = new VoltageOut(0.0);
 
   }
 
@@ -131,8 +153,25 @@ public class HotDog extends SubsystemBase {
     return m_HotDogLeft.getVelocity().getValueAsDouble();
   }
 
+  public void setIndexerVoltage(){
+    m_Indexer.setControl(indexerVoltageRequest);
+  }
+  public void setIndexerVoltageOutake(){
+    m_Indexer.setControl(indexerVoltageRequestOutake);
+  }
+  public void stopIndexerVoltage() {
+    m_IntakeRoller.setControl(indexerVoltageRequestStop);
+  }
 
-
+  public void setHotDogVoltage(){
+    m_IntakeRoller.setControl(hotDogVoltageRequest);
+  }
+  public void setHotDogVoltageOutake(){
+    m_Indexer.setControl(hotDogVoltageRequestOutake);
+  }
+  public void stopHotDogVoltage() {
+    m_IntakeRoller.setControl(hotDogVoltageRequestStop);
+  }
 
   @Override
   public void periodic() {
