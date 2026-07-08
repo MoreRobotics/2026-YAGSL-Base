@@ -27,7 +27,7 @@ public class Outake extends Command {
     //s_Intake.setIntakeSpeed(s_Intake.getOutakeSpeed());
     s_Intake.setOutakeVoltage();
     //s_HotDog.setHotDogSpeed(s_HotDog.getReverseHotDogSpeed());
-    s_HotDog.setHotDogVoltage()
+    s_HotDog.setHotDogVoltage();
     s_HotDog.setIndexerSpeed(s_HotDog.getReverseIndexerSpeed());
   }
 

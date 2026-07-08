@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
@@ -59,7 +60,13 @@ public class HotDog extends SubsystemBase {
 
   private Follower m_Follower;
 
-  private VoltageOut voltageRequest;
+  private VoltageOut indexerVoltageRequest;
+  private VoltageOut indexerVoltageRequestOutake;
+  private VoltageOut indexerVoltageRequestStop;
+
+  private VoltageOut hotDogVoltageRequest;
+  private VoltageOut hotDogVoltageRequestOutake;
+  private VoltageOut hotDogVoltageRequestStop;
 
   /** Creates a new Shooter. */
   public HotDog() {
@@ -160,17 +167,20 @@ public class HotDog extends SubsystemBase {
     m_Indexer.setControl(indexerVoltageRequestOutake);
   }
   public void stopIndexerVoltage() {
-    m_IntakeRoller.setControl(indexerVoltageRequestStop);
+    m_Indexer.setControl(indexerVoltageRequestStop);
   }
 
   public void setHotDogVoltage(){
-    m_IntakeRoller.setControl(hotDogVoltageRequest);
+    m_HotDogLeft.setControl(hotDogVoltageRequest);
+    m_HotDogRight.setControl(hotDogVoltageRequest.withOutput(-hotDogVoltage));
   }
   public void setHotDogVoltageOutake(){
-    m_Indexer.setControl(hotDogVoltageRequestOutake);
+    m_HotDogLeft.setControl(hotDogVoltageRequestOutake);
+    m_HotDogRight.setControl(hotDogVoltageRequestOutake.withOutput(hotDogVoltage));
   }
   public void stopHotDogVoltage() {
-    m_IntakeRoller.setControl(hotDogVoltageRequestStop);
+    m_HotDogLeft.setControl(hotDogVoltageRequestStop);
+    m_HotDogRight.setControl(hotDogVoltageRequestStop);
   }
 
   @Override

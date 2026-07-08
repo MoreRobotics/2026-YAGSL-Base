@@ -58,8 +58,8 @@ public class Intake extends SubsystemBase {
   private int rightIntakePowerID = 11;
   private int leftIntakePowerID = 29;
 
-  private double intakeVoltage = 12.0;
-  private double intakeVoltageIdle = 4.5;
+  private double intakeVoltage = -12.0;
+  private double intakeVoltageIdle = -4.5;
 
   // Talon Classes
   private TalonFX m_IntakePivot;
@@ -240,22 +240,25 @@ public class Intake extends SubsystemBase {
   }
 
   public void setIntakeVoltage(){
-    m_IntakeRoller.setControl(voltageRequest);
+    m_RightIntakeRoller.setControl(voltageRequest);
+    m_LeftIntakeRoller.setControl(m_RollerFollower);
   }
   public void setOutakeVoltage() {
-    m_IntakeRoller.setControl(voltageRequestOutake);
+    m_RightIntakeRoller.setControl(voltageRequestOutake);
+    m_LeftIntakeRoller.setControl(m_RollerFollower);
   }
   public void setIdleVoltage(){
-    m_IntakeRoller.setControl(voltageRequestIdle);
+    m_RightIntakeRoller.setControl(voltageRequestIdle);
+    m_LeftIntakeRoller.setControl(m_RollerFollower);
   }
   public void stopIntakeVoltage() {
-    m_IntakeRoller.setControl(voltageRequestStop);
+    m_RightIntakeRoller.setControl(voltageRequestStop);
+    m_LeftIntakeRoller.setControl(m_RollerFollower);
   }
 
   public void setCurrentLimit(double currentLimit)
   {
-    rollerConfigs.CurrentLimits.StatorCurrentLimit = rollerCurrentLimit;
-    rollerConfigs.CurrentLimits.SupplyCurrentLimit = rollerSupplyLimit;
+    rollerConfigs.CurrentLimits.StatorCurrentLimit = currentLimit;
      m_RightIntakeRoller.getConfigurator().apply(rollerConfigs);
     m_LeftIntakeRoller.getConfigurator().apply(rollerConfigs);
   }
@@ -300,6 +303,8 @@ public class Intake extends SubsystemBase {
     SmartDashboard.putNumber("Left Intake Roller Speed", m_LeftIntakeRoller.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("Right Intake Roller Current", m_RightIntakeRoller.getStatorCurrent().getValueAsDouble());
     SmartDashboard.putNumber("Left Intake Roller Current", m_LeftIntakeRoller.getStatorCurrent().getValueAsDouble());
+    SmartDashboard.putNumber("Right Intake Roller Supply Current", m_RightIntakeRoller.getSupplyCurrent().getValueAsDouble());
+    SmartDashboard.putNumber("Left Intake Roller Supply Current", m_LeftIntakeRoller.getSupplyCurrent().getValueAsDouble());
     SmartDashboard.putNumber("Intake Pivot Current", m_IntakePivot.getStatorCurrent().getValueAsDouble());
     // SmartDashboard.putNumber("Intake Roller Current Limit", rollerConfigs.CurrentLimits.StatorCurrentLimit);
 
