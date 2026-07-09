@@ -111,8 +111,8 @@ public class HotDog extends SubsystemBase {
     m_HotDogLeft.getConfigurator().apply(hotDogConfigs);
     m_HotDogRight.getConfigurator().apply(hotDogConfigs);
 
-    indexerVoltageRequest = new VoltageOut(indexerVoltage);
-    indexerVoltageRequestOutake = new VoltageOut(-indexerVoltage);
+    indexerVoltageRequest = new VoltageOut(-indexerVoltage);
+    indexerVoltageRequestOutake = new VoltageOut(indexerVoltage);
     indexerVoltageRequestStop = new VoltageOut(0.0);
 
     hotDogVoltageRequest = new VoltageOut(hotDogVoltage);
@@ -172,11 +172,11 @@ public class HotDog extends SubsystemBase {
 
   public void setHotDogVoltage(){
     m_HotDogLeft.setControl(hotDogVoltageRequest);
-    m_HotDogRight.setControl(hotDogVoltageRequest.withOutput(-hotDogVoltage));
+    m_HotDogRight.setControl(hotDogVoltageRequestOutake);
   }
   public void setHotDogVoltageOutake(){
     m_HotDogLeft.setControl(hotDogVoltageRequestOutake);
-    m_HotDogRight.setControl(hotDogVoltageRequestOutake.withOutput(hotDogVoltage));
+    m_HotDogRight.setControl(hotDogVoltageRequest);
   }
   public void stopHotDogVoltage() {
     m_HotDogLeft.setControl(hotDogVoltageRequestStop);

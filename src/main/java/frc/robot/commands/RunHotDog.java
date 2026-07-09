@@ -22,8 +22,8 @@ public class RunHotDog extends Command {
   public void initialize() {
     //s_HotDog.setHotDogSpeed(s_HotDog.getHotDogSpeed());
     // s_HotDog.setIndexerSpeed(s_HotDog.getIndexerSpeed());
-    s_HotDog.setHotDogVoltageOutake();
-    s_HotDog.setIndexerVoltageOutake();
+    s_HotDog.setHotDogVoltage();
+    s_HotDog.setIndexerVoltage();
   }
 
   // Called every time the scheduler runs while the command is scheduled.

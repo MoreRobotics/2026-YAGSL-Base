@@ -58,7 +58,7 @@ public class Intake extends SubsystemBase {
   private int rightIntakePowerID = 11;
   private int leftIntakePowerID = 29;
 
-  private double intakeVoltage = -12.0;
+  private double intakeVoltage = -9.0;
   private double intakeVoltageIdle = -4.5;
 
   // Talon Classes
