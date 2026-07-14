@@ -40,7 +40,7 @@ public class RunIntake extends Command {
     
     //s_Intake.setCurrentLimit(s_Intake.getIdleRollerCurrentLimit());
     //s_Intake.setCurrentLimit(s_Intake.getActiveRollerCurrentLimit());
-    s_Intake.setIdleVoltage();
+    s_Intake.stopIntakeVoltage();
     //s_Intake.setIntakeSpeed(0);//20
     // s_Lights.ClearLights();
 
