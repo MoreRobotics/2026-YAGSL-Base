@@ -247,8 +247,8 @@ import java.net.http.HttpResponse;
         double targetY = targetPose.getY();
 
         double angle =  (Math.atan((targetY - robotY) / (targetX - robotX)) * (180 / Math.PI));
-        SmartDashboard.putNumber("RobotX", robotX);
-        SmartDashboard.putNumber("RobotY", robotY);
+        // SmartDashboard.putNumber("RobotX", robotX);
+        // SmartDashboard.putNumber("RobotY", robotY);
         SmartDashboard.putNumber("TargetX", targetX);
         SmartDashboard.putNumber("TagretY", targetY);
 
@@ -503,6 +503,8 @@ import java.net.http.HttpResponse;
         SmartDashboard.putNumber("Angular Velocity", s_Swerve.swerveDrive.getGyro().getYawAngularVelocity().in(DegreesPerSecond));
         SmartDashboard.putBoolean("isRedAlliance", s_Swerve.redAlliance);
         SmartDashboard.putNumber("pipeline", LimelightHelpers.getCurrentPipelineIndex("limelight-left"));
+        SmartDashboard.putNumber("RobotX", s_Swerve.m_PoseEstimator.getEstimatedPosition().getX());
+        SmartDashboard.putNumber("RobotY", s_Swerve.m_PoseEstimator.getEstimatedPosition().getY());
         
 
         targetHub.set(getTargetPose());
