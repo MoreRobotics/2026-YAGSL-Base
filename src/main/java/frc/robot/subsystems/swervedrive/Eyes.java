@@ -105,7 +105,7 @@ import java.net.http.HttpResponse;
           * ta = pitch in degrees in limelight FOV
           * tID = target ID number
           */
-         NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight-left");
+         NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight-center");
          NetworkTableEntry tx = table.getEntry("tx");
          NetworkTableEntry ty = table.getEntry("ty");
          NetworkTableEntry ta = table.getEntry("ta");
@@ -130,9 +130,9 @@ import java.net.http.HttpResponse;
          SmartDashboard.putNumber("LimelightY", y);
          SmartDashboard.putNumber("LimelightArea", area);
 
-         SmartDashboard.putNumber("Limelight-LeftX", xLeft);
-         SmartDashboard.putNumber("Limelight-LeftY", yLeft);
-         SmartDashboard.putNumber("LimelightArea-Left", areaLeft);
+         SmartDashboard.putNumber("Limelight-CenterX", xLeft);
+         SmartDashboard.putNumber("Limelight-CenterY", yLeft);
+         SmartDashboard.putNumber("LimelightArea-Center", areaLeft);
  
          // tx = LimelightHelpers.getTX("limelight");
          // ty = LimelightHelpers.getTY("limelight");
@@ -143,7 +143,7 @@ import java.net.http.HttpResponse;
          // tync = LimelightHelpers.getTYNC("limelight");  // Vertical  offset from principal pixel/point to target in degrees
  
          LimelightHelpers.setPipelineIndex("limelight-right", 0);
-         LimelightHelpers.setPipelineIndex("limelight-left", 0);
+         LimelightHelpers.setPipelineIndex("limelight-center", 0);
  
          // log target data
          SmartDashboard.putNumber("AprilTagID", tID);
@@ -198,7 +198,7 @@ import java.net.http.HttpResponse;
      public PoseEstimate getLimelightLeftPose() {
  
          
-        PoseEstimate pose = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-left");
+        PoseEstimate pose = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-center");
          return pose;
      }
 
@@ -397,7 +397,7 @@ import java.net.http.HttpResponse;
 
      public static void ResetLimelight() {
         //LimelightHelpers.setPipelineIndex("limelight-left", 1);
-        NetworkTable left = NetworkTableInstance.getDefault().getTable("limelight-left");
+        NetworkTable left = NetworkTableInstance.getDefault().getTable("limelight-center");
         left.getEntry("restart").setNumber(1);
         System.out.println("limelight reset");
         
@@ -424,7 +424,7 @@ import java.net.http.HttpResponse;
         
         s_Swerve.swerveDrive.updateOdometry();
         LimelightHelpers.SetRobotOrientation("limelight-right", s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
-        LimelightHelpers.SetRobotOrientation("limelight-left", s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
+        LimelightHelpers.SetRobotOrientation("limelight-center", s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
 
         doRejectUpdateRight = false;
         doRejectUpdateLeft = false;
@@ -502,7 +502,7 @@ import java.net.http.HttpResponse;
         SmartDashboard.putNumber("Linear Velocity", s_Swerve.getSwerveDrive().getRobotVelocity().vxMetersPerSecond);
         SmartDashboard.putNumber("Angular Velocity", s_Swerve.swerveDrive.getGyro().getYawAngularVelocity().in(DegreesPerSecond));
         SmartDashboard.putBoolean("isRedAlliance", s_Swerve.redAlliance);
-        SmartDashboard.putNumber("pipeline", LimelightHelpers.getCurrentPipelineIndex("limelight-left"));
+        SmartDashboard.putNumber("pipeline", LimelightHelpers.getCurrentPipelineIndex("limelight-center"));
         SmartDashboard.putNumber("RobotX", s_Swerve.m_PoseEstimator.getEstimatedPosition().getX());
         SmartDashboard.putNumber("RobotY", s_Swerve.m_PoseEstimator.getEstimatedPosition().getY());
         

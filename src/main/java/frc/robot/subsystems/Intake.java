@@ -34,8 +34,8 @@ public class Intake extends SubsystemBase {
   private double pivotCurrentLimit = 50;
   private double intakeStowPosition = -0.001;
   private double intakeOutPosition = -0.330;//-0.334
-  private double intakeMiddlePosition = -0.1525;//-0.165
-  private double intakePumpPosition = -0.181;
+  private double intakeMiddlePosition = -0.1118;//-0.165
+  private double intakePumpPosition = -0.165;//-0.181
   private double target = 0;
   private boolean intakeOut = false;
   private double tolerance = 0.005;
