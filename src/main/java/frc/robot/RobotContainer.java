@@ -163,11 +163,12 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     NamedCommands.registerCommand("Stop Shooter", new InstantCommand(() -> s_Shooter.setShooterVoltage(-1)));
     NamedCommands.registerCommand("Fart Shooter", new InstantCommand(() -> s_Shooter.setShooterVoltage(-2)));
     NamedCommands.registerCommand("Shooter Pivot Fart", new SetShooterAngle(s_ShooterPivot, -0.065));
-    NamedCommands.registerCommand("Intake", new ParallelCommandGroup(
-      new InstantCommand(() -> s_Intake.setIntakeSpeed(50)),
-      new InstantCommand(() -> s_Intake.setCurrentLimit(s_Intake.getActiveRollerCurrentLimit())))
+    NamedCommands.registerCommand("Intake",
+      new InstantCommand(() -> s_Intake.setIntakeVoltage())
     );
-    NamedCommands.registerCommand("Stop Intake", new InstantCommand(() -> s_Intake.setIntakeSpeed(0)));
+    NamedCommands.registerCommand("Stop Intake",
+      new InstantCommand(() -> s_Intake.stopIntakeVoltage())
+    );
     NamedCommands.registerCommand("Move Intake", new SequentialCommandGroup(
         new InstantCommand(() -> s_Intake.changeTarget()),
         new MoveIntake(s_Intake),
@@ -185,7 +186,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     //new InstantCommand(() -> s_Intake.setIntakeSpeed(40)),
    new SequentialCommandGroup(
         new InstantCommand(() -> s_Intake.setState(true)),
-        new InstantCommand(() -> s_Intake.setIntakeTarget(s_Intake.getIntakeMiddlePosition())),
+        new InstantCommand(() -> s_Intake.setIntakeTarget(s_Intake.getIntakePumpPosition())),
         new MoveIntake(s_Intake),
         new InstantCommand(() -> s_Intake.setState(false)),
         new InstantCommand(() -> s_Intake.changeTarget()),
@@ -390,7 +391,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
         new SequentialCommandGroup(
           // new InstantCommand(() -> s_Intake.setNormalMode()),
           new InstantCommand(() -> s_Intake.setState(true)),
-          new InstantCommand(() -> s_Intake.setIntakeTarget(s_Intake.getIntakeMiddlePosition())),
+          new InstantCommand(() -> s_Intake.setIntakeTarget(s_Intake.getIntakeBlockPosition())),
           new MoveIntake(s_Intake)
         )
       )

@@ -33,9 +33,9 @@ public class Intake extends SubsystemBase {
   private double reverseLimit = -.163;
   private double pivotCurrentLimit = 50;
   private double intakeStowPosition = -0.001;
-  private double intakeOutPosition = -0.3285;//-0.330
-  private double intakeMiddlePosition = -0.1118;//-0.165
-  private double intakePumpPosition = -0.165;//-0.181
+  private double intakeOutPosition = -0.333;//-0.330
+  private double intakeBlockPosition = -0.079;//-0.165
+  private double intakePumpPosition = -0.1599;//-0.165
   private double target = 0;
   private boolean intakeOut = false;
   private double tolerance = 0.005;
@@ -175,9 +175,9 @@ public class Intake extends SubsystemBase {
     target = setpoint;
   }
 
-  public double getIntakeMiddlePosition()
+  public double getIntakeBlockPosition()
   {
-    return intakeMiddlePosition;
+    return intakeBlockPosition;
   }
 
   public double getIntakeOutPosition()
