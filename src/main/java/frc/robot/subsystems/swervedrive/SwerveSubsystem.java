@@ -19,8 +19,10 @@ import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 
+import choreo.trajectory.SwerveSample;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -81,6 +83,10 @@ public class SwerveSubsystem extends SubsystemBase
 
   public boolean redAlliance;
 
+  private final PIDController xController = new PIDController(10.0, 0.0, 0.0);
+  private final PIDController yController = new PIDController(10.0, 0.0, 0.0);
+  private final PIDController headingController = new PIDController(7.5, 0.0, 0.0);
+
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
    *
@@ -90,7 +96,6 @@ public class SwerveSubsystem extends SubsystemBase
   {
     redAlliance = false;
     // boolean blueAlliance = false;
-    isRedAlliance();
     
     //  Pose2d startingPose = 
     //  !redAlliance ? new Pose2d(new Translation2d(Meter.of(1),
@@ -120,16 +125,7 @@ public class SwerveSubsystem extends SubsystemBase
                                                 1); // Enable if you want to resynchronize your absolute encoders and motor encoders periodically when they are not moving.
     // swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
     //RobotModeTriggers.autonomous().onTrue(Commands.runOnce(this::zeroGyroWithAlliance));
-
-    m_PoseEstimator = 
-        new SwerveDrivePoseEstimator(
-            getKinematics(),
-            getHeading(),
-            getSwerveDrive().getModulePositions(),
-            getPose(),
-            VecBuilder.fill(0.1, 0.1, 0.1),
-            VecBuilder.fill(.7, .7, 99)
-            );
+    setupPathPlanner();
 
     
   }
@@ -147,6 +143,22 @@ public class SwerveSubsystem extends SubsystemBase
                                   Constants.MAX_SPEED,
                                   new Pose2d(new Translation2d(Meter.of(2), Meter.of(0)),
                                              Rotation2d.fromDegrees(0)));
+
+    isRedAlliance();
+
+    m_PoseEstimator = 
+        new SwerveDrivePoseEstimator(
+            getKinematics(),
+            getHeading(),
+            getSwerveDrive().getModulePositions(),
+            getPose(),
+            VecBuilder.fill(0.1, 0.1, 0.1),
+            VecBuilder.fill(.7, .7, 99)
+            );
+
+    headingController.enableContinuousInput(-Math.PI, Math.PI);
+
+    
   
     
   }
@@ -164,6 +176,21 @@ public class SwerveSubsystem extends SubsystemBase
     // estimatedRobotPosePublisher.set(m_PoseEstimator.getEstimatedPosition());
     
   }
+
+  public void followTrajectory(SwerveSample sample) {
+        // Get the current pose of the robot
+        Pose2d pose = getPose();
+
+        // Generate the next speeds for the robot
+        ChassisSpeeds speeds = new ChassisSpeeds(
+            sample.vx + xController.calculate(pose.getX(), sample.x),
+            sample.vy + yController.calculate(pose.getY(), sample.y),
+            sample.omega + headingController.calculate(pose.getRotation().getRadians(), sample.heading)
+        );
+
+        // Apply the generated speeds
+        swerveDrive.driveFieldOriented(speeds);
+    }
 
   /**
    * Setup AutoBuilder for PathPlanner.
