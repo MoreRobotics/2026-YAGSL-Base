@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Kilograms;
+import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
@@ -18,7 +19,11 @@ import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import yams.gearing.MechanismGearing;
@@ -86,6 +91,16 @@ public class Intake extends SubsystemBase {
   private FlyWheel m_RollerFlyWheel;
   private SmartMotorController m_RollerMotor;
 
+  /**
+   * Publishes the intake pivot's live pose for AdvantageScope's articulated CAD component
+   * (Robot_MoreRobotics2026/model_0.glb - the intake is the moving component in that export, the
+   * shooter hood is static/part of model.glb). Rotation axis assumes YAMS's default Arm movement
+   * plane (vertical/XZ, i.e. pitch about Y) - needs visual confirmation/calibration against the
+   * actual CAD export, alongside config.json's zeroedPosition/zeroedRotations.
+   */
+  private final StructArrayPublisher<Pose3d> intakeComponentPublisher = NetworkTableInstance.getDefault()
+      .getStructArrayTopic("Telemetry/ComponentPoses3d", Pose3d.struct).publish();
+
   /** Creates a new Intake. */
   public Intake() {
     m_IntakePivot = new TalonFX(intakePivotID);
@@ -105,15 +120,16 @@ public class Intake extends SubsystemBase {
         .withTrapezoidalProfile(RotationsPerSecond.of(pivotVelocity), RotationsPerSecondPerSecond.of(pivotAcceleration))
         .withStatorCurrentLimit(Amps.of(pivotCurrentLimit))
         .withIdleMode(MotorMode.BRAKE)
-        // Placeholder arm mass for simulation physics only - not a measured value.
-        .withMomentOfInertia(Inches.of(14), Kilograms.of(2))
+        // Placeholder arm mass for simulation physics only - not a measured value. Lightened from
+        // an earlier guess (14in/2kg) since that made the simulated pivot visibly sluggish.
+        .withMomentOfInertia(Inches.of(6), Kilograms.of(0.5))
         .withStartingPosition(Rotations.of(0))
         .withTelemetry("IntakePivot", SmartMotorControllerConfig.TelemetryVerbosity.HIGH);
     m_PivotMotor = new TalonFXWrapper(m_IntakePivot, DCMotor.getKrakenX60(1), pivotMotorConfig);
 
     ArmConfig pivotArmConfig = new ArmConfig()
         // Placeholder arm length for simulation physics only - not a measured value.
-        .withLength(Inches.of(10))
+        .withLength(Inches.of(6))
         // NOT forwardLimit/reverseLimit - those soft limits are disabled on the real robot today
         // (commented out in the original config) and don't actually cover the real travel range;
         // intakeOutPosition (-0.333) is well past reverseLimit (-0.163). These hard limits instead
@@ -313,6 +329,16 @@ public class Intake extends SubsystemBase {
     // This method will be called once per scheduler run
     m_PivotArm.updateTelemetry();
     m_RollerFlyWheel.updateTelemetry();
+
+    // The CAD assembly was exported while posed in its deployed state (intakeOutPosition), not
+    // real-world zero/stowed - so the mesh's own baked-in zero rotation corresponds to
+    // intakeOutPosition, not 0. Publish the angle relative to that reference instead of raw
+    // position, so config.json's zeroedRotations (aligning the as-exported deployed pose to the
+    // robot frame) stays correct and this offset alone accounts for the CAD/real-zero mismatch.
+    double angleRadians = -Rotations.of(getIntakePosition() - intakeOutPosition).in(Radians);
+    intakeComponentPublisher.set(new Pose3d[] {
+        new Pose3d(0, 0, 0, new Rotation3d(0, angleRadians, 0))
+    });
 
     // Intake Logging
     SmartDashboard.putNumber("Intake Pivot Motor Position", getIntakePosition());
