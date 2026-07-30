@@ -115,13 +115,21 @@ public class Intake extends SubsystemBase {
     // are only used below for the Arm's simulated range of motion, not real software enforcement.
     SmartMotorControllerConfig pivotMotorConfig = new SmartMotorControllerConfig(this)
         .withClosedLoopController(pivotP, pivotI, pivotD)
+        // NOTE: withSimClosedLoopController does NOT apply here - confirmed by reading
+        // TalonFXWrapper's actual source: setPosition() always routes through CTRE's native
+        // MotionMagic request via Phoenix6's own simulated TalonFX firmware (using the REAL
+        // pivotP gain above), for both real hardware and simulation. A sim-only gain here would be
+        // silently ignored for this control path. The only real lever left for simulated response
+        // speed is the placeholder mass/length below - it needs to be light enough that the real,
+        // unmodified pivotP/current-limit/profile can actually move it at a reasonable rate.
         .withFeedforward(new ArmFeedforward(0, 0, 0, 0))
         .withGearing(new MechanismGearing(gearRatio))
         .withTrapezoidalProfile(RotationsPerSecond.of(pivotVelocity), RotationsPerSecondPerSecond.of(pivotAcceleration))
         .withStatorCurrentLimit(Amps.of(pivotCurrentLimit))
         .withIdleMode(MotorMode.BRAKE)
-        // Placeholder arm mass for simulation physics only - not a measured value. Lightened from
-        // an earlier guess (14in/2kg) since that made the simulated pivot visibly sluggish.
+        // Placeholder arm mass for simulation physics only - not a measured value. Lightened twice
+        // now (from 14in/2kg to 6in/0.5kg to this) since heavier guesses made the simulated pivot
+        // move too slowly for the real (unmodified) pivotP/profile/current-limit to track well.
         .withMomentOfInertia(Inches.of(6), Kilograms.of(0.5))
         .withStartingPosition(Rotations.of(0))
         .withTelemetry("IntakePivot", SmartMotorControllerConfig.TelemetryVerbosity.HIGH);
