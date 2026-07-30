@@ -67,6 +67,14 @@ public class RobotContainer
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final         CommandXboxController driver = new CommandXboxController(0);
   final CommandPS5Controller operator = new CommandPS5Controller(1);
+
+  // driver is physically a PS5 DualSense, but declared as CommandXboxController - button indices
+  // happen to line up, but its fixed Xbox axis map does not: leftTrigger()/rightTrigger() read raw
+  // axes 2/3 (Xbox convention), but this controller's triggers are actually raw axes 3/4 (same
+  // root cause as the drive rotation axis fix in SwerveSubsystem's default command). These replace
+  // driver.leftTrigger()/rightTrigger() with the correct raw axes.
+  final Trigger driverLeftTrigger = new Trigger(() -> driver.getRawAxis(3) > 0.5);
+  final Trigger driverRightTrigger = new Trigger(() -> driver.getRawAxis(4) > 0.5);
   //final         CommandPS5Controller operator = new CommandPS5Controller(1);
   // The robot's subsystems and commands are defined here...
   private static final SwerveSubsystem       drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
@@ -248,8 +256,8 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
 
     // Teleop Commands
 
-    // Aiming Command 
-        driver.leftTrigger().whileTrue(
+    // Aiming Command
+        driverLeftTrigger.whileTrue(
           new ParallelCommandGroup(
             driveFieldOrientedDirectAngle = drivebase.driveCommand(
           () -> driver.getLeftY(),
@@ -335,7 +343,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     );
 
 //shoot
-     driver.rightTrigger().whileTrue(
+     driverRightTrigger.whileTrue(
       new ParallelCommandGroup(
         
         //new InstantCommand(() -> s_Intake.setCurrentLimit(s_Intake.getIdleRollerCurrentLimit())),
