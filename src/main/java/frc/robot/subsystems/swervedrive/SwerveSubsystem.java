@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.swervedrive;
 
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meter;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -31,6 +33,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.Odometry;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -47,6 +50,12 @@ import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+import org.ironmaple.simulation.IntakeSimulation;
+import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.drivesims.COTS;
+import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
+import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
+import org.ironmaple.simulation.seasonspecific.rebuilt2026.RebuiltFuelOnField;
 import org.json.simple.parser.ParseException;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
@@ -88,6 +97,21 @@ public class SwerveSubsystem extends SubsystemBase
   private final PIDController headingController = new PIDController(7.5, 0.0, 0.0);
 
   /**
+   * Standalone maple-sim drivetrain used only as a positional anchor for the REBUILT Fuel intake
+   * simulation below. YAGSL already runs its own bundled maple-sim drivetrain internally
+   * (see {@link SwerveDrive#getMapleSimDrive()}), but that bundled copy predates the REBUILT 2026
+   * season and has no Fuel game piece support, so a separate maple-sim instance is used here purely
+   * to give {@link IntakeSimulation} something to attach to. Its pose is overwritten every
+   * simulation tick to match YAGSL's real simulated robot pose. Null outside of simulation.
+   */
+  private SwerveDriveSimulation mapleSimIntakeAnchor;
+
+  /**
+   * Simulated intake for REBUILT Fuel game pieces. Null outside of simulation.
+   */
+  private IntakeSimulation fuelIntakeSimulation;
+
+  /**
    * Initialize {@link SwerveDrive} with the directory provided.
    *
    * @param directory Directory of swerve drive config files.
@@ -127,7 +151,44 @@ public class SwerveSubsystem extends SubsystemBase
     //RobotModeTriggers.autonomous().onTrue(Commands.runOnce(this::zeroGyroWithAlliance));
     setupPathPlanner();
 
-    
+    if (SwerveDriveTelemetry.isSimulation)
+    {
+      setupMapleSimIntake();
+    }
+  }
+
+  /**
+   * Sets up the standalone maple-sim drivetrain anchor and REBUILT Fuel intake simulation.
+   * See the {@link #mapleSimIntakeAnchor} field doc for why this is separate from YAGSL's own
+   * bundled maple-sim integration.
+   */
+  private void setupMapleSimIntake()
+  {
+    DriveTrainSimulationConfig mapleSimConfig = DriveTrainSimulationConfig.Default()
+        .withRobotMass(Kilograms.of(67.13))
+        .withBumperSize(Inches.of(34.75), Inches.of(34.75))
+        .withTrackLengthTrackWidth(Inches.of(22.73), Inches.of(22.73))
+        // COTS.ofMark4i bakes in stock MK4i steer ratio (21.4285714286:1) and 4in wheel diameter,
+        // matching the real robot. Drive/steer friction voltage (0.1V/0.2V) and steer MOI
+        // (0.03 kg*m^2) are that preset's built-in placeholder defaults - tuning knobs for later,
+        // not correctness issues. "2" selects the MK4i L2 gear ratio (6.75:1) to match the real robot.
+        .withSwerveModule(COTS.ofMark4i(DCMotor.getKrakenX60(1), DCMotor.getKrakenX60(1), 1.19, 2))
+        .withGyro(COTS.ofPigeon2());
+
+    mapleSimIntakeAnchor = new SwerveDriveSimulation(mapleSimConfig, getPose());
+    SimulatedArena.getInstance().addDriveTrainSimulation(mapleSimIntakeAnchor);
+
+    fuelIntakeSimulation = IntakeSimulation.OverTheBumperIntake(
+        RebuiltFuelOnField.REBUILT_FUEL_INFO.type(),
+        mapleSimIntakeAnchor,
+        Inches.of(26),
+        Inches.of(12),
+        IntakeSimulation.IntakeSide.FRONT,
+        1);
+    fuelIntakeSimulation.register();
+    // Simplification for testing: always running. Real intake state isn't wired in here since
+    // that lives in the separate Intake subsystem, out of scope for this drivetrain wiring.
+    fuelIntakeSimulation.startIntake();
   }
 
   /**
@@ -174,7 +235,32 @@ public class SwerveSubsystem extends SubsystemBase
     // m_PoseEstimator.update(getHeading(), swerveDrive.getModulePositions());
     swerveDrive.updateOdometry();
     // estimatedRobotPosePublisher.set(m_PoseEstimator.getEstimatedPosition());
-    
+
+    if (mapleSimIntakeAnchor != null)
+    {
+      // Keep the intake anchor glued to YAGSL's own internally-simulated robot pose (see the
+      // mapleSimIntakeAnchor field doc); YAGSL ticks its own internal maple-sim arena itself, so
+      // only our separate standalone arena needs to be ticked here.
+      mapleSimIntakeAnchor.setSimulationWorldPose(
+          swerveDrive.getSimulationDriveTrainPose().orElse(swerveDrive.getPose()));
+      SimulatedArena.getInstance().simulationPeriodic();
+    }
+  }
+
+  /**
+   * Spawns a test REBUILT Fuel game piece about 1 meter in front of the robot, for manually testing
+   * intake capture in simulation. No-op outside of simulation.
+   */
+  public void spawnTestFuelGamePiece()
+  {
+    if (!SwerveDriveTelemetry.isSimulation)
+    {
+      return;
+    }
+    Pose2d robotPose = getPose();
+    Translation2d spawnLocation = robotPose.getTranslation()
+        .plus(new Translation2d(1.0, 0.0).rotateBy(robotPose.getRotation()));
+    SimulatedArena.getInstance().addGamePiece(new RebuiltFuelOnField(spawnLocation));
   }
 
   public void followTrajectory(SwerveSample sample) {

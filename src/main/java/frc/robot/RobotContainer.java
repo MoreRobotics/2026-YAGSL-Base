@@ -287,6 +287,9 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     //zero gyro
     driver.start().onTrue(new InstantCommand(() -> drivebase.zeroGyroWithAlliance()));
 
+    //spawn a test Fuel game piece in simulation, for manually testing intake capture
+    driver.y().onTrue(new InstantCommand(() -> drivebase.spawnTestFuelGamePiece()));
+
     //run intake
     driver.leftBumper().whileTrue(new RunIntake(s_Intake));
     // InstantCommand(() -> s_Intake.setIntakeSpeed(s_Intake.getIntakeSpeed())))
