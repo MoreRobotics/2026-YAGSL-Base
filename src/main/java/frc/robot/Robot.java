@@ -41,18 +41,19 @@ public class Robot extends TimedRobot
   private boolean flag;
   private Optional<Alliance> alliance;
 
-  private final SwerveSubsystem s_Swerve = new SwerveSubsystem(null);
+  private final SwerveSubsystem s_Swerve;
   private final AutoFactory autoFactory;
 
   public Robot()
   {
     instance = this;
     flag = true;
+    s_Swerve = RobotContainer.getSwerveDrive();
     autoFactory = new AutoFactory(
             s_Swerve::getPose, // A function that returns the current robot pose
             s_Swerve::resetOdometry, // A function that resets the current robot pose to the provided Pose2d
-            s_Swerve::followTrajectory, // The drive subsystem trajectory follower 
-            true, // If alliance flipping should be enabled 
+            s_Swerve::followTrajectory, // The drive subsystem trajectory follower
+            true, // If alliance flipping should be enabled
             s_Swerve // The drive subsystem
         );
   }

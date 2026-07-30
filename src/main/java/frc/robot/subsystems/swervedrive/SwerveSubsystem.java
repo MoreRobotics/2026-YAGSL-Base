@@ -38,6 +38,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -149,6 +150,18 @@ public class SwerveSubsystem extends SubsystemBase
                                                 1); // Enable if you want to resynchronize your absolute encoders and motor encoders periodically when they are not moving.
     // swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
     //RobotModeTriggers.autonomous().onTrue(Commands.runOnce(this::zeroGyroWithAlliance));
+
+    m_PoseEstimator =
+        new SwerveDrivePoseEstimator(
+            getKinematics(),
+            getHeading(),
+            getSwerveDrive().getModulePositions(),
+            getPose(),
+            VecBuilder.fill(0.1, 0.1, 0.1),
+            VecBuilder.fill(.7, .7, 99)
+            );
+    headingController.enableContinuousInput(-Math.PI, Math.PI);
+
     setupPathPlanner();
 
     if (SwerveDriveTelemetry.isSimulation)
@@ -244,6 +257,9 @@ public class SwerveSubsystem extends SubsystemBase
       mapleSimIntakeAnchor.setSimulationWorldPose(
           swerveDrive.getSimulationDriveTrainPose().orElse(swerveDrive.getPose()));
       SimulatedArena.getInstance().simulationPeriodic();
+      SmartDashboard.putNumber("MapleSim/Fuel Pieces Held", fuelIntakeSimulation.getGamePiecesAmount());
+      SmartDashboard.putNumber("MapleSim/Fuel Pieces On Field", SimulatedArena.getInstance()
+          .getGamePiecesByType(RebuiltFuelOnField.REBUILT_FUEL_INFO.type()).size());
     }
   }
 
