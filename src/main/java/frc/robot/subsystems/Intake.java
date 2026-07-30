@@ -4,20 +4,32 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.controls.VelocityVoltage;
-import com.ctre.phoenix6.hardware.CANcoder;
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.GravityTypeValue;
-import com.ctre.phoenix6.signals.MotorAlignmentValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.controls.VoltageOut;
+import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Kilograms;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.Volts;
 
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
+
+import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import yams.gearing.MechanismGearing;
+import yams.mechanisms.config.ArmConfig;
+import yams.mechanisms.config.FlyWheelConfig;
+import yams.mechanisms.positional.Arm;
+import yams.mechanisms.velocity.FlyWheel;
+import yams.motorcontrollers.SmartMotorController;
+import yams.motorcontrollers.SmartMotorControllerConfig;
+import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
+import yams.motorcontrollers.remote.TalonFXWrapper;
 
 public class Intake extends SubsystemBase {
 
@@ -47,10 +59,9 @@ public class Intake extends SubsystemBase {
   private double rollerCurrentLimit = 80;
   private double idleRollerCurrentLimit = 20;
   private double rollerSupplyLimit = 50;
-  
+
   private double intakeSpeed = -70;//60,75
   private double outakeSpeed = 40;
-  private double acceleration = 250;
 
   private double gearRatio = 87.5/1;
   private int intakePivotID = 12;
@@ -64,95 +75,94 @@ public class Intake extends SubsystemBase {
   private TalonFX m_IntakePivot;
   private TalonFX m_RightIntakeRoller;
   private TalonFX m_LeftIntakeRoller;
-  private MotionMagicVoltage m_Request;
-  private TalonFXConfiguration pivotConfigs;
-  private TalonFXConfiguration rollerConfigs;
-  private MotionMagicVelocityVoltage m_VelocityRequest;
-  private VelocityVoltage m_PivotVelocityRequest;
-  private VoltageOut voltageRequest;
-  private VoltageOut voltageRequestOutake;
-  private VoltageOut voltageRequestStop;
-  private VoltageOut voltageRequestIdle;
   private Follower m_RollerFollower;
 
   private boolean intaking = false;
+
+  // YAMS mechanisms - pivot (Arm) and right/leader roller (FlyWheel), both wrapping the same
+  // TalonFX objects. Left roller stays a plain CTRE Follower, untouched by YAMS.
+  private Arm m_PivotArm;
+  private SmartMotorController m_PivotMotor;
+  private FlyWheel m_RollerFlyWheel;
+  private SmartMotorController m_RollerMotor;
 
   /** Creates a new Intake. */
   public Intake() {
     m_IntakePivot = new TalonFX(intakePivotID);
     m_RightIntakeRoller = new TalonFX(rightIntakePowerID);
     m_LeftIntakeRoller = new TalonFX(leftIntakePowerID);
-    //e_IntakePivot =  new CANcoder(intakePivotCANCoderID);
 
-    m_Request = new MotionMagicVoltage(0).withSlot(0);
-    m_VelocityRequest = new MotionMagicVelocityVoltage(0).withSlot(0);
-    m_PivotVelocityRequest = new VelocityVoltage(0).withSlot(0);
-    
     //Left motor follows the right
-
     m_RollerFollower = new Follower(leftIntakePowerID, MotorAlignmentValue.Opposed);
-    // Motor Config
-    pivotConfigs = new TalonFXConfiguration();
-    pivotConfigs.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
-    pivotConfigs.Slot0.kP = pivotP;
-    pivotConfigs.Slot0.kI = pivotI;
-    pivotConfigs.Slot0.kD = pivotD;
-    pivotConfigs.MotionMagic.MotionMagicAcceleration = pivotAcceleration;
-    pivotConfigs.MotionMagic.MotionMagicCruiseVelocity = pivotVelocity;
-    // pivotConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    // pivotConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = forwardLimit;
-    // pivotConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    // pivotConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = reverseLimit;
-    pivotConfigs.Feedback.SensorToMechanismRatio = gearRatio;
-    pivotConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
-    pivotConfigs.CurrentLimits.StatorCurrentLimit = pivotCurrentLimit;
-    pivotConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    rollerConfigs = new TalonFXConfiguration();
-    rollerConfigs.Slot0.kP = rollerP;
-    rollerConfigs.Slot0.kI = rollerI;
-    rollerConfigs.Slot0.kD = rollerD;
-    rollerConfigs.Slot0.kV = rollerV;
-    rollerConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
-    rollerConfigs.CurrentLimits.StatorCurrentLimit = rollerCurrentLimit;
-    rollerConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
-    rollerConfigs.CurrentLimits.SupplyCurrentLimit = rollerSupplyLimit;
-    rollerConfigs.MotionMagic.MotionMagicAcceleration = acceleration;
+    // NOTE: neither forward nor reverse soft limit is actually enabled on the real robot today
+    // (both were already commented out in the original config) - preserved exactly, these limits
+    // are only used below for the Arm's simulated range of motion, not real software enforcement.
+    SmartMotorControllerConfig pivotMotorConfig = new SmartMotorControllerConfig(this)
+        .withClosedLoopController(pivotP, pivotI, pivotD)
+        .withFeedforward(new ArmFeedforward(0, 0, 0, 0))
+        .withGearing(new MechanismGearing(gearRatio))
+        .withTrapezoidalProfile(RotationsPerSecond.of(pivotVelocity), RotationsPerSecondPerSecond.of(pivotAcceleration))
+        .withStatorCurrentLimit(Amps.of(pivotCurrentLimit))
+        .withIdleMode(MotorMode.BRAKE)
+        // Placeholder arm mass for simulation physics only - not a measured value.
+        .withMomentOfInertia(Inches.of(14), Kilograms.of(2))
+        .withStartingPosition(Rotations.of(0))
+        .withTelemetry("IntakePivot", SmartMotorControllerConfig.TelemetryVerbosity.HIGH);
+    m_PivotMotor = new TalonFXWrapper(m_IntakePivot, DCMotor.getKrakenX60(1), pivotMotorConfig);
 
-    m_IntakePivot.getConfigurator().apply(pivotConfigs);
-    m_RightIntakeRoller.getConfigurator().apply(rollerConfigs);
-    m_LeftIntakeRoller.getConfigurator().apply(rollerConfigs);
+    ArmConfig pivotArmConfig = new ArmConfig()
+        // Placeholder arm length for simulation physics only - not a measured value.
+        .withLength(Inches.of(10))
+        // NOT forwardLimit/reverseLimit - those soft limits are disabled on the real robot today
+        // (commented out in the original config) and don't actually cover the real travel range;
+        // intakeOutPosition (-0.333) is well past reverseLimit (-0.163). These hard limits instead
+        // span the actual named positions used below, with a little margin, so the simulated arm
+        // can physically reach every position the real robot commands it to.
+        .withHardLimits(Rotations.of(-0.34), Rotations.of(0.01));
+    m_PivotArm = new Arm(pivotArmConfig, m_PivotMotor);
 
-    voltageRequest = new VoltageOut(intakeVoltage);
-    voltageRequestOutake = new VoltageOut(-intakeVoltage);
-    voltageRequestStop = new VoltageOut(0.0);
-    voltageRequestIdle = new VoltageOut(intakeVoltageIdle);
+    SmartMotorControllerConfig rollerMotorConfig = new SmartMotorControllerConfig(this)
+        .withClosedLoopController(rollerP, rollerI, rollerD)
+        .withFeedforward(new SimpleMotorFeedforward(0, rollerV, 0))
+        // No SensorToMechanismRatio was ever set for the rollers in the original config, which
+        // means the real robot already runs them at CTRE's default 1:1 - not a placeholder here.
+        .withGearing(MechanismGearing.kOne)
+        .withStatorCurrentLimit(Amps.of(rollerCurrentLimit))
+        .withSupplyCurrentLimit(Amps.of(rollerSupplyLimit))
+        .withIdleMode(MotorMode.COAST)
+        // Placeholder roller mass for simulation physics only - not a measured value.
+        .withMomentOfInertia(Inches.of(1.5), Kilograms.of(0.3))
+        .withTelemetry("IntakeRoller", SmartMotorControllerConfig.TelemetryVerbosity.HIGH);
+    m_RollerMotor = new TalonFXWrapper(m_RightIntakeRoller, DCMotor.getKrakenX60(1), rollerMotorConfig);
+
+    // Placeholder roller diameter for simulation physics only - not a measured value.
+    FlyWheelConfig rollerFlyWheelConfig = new FlyWheelConfig().withDiameter(Inches.of(2));
+    m_RollerFlyWheel = new FlyWheel(rollerFlyWheelConfig, m_RollerMotor);
 
     // Set Intake RELATIVE
     m_IntakePivot.setPosition(0);
   }
 
   public void moveIntake(){
-    m_IntakePivot.setControl(m_Request.withPosition(target));
+    m_PivotMotor.setPosition(Rotations.of(target));
   }
 
    public void setIntakePivotPosition(double setPosition)
    {
     m_IntakePivot.setPosition(setPosition);
-    pivotConfigs.Slot0.kP = pivotP;
-    m_IntakePivot.getConfigurator().apply(pivotConfigs);
+    m_PivotMotor.setKp(pivotP);
    }
 
   public void homeIntakePivot()
   {
-    pivotConfigs.Slot0.kP = .25;
-    m_IntakePivot.getConfigurator().apply(pivotConfigs);
-    m_IntakePivot.setControl(m_PivotVelocityRequest.withVelocity(-3));
+    m_PivotMotor.setKp(.25);
+    m_PivotMotor.setVelocity(RotationsPerSecond.of(-3));
   }
 
   public void stopIntakePivot()
   {
-    m_IntakePivot.setControl(m_PivotVelocityRequest.withVelocity(0));
+    m_PivotMotor.setVelocity(RotationsPerSecond.of(0));
   }
 
   public void changeTarget(){
@@ -209,17 +219,13 @@ public class Intake extends SubsystemBase {
 
   public void setSlowMode()
   {
-    pivotConfigs.MotionMagic.MotionMagicAcceleration = pivotAccelerationSlow;
-    // pivotConfigs.MotionMagic.MotionMagicCruiseVelocity = pivotVelocitySlow;
-    m_IntakePivot.getConfigurator().apply(pivotConfigs);
+    m_PivotMotor.setMotionProfileMaxAcceleration(RotationsPerSecondPerSecond.of(pivotAccelerationSlow));
     // intakeOut = true;
   }
 
   public void setNormalMode()
   {
-    pivotConfigs.MotionMagic.MotionMagicAcceleration = pivotAcceleration;
-    // pivotConfigs.MotionMagic.MotionMagicCruiseVelocity = pivotVelocity;
-    m_IntakePivot.getConfigurator().apply(pivotConfigs);
+    m_PivotMotor.setMotionProfileMaxAcceleration(RotationsPerSecondPerSecond.of(pivotAcceleration));
     // intakeOut = false;
   }
 
@@ -232,31 +238,34 @@ public class Intake extends SubsystemBase {
   {
     this.intakeOut = intakeOut;
   }
-  
+
 
   public void setIntakeSpeed(double speed){
     SmartDashboard.putNumber("Intake Roller Commanded Speed", speed);
-    m_RightIntakeRoller.setControl(m_VelocityRequest.withVelocity(speed));
+    m_RollerMotor.setVelocity(RotationsPerSecond.of(speed));
+    // NOTE: preserved as-is - this call was already missing .withLeaderID(rightIntakePowerID) in
+    // the original code (every other roller method below sets it), so the left roller doesn't
+    // actually follow here. Not fixed since setIntakeSpeed isn't used by any active binding today.
     m_LeftIntakeRoller.setControl(m_RollerFollower);
   }
 
   public void setIntakeVoltage(){
-    m_RightIntakeRoller.setControl(voltageRequest);
+    m_RollerMotor.setVoltage(Volts.of(intakeVoltage));
     m_LeftIntakeRoller.setControl(m_RollerFollower.withLeaderID(rightIntakePowerID));
     intaking = true;
   }
   public void setOutakeVoltage() {
-    m_RightIntakeRoller.setControl(voltageRequestOutake);
+    m_RollerMotor.setVoltage(Volts.of(-intakeVoltage));
     m_LeftIntakeRoller.setControl(m_RollerFollower.withLeaderID(rightIntakePowerID));
     intaking = false;
   }
   public void setIdleVoltage(){
-    m_RightIntakeRoller.setControl(voltageRequestIdle);
+    m_RollerMotor.setVoltage(Volts.of(intakeVoltageIdle));
     m_LeftIntakeRoller.setControl(m_RollerFollower.withLeaderID(rightIntakePowerID));
     intaking = false;
   }
   public void stopIntakeVoltage() {
-    m_RightIntakeRoller.setControl(voltageRequestStop);
+    m_RollerMotor.setVoltage(Volts.of(0.0));
     m_LeftIntakeRoller.setControl(m_RollerFollower.withLeaderID(rightIntakePowerID));
     intaking = false;
   }
@@ -272,9 +281,7 @@ public class Intake extends SubsystemBase {
 
   public void setCurrentLimit(double currentLimit)
   {
-    rollerConfigs.CurrentLimits.StatorCurrentLimit = currentLimit;
-     m_RightIntakeRoller.getConfigurator().apply(rollerConfigs);
-    m_LeftIntakeRoller.getConfigurator().apply(rollerConfigs);
+    m_RollerMotor.setStatorCurrentLimit(Amps.of(currentLimit));
   }
 
   public double getIdleRollerCurrentLimit()
@@ -288,7 +295,7 @@ public class Intake extends SubsystemBase {
   }
 
 
-  
+
 
   public double getIntakeSpeed()
   {
@@ -304,15 +311,13 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    m_PivotArm.updateTelemetry();
+    m_RollerFlyWheel.updateTelemetry();
 
     // Intake Logging
     SmartDashboard.putNumber("Intake Pivot Motor Position", getIntakePosition());
-    //SmartDashboard.putNumber("Intake Pivot Acceleration Config", pivotConfigs.MotionMagic.MotionMagicAcceleration);
-    //SmartDashboard.putNumber("Intake Pivot Velocity Config", m_Request.getPositionMeasure().baseUnitMagnitude());
     SmartDashboard.putNumber("Intake Pivot Target", target);
-    // SmartDashboard.putNumber("Intake Pivot Motor Acceleration", m_IntakePivot.getAcceleration().getValueAsDouble());
      SmartDashboard.putNumber("Intake Pivot Motor Velocity", m_IntakePivot.getVelocity().getValueAsDouble());
-    //SmartDashboard.putNumber("Intake Pivot CANCoder Position", e_IntakePivot.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("Right Intake Roller Speed", m_RightIntakeRoller.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("Left Intake Roller Speed", m_LeftIntakeRoller.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("Right Intake Roller Current", m_RightIntakeRoller.getStatorCurrent().getValueAsDouble());
@@ -322,14 +327,11 @@ public class Intake extends SubsystemBase {
     SmartDashboard.putNumber("Right Intake Roller Voltage", m_RightIntakeRoller.getMotorVoltage().getValueAsDouble());
     SmartDashboard.putNumber("Left Intake Roller Voltage", m_LeftIntakeRoller.getMotorVoltage().getValueAsDouble());
     SmartDashboard.putNumber("Intake Pivot Current", m_IntakePivot.getStatorCurrent().getValueAsDouble());
-    // SmartDashboard.putNumber("Intake Roller Current Limit", rollerConfigs.CurrentLimits.StatorCurrentLimit);
-
-    
   }
 
   @Override
   public void simulationPeriodic() {
-    // This method will be called once per scheduler run during simulation
-    
+    m_PivotArm.simIterate();
+    m_RollerFlyWheel.simIterate();
   }
 }
