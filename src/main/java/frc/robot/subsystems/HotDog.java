@@ -68,6 +68,8 @@ public class HotDog extends SubsystemBase {
   private VoltageOut hotDogVoltageRequestOutake;
   private VoltageOut hotDogVoltageRequestStop;
 
+  private boolean indexerRunning = false;
+
   /** Creates a new Shooter. */
   public HotDog() {
  
@@ -125,6 +127,16 @@ public class HotDog extends SubsystemBase {
   {
     SmartDashboard.putNumber("Indexer Commanded Speed", -setpoint);
     m_Indexer.setControl(m_velocityRequest.withVelocity(-setpoint));
+    indexerRunning = setpoint != 0;
+  }
+
+  /**
+   * Whether the indexer is currently commanded to feed a piece toward the shooter. Used in
+   * simulation as the trigger moment for launching a held Fuel piece as a projectile.
+   */
+  public boolean isIndexerRunning()
+  {
+    return indexerRunning;
   }
 
   public double getIndexerSpeed()

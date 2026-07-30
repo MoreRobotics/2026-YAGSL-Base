@@ -75,6 +75,8 @@ public class Intake extends SubsystemBase {
   private VoltageOut voltageRequestIdle;
   private Follower m_RollerFollower;
 
+  private boolean intaking = false;
+
   /** Creates a new Intake. */
   public Intake() {
     m_IntakePivot = new TalonFX(intakePivotID);
@@ -241,18 +243,31 @@ public class Intake extends SubsystemBase {
   public void setIntakeVoltage(){
     m_RightIntakeRoller.setControl(voltageRequest);
     m_LeftIntakeRoller.setControl(m_RollerFollower.withLeaderID(rightIntakePowerID));
+    intaking = true;
   }
   public void setOutakeVoltage() {
     m_RightIntakeRoller.setControl(voltageRequestOutake);
     m_LeftIntakeRoller.setControl(m_RollerFollower.withLeaderID(rightIntakePowerID));
+    intaking = false;
   }
   public void setIdleVoltage(){
     m_RightIntakeRoller.setControl(voltageRequestIdle);
     m_LeftIntakeRoller.setControl(m_RollerFollower.withLeaderID(rightIntakePowerID));
+    intaking = false;
   }
   public void stopIntakeVoltage() {
     m_RightIntakeRoller.setControl(voltageRequestStop);
     m_LeftIntakeRoller.setControl(m_RollerFollower.withLeaderID(rightIntakePowerID));
+    intaking = false;
+  }
+
+  /**
+   * Whether the intake rollers are currently commanded to run in the intaking direction. Used in
+   * simulation to start/stop the maple-sim Fuel intake to match real intake state.
+   */
+  public boolean isIntaking()
+  {
+    return intaking;
   }
 
   public void setCurrentLimit(double currentLimit)

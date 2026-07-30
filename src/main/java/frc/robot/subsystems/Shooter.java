@@ -116,6 +116,15 @@ public class Shooter extends SubsystemBase {
     return m_TopLeftShooter.getVelocity().getValueAsDouble();
   }
 
+  /**
+   * Last commanded flywheel speed (rotations/sec), as set by {@link #setShooterSpeed}. Used in
+   * simulation to approximate Fuel piece launch velocity.
+   */
+  public double getTargetSpeed()
+  {
+    return targetSpeed;
+  }
+
   public double getShooterSpeed()
   {
     double speed;

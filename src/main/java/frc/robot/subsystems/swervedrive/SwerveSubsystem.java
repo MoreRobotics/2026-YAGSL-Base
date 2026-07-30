@@ -4,9 +4,11 @@
 
 package frc.robot.subsystems.swervedrive;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meter;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -28,6 +30,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -36,6 +39,12 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -47,7 +56,9 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -57,6 +68,7 @@ import org.ironmaple.simulation.drivesims.COTS;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 import org.ironmaple.simulation.seasonspecific.rebuilt2026.RebuiltFuelOnField;
+import org.ironmaple.simulation.seasonspecific.rebuilt2026.RebuiltFuelOnFly;
 import org.json.simple.parser.ParseException;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
@@ -111,6 +123,33 @@ public class SwerveSubsystem extends SubsystemBase
    * Simulated intake for REBUILT Fuel game pieces. Null outside of simulation.
    */
   private IntakeSimulation fuelIntakeSimulation;
+
+  // Placeholder shooter geometry/performance constants for simulated Fuel launches - none of these
+  // are measured from the real robot yet. Tune once the shooter's physical mount point, exit
+  // height, and true muzzle velocity/angle range are characterized.
+  private static final Translation2d SHOOTER_POSITION_ON_ROBOT = new Translation2d(Inches.of(13), Inches.of(0));
+  private static final Distance      SHOOTER_EXIT_HEIGHT        = Inches.of(24);
+  // ShooterPivot.getShooterAngle() operating range (rotations), see ShooterPivot's clamp bounds.
+  private static final double        PIVOT_MIN_ROTATIONS = -0.071;
+  private static final double        PIVOT_MAX_ROTATIONS = -0.004;
+  private static final Angle         LAUNCH_ANGLE_AT_PIVOT_MIN = Degrees.of(55);
+  private static final Angle         LAUNCH_ANGLE_AT_PIVOT_MAX = Degrees.of(20);
+  // Fuel-piece-diameter-ish flywheel effective radius used to convert commanded flywheel
+  // rotations/sec into an exit speed; not a measured value.
+  private static final double        FLYWHEEL_EFFECTIVE_RADIUS_METERS = Units.inchesToMeters(2);
+
+  /**
+   * Publishes on-field and in-flight Fuel piece poses for visualization (e.g. AdvantageScope's 3D
+   * Field view). Null outside of simulation.
+   */
+  private StructArrayPublisher<Pose3d> fuelPosesPublisher;
+
+  /**
+   * Publishes the robot's own pose for visualization (e.g. AdvantageScope's 3D Field view). Nothing
+   * else in this codebase publishes a robot pose struct.
+   */
+  private final StructPublisher<Pose3d> robotPosePublisher =
+      NetworkTableInstance.getDefault().getStructTopic("Telemetry/RobotPose3d", Pose3d.struct).publish();
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -199,9 +238,66 @@ public class SwerveSubsystem extends SubsystemBase
         IntakeSimulation.IntakeSide.FRONT,
         1);
     fuelIntakeSimulation.register();
-    // Simplification for testing: always running. Real intake state isn't wired in here since
-    // that lives in the separate Intake subsystem, out of scope for this drivetrain wiring.
-    fuelIntakeSimulation.startIntake();
+    // Starts stopped; the real Intake subsystem's roller state drives this via setFuelIntakeRunning().
+
+    fuelPosesPublisher = NetworkTableInstance.getDefault()
+        .getStructArrayTopic("MapleSim/FuelPoses3d", Pose3d.struct).publish();
+  }
+
+  /**
+   * Starts or stops the maple-sim Fuel intake to match the real {@link frc.robot.subsystems.Intake}
+   * subsystem's roller state. No-op outside of simulation.
+   */
+  public void setFuelIntakeRunning(boolean running)
+  {
+    if (fuelIntakeSimulation == null)
+    {
+      return;
+    }
+    if (running)
+    {
+      fuelIntakeSimulation.startIntake();
+    } else
+    {
+      fuelIntakeSimulation.stopIntake();
+    }
+  }
+
+  /**
+   * If the simulated intake is holding a Fuel piece, removes it and launches it as a projectile
+   * approximating a real shot, using the shooter pivot setpoint and flywheel target speed. No-op
+   * outside of simulation or if no piece is held. See the placeholder constants above this class's
+   * maple-sim fields for the (untuned) shooter geometry/performance this approximation relies on.
+   *
+   * @param pivotPositionRotations Current {@link frc.robot.subsystems.ShooterPivot#getShooterAngle()} setpoint.
+   * @param flywheelTargetSpeedRps Current {@link frc.robot.subsystems.Shooter#getTargetSpeed()} setpoint.
+   */
+  public void fireFuelFromShooter(double pivotPositionRotations, double flywheelTargetSpeedRps)
+  {
+    if (fuelIntakeSimulation == null || fuelIntakeSimulation.getGamePiecesAmount() <= 0)
+    {
+      return;
+    }
+    fuelIntakeSimulation.obtainGamePieceFromIntake();
+
+    Angle launchAngle = Degrees.of(MathUtil.interpolate(
+        LAUNCH_ANGLE_AT_PIVOT_MIN.in(Degrees),
+        LAUNCH_ANGLE_AT_PIVOT_MAX.in(Degrees),
+        MathUtil.inverseInterpolate(PIVOT_MIN_ROTATIONS, PIVOT_MAX_ROTATIONS, pivotPositionRotations)));
+    LinearVelocity launchSpeed = MetersPerSecond.of(
+        Math.abs(flywheelTargetSpeedRps) * FLYWHEEL_EFFECTIVE_RADIUS_METERS * 2 * Math.PI);
+
+    Pose2d robotPose = getPose();
+    RebuiltFuelOnFly projectile = new RebuiltFuelOnFly(
+        robotPose.getTranslation(),
+        SHOOTER_POSITION_ON_ROBOT,
+        getRobotVelocity(),
+        robotPose.getRotation(),
+        SHOOTER_EXIT_HEIGHT,
+        launchSpeed,
+        launchAngle);
+    projectile.launch();
+    SimulatedArena.getInstance().addGamePieceProjectile(projectile);
   }
 
   /**
@@ -240,7 +336,13 @@ public class SwerveSubsystem extends SubsystemBase
   /**
    * Setup the photon vision class.
    */
-  
+
+
+  @Override
+  public void periodic()
+  {
+    robotPosePublisher.set(new Pose3d(getPose()));
+  }
 
   @Override
   public void simulationPeriodic()
@@ -260,6 +362,17 @@ public class SwerveSubsystem extends SubsystemBase
       SmartDashboard.putNumber("MapleSim/Fuel Pieces Held", fuelIntakeSimulation.getGamePiecesAmount());
       SmartDashboard.putNumber("MapleSim/Fuel Pieces On Field", SimulatedArena.getInstance()
           .getGamePiecesByType(RebuiltFuelOnField.REBUILT_FUEL_INFO.type()).size());
+
+      List<Pose3d> fuelPoses = new ArrayList<>(Arrays.asList(SimulatedArena.getInstance()
+          .getGamePiecesArrayByType(RebuiltFuelOnField.REBUILT_FUEL_INFO.type())));
+      for (var projectile : SimulatedArena.getInstance().gamePieceLaunched())
+      {
+        if (RebuiltFuelOnField.REBUILT_FUEL_INFO.type().equals(projectile.getType()))
+        {
+          fuelPoses.add(projectile.getPose3d());
+        }
+      }
+      fuelPosesPublisher.set(fuelPoses.toArray(new Pose3d[0]));
     }
   }
 

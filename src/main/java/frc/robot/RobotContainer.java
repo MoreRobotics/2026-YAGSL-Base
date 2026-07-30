@@ -53,6 +53,7 @@ import java.io.File;
 import java.security.spec.NamedParameterSpec;
 
 import swervelib.SwerveInputStream;
+import swervelib.telemetry.SwerveDriveTelemetry;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -85,7 +86,13 @@ public class RobotContainer
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
                                                                 () -> driver.getLeftY() * -1,
                                                                 () -> driver.getLeftX() * -1)
-                                                            .withControllerRotationAxis(() -> -driver.getRightX())
+                                                            // driver.getRightX() reads raw axis 4, the Xbox
+                                                            // convention - but the driver station controller is a
+                                                            // PS5 DualSense, whose right stick X sits at raw axis 2
+                                                            // under Windows. Reading axis 4 there was reading
+                                                            // whatever's actually at that slot (a trigger), causing
+                                                            // spurious nonzero rotation with the stick untouched.
+                                                            .withControllerRotationAxis(() -> -driver.getRawAxis(2))
                                                             .deadband(OperatorConstants.DEADBAND)
                                                             .scaleTranslation(0.8)
                                                             .allianceRelativeControl(true);
@@ -460,10 +467,30 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
       new InstantCommand(() -> s_Shooter.resetShooterSpeed())
     );
 
-   
+    if (SwerveDriveTelemetry.isSimulation)
+    {
+      configureMapleSimBindings();
+    }
+  }
 
+  /**
+   * Wires the maple-sim REBUILT Fuel intake/shooter simulation to the real Intake/HotDog subsystem
+   * state, so simulation behavior tracks whatever the driver/operator actually command. Only called
+   * in simulation.
+   */
+  private void configureMapleSimBindings()
+  {
+    new Trigger(s_Intake::isIntaking)
+        .onTrue(new InstantCommand(() -> drivebase.setFuelIntakeRunning(true)))
+        .onFalse(new InstantCommand(() -> drivebase.setFuelIntakeRunning(false)));
 
-  
+    // Indexer starting to run is treated as the moment a held Fuel piece gets fed into the spinning
+    // shooter flywheel and launched. Launch angle/speed are approximated from the shooter pivot
+    // setpoint and flywheel target speed - see SwerveSubsystem.fireFuelFromShooter for placeholder
+    // physical constants that need tuning once real shooter geometry/muzzle velocity is known.
+    new Trigger(s_HotDog::isIndexerRunning)
+        .onTrue(new InstantCommand(
+            () -> drivebase.fireFuelFromShooter(s_ShooterPivot.getShooterAngle(), s_Shooter.getTargetSpeed())));
   }
 
   
