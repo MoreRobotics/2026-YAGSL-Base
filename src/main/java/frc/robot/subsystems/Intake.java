@@ -17,6 +17,7 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -142,8 +143,11 @@ public class Intake extends SubsystemBase {
         // (commented out in the original config) and don't actually cover the real travel range;
         // intakeOutPosition (-0.333) is well past reverseLimit (-0.163). These hard limits instead
         // span the actual named positions used below, with a little margin, so the simulated arm
-        // can physically reach every position the real robot commands it to.
-        .withHardLimits(Rotations.of(-0.34), Rotations.of(0.01));
+        // can physically reach every position the real robot commands it to. Upper bound is 0 (not
+        // 0.01 past it) so the simulated arm can't visually swing further back into the chassis
+        // than the real stow reference position - can't use intakeStowPosition (-0.001) exactly
+        // since that's below the real starting position (0) set at the end of this constructor.
+        .withHardLimits(Rotations.of(-0.34), Rotations.of(0));
     m_PivotArm = new Arm(pivotArmConfig, m_PivotMotor);
 
     SmartMotorControllerConfig rollerMotorConfig = new SmartMotorControllerConfig(this)
@@ -343,7 +347,12 @@ public class Intake extends SubsystemBase {
     // intakeOutPosition, not 0. Publish the angle relative to that reference instead of raw
     // position, so config.json's zeroedRotations (aligning the as-exported deployed pose to the
     // robot frame) stays correct and this offset alone accounts for the CAD/real-zero mismatch.
-    double angleRadians = -Rotations.of(getIntakePosition() - intakeOutPosition).in(Radians);
+    // Clamped to the real robot's actual physical range (135 degrees) so simulated PID
+    // overshoot/oscillation transients can't visually swing the CAD model past where the real
+    // intake physically stops.
+    double angleRadians = MathUtil.clamp(
+        -Rotations.of(getIntakePosition() - intakeOutPosition).in(Radians),
+        -Math.toRadians(135), 0);
     intakeComponentPublisher.set(new Pose3d[] {
         new Pose3d(0, 0, 0, new Rotation3d(0, angleRadians, 0))
     });
