@@ -67,6 +67,7 @@ import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.COTS;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
+import org.ironmaple.simulation.seasonspecific.rebuilt2026.Arena2026Rebuilt;
 import org.ironmaple.simulation.seasonspecific.rebuilt2026.RebuiltFuelOnField;
 import org.ironmaple.simulation.seasonspecific.rebuilt2026.RebuiltFuelOnFly;
 import org.json.simple.parser.ParseException;
@@ -127,7 +128,9 @@ public class SwerveSubsystem extends SubsystemBase
   // Placeholder shooter geometry/performance constants for simulated Fuel launches - none of these
   // are measured from the real robot yet. Tune once the shooter's physical mount point, exit
   // height, and true muzzle velocity/angle range are characterized.
-  private static final Translation2d SHOOTER_POSITION_ON_ROBOT = new Translation2d(Inches.of(13), Inches.of(0));
+  // The shooter is mounted on the back of the robot, opposite the front-mounted intake - negative X
+  // (behind robot center in robot-forward coordinates) accounts for that.
+  private static final Translation2d SHOOTER_POSITION_ON_ROBOT = new Translation2d(Inches.of(-13), Inches.of(0));
   private static final Distance      SHOOTER_EXIT_HEIGHT        = Inches.of(24);
   // ShooterPivot.getShooterAngle() operating range (rotations), see ShooterPivot's clamp bounds.
   private static final double        PIVOT_MIN_ROTATIONS = -0.071;
@@ -216,6 +219,13 @@ public class SwerveSubsystem extends SubsystemBase
    */
   private void setupMapleSimIntake()
   {
+    // The generic SimulatedArena has no REBUILT-specific scoring: RebuiltHub (which detects a Fuel
+    // piece flying into the hub and calls Arena2026Rebuilt.addToScore(...)) only exists on this
+    // season-specific arena subclass. Must override the singleton before anything below registers
+    // to it, or scoring silently never happens despite otherwise-correct shot physics.
+    SimulatedArena.overrideInstance(new Arena2026Rebuilt());
+    SimulatedArena.getInstance().enableBreakdownPublishing();
+
     DriveTrainSimulationConfig mapleSimConfig = DriveTrainSimulationConfig.Default()
         .withRobotMass(Kilograms.of(67.13))
         .withBumperSize(Inches.of(34.75), Inches.of(34.75))
@@ -230,11 +240,14 @@ public class SwerveSubsystem extends SubsystemBase
     mapleSimIntakeAnchor = new SwerveDriveSimulation(mapleSimConfig, getPose());
     SimulatedArena.getInstance().addDriveTrainSimulation(mapleSimIntakeAnchor);
 
+    // Widened from the original 26in/12in - capture was reported inconsistent (works sometimes,
+    // not others, with no clear pattern), consistent with a capture zone that's narrow relative to
+    // normal driving precision. Not a measured/tuned value, just more forgiving.
     fuelIntakeSimulation = IntakeSimulation.OverTheBumperIntake(
         RebuiltFuelOnField.REBUILT_FUEL_INFO.type(),
         mapleSimIntakeAnchor,
-        Inches.of(26),
-        Inches.of(12),
+        Inches.of(32),
+        Inches.of(20),
         IntakeSimulation.IntakeSide.FRONT,
         1);
     fuelIntakeSimulation.register();
@@ -288,11 +301,14 @@ public class SwerveSubsystem extends SubsystemBase
         Math.abs(flywheelTargetSpeedRps) * FLYWHEEL_EFFECTIVE_RADIUS_METERS * 2 * Math.PI);
 
     Pose2d robotPose = getPose();
+    // Shooter faces the robot's back (opposite the intake's front), hence the 180 degree flip -
+    // matches SHOOTER_POSITION_ON_ROBOT's negative X offset above.
+    Rotation2d shooterFacing = robotPose.getRotation().plus(Rotation2d.fromDegrees(180));
     RebuiltFuelOnFly projectile = new RebuiltFuelOnFly(
         robotPose.getTranslation(),
         SHOOTER_POSITION_ON_ROBOT,
         getRobotVelocity(),
-        robotPose.getRotation(),
+        shooterFacing,
         SHOOTER_EXIT_HEIGHT,
         launchSpeed,
         launchAngle);
@@ -362,6 +378,7 @@ public class SwerveSubsystem extends SubsystemBase
       SmartDashboard.putNumber("MapleSim/Fuel Pieces Held", fuelIntakeSimulation.getGamePiecesAmount());
       SmartDashboard.putNumber("MapleSim/Fuel Pieces On Field", SimulatedArena.getInstance()
           .getGamePiecesByType(RebuiltFuelOnField.REBUILT_FUEL_INFO.type()).size());
+      SmartDashboard.putNumber("MapleSim/Score", SimulatedArena.getInstance().getScore(!redAlliance));
 
       List<Pose3d> fuelPoses = new ArrayList<>(Arrays.asList(SimulatedArena.getInstance()
           .getGamePiecesArrayByType(RebuiltFuelOnField.REBUILT_FUEL_INFO.type())));
