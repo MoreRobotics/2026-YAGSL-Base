@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -262,17 +263,15 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
             driveFieldOrientedDirectAngle = drivebase.driveCommand(
           () -> driver.getLeftY(),
           () -> driver.getLeftX(),
-          () -> (s_Eyes.getTargetRotation()) * (.12)),
+          () -> drivebase.getRotationToFaceHub()),
             new AimShooter(s_ShooterPivot),
-            new PrepareShooter(s_Shooter),
-            new InstantCommand(() -> s_HotDog.setIndexerSpeed(s_HotDog.getIndexerSpeed()))      
+            new PrepareShooter(s_Shooter)
           ))
       .onFalse(
         new ParallelCommandGroup(
-          driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngularVelocity),
             new StowShooter(s_ShooterPivot),
             new InstantCommand(() -> s_Shooter.setShooterVoltage(-1)),
-            new InstantCommand(() -> s_HotDog.setIndexerSpeed(0))      
+            new InstantCommand(() -> s_HotDog.setIndexerSpeed(0))
 
             //  new InstantCommand(() -> driver.setRumble(GenericHID.RumbleType.kBothRumble, 1.0))
         )
@@ -300,7 +299,15 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
 
     
     //zero gyro
-    driver.start().onTrue(new InstantCommand(() -> drivebase.zeroGyroWithAlliance()));
+    // This PS5 DualSense echoes the right trigger's digital click onto button 8 (confirmed via
+    // Diag/ButtonsPressedDuringShoot), which is exactly the index start() reads - so pressing shoot
+    // was silently also zeroing the gyro/resetting heading to a fixed 180 (the "shoot causes an
+    // instant 180 snap" bug). A same-tick AND guard against the trigger didn't fully fix it (still
+    // reproduced) - the digital echo appears to land on an earlier tick than the analog axis crosses
+    // its deadband, slipping through before the guard engages. Moved off start()/button 8 entirely
+    // onto the D-pad (a POV hat switch - a different HID report type from buttons/axes, so it can't
+    // alias with a trigger echo at all) instead of chasing the exact timing.
+    driver.povUp().onTrue(new InstantCommand(() -> drivebase.zeroGyroWithAlliance()));
 
     //spawn a test Fuel game piece in simulation, for manually testing intake capture
     driver.y().onTrue(new InstantCommand(() -> drivebase.spawnTestFuelGamePiece()));

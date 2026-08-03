@@ -213,7 +213,7 @@ import java.net.http.HttpResponse;
         double targetX = targetPose.getX();
         double targetY = targetPose.getY();
 
-        double angle =  (Math.atan((targetY - robotY) / (targetX - robotX)) * (180 / Math.PI));
+        double angle =  (Math.atan2(targetY - robotY, targetX - robotX) * (180 / Math.PI));
         SmartDashboard.putNumber("RobotX", robotX);
         SmartDashboard.putNumber("RobotY", robotY);
         SmartDashboard.putNumber("TargetX", targetX);
@@ -229,7 +229,10 @@ import java.net.http.HttpResponse;
              }
          }
          else{
-            return angle - s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees();
+            // Shooter is mounted on the robot's back (opposite the intake) - flip 180 so the shooter,
+            // not the intake, ends up facing the hub. Blue branch above already had this flip; red
+            // branch was missing it, causing the intake to face the hub instead.
+            return angle + 180 - s_Swerve.m_PoseEstimator.getEstimatedPosition().getRotation().getDegrees();
          }
 
      }
@@ -246,7 +249,7 @@ import java.net.http.HttpResponse;
         double targetX = targetPose.getX();
         double targetY = targetPose.getY();
 
-        double angle =  (Math.atan((targetY - robotY) / (targetX - robotX)) * (180 / Math.PI));
+        double angle =  (Math.atan2(targetY - robotY, targetX - robotX) * (180 / Math.PI));
         // SmartDashboard.putNumber("RobotX", robotX);
         // SmartDashboard.putNumber("RobotY", robotY);
         SmartDashboard.putNumber("TargetX", targetX);

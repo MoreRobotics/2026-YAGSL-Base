@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meter;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Radians;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -62,6 +63,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+import org.dyn4j.dynamics.Body;
 import org.ironmaple.simulation.IntakeSimulation;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.COTS;
@@ -106,17 +108,24 @@ public class SwerveSubsystem extends SubsystemBase
 
   public boolean redAlliance;
 
+  private double previousHeadingDegrees = Double.NaN;
+  private double maxHeadingJumpSeenDegrees = 0.0;
+  private double previousX = 0.0;
+  private double previousY = 0.0;
+  private boolean jumpSnapshotTaken = false;
+
   private final PIDController xController = new PIDController(10.0, 0.0, 0.0);
   private final PIDController yController = new PIDController(10.0, 0.0, 0.0);
   private final PIDController headingController = new PIDController(7.5, 0.0, 0.0);
 
   /**
    * Standalone maple-sim drivetrain used only as a positional anchor for the REBUILT Fuel intake
-   * simulation below. YAGSL already runs its own bundled maple-sim drivetrain internally
-   * (see {@link SwerveDrive#getMapleSimDrive()}), but that bundled copy predates the REBUILT 2026
-   * season and has no Fuel game piece support, so a separate maple-sim instance is used here purely
-   * to give {@link IntakeSimulation} something to attach to. Its pose is overwritten every
-   * simulation tick to match YAGSL's real simulated robot pose. Null outside of simulation.
+   * simulation below. YAGSL bundles its OWN shaded/relocated copy of maple-sim internally
+   * (a separate class hierarchy and physics world from this one - confirmed by a compile error when
+   * an attempt was made to reuse {@link SwerveDrive#getMapleSimDrive()} directly here instead), so a
+   * separate instance genuinely is required to give {@link IntakeSimulation} something to attach to
+   * in THIS arena. Its pose is overwritten every simulation tick to match YAGSL's real simulated
+   * robot pose. Null outside of simulation.
    */
   private SwerveDriveSimulation mapleSimIntakeAnchor;
 
@@ -137,6 +146,9 @@ public class SwerveSubsystem extends SubsystemBase
   private static final double        PIVOT_MAX_ROTATIONS = -0.004;
   private static final Angle         LAUNCH_ANGLE_AT_PIVOT_MIN = Degrees.of(55);
   private static final Angle         LAUNCH_ANGLE_AT_PIVOT_MAX = Degrees.of(20);
+  // Real REBUILT hub scoring height (matches frc1678's public kHubAltitude constant, cross-checked
+  // against real field geometry) - used for ballistic-solving launch speed below, not a guess.
+  private static final Distance      HUB_TARGET_HEIGHT = Inches.of(72);
   // Fuel-piece-diameter-ish flywheel effective radius used to convert commanded flywheel
   // rotations/sec into an exit speed; not a measured value.
   private static final double        FLYWHEEL_EFFECTIVE_RADIUS_METERS = Units.inchesToMeters(2);
@@ -192,6 +204,14 @@ public class SwerveSubsystem extends SubsystemBase
                                                 1); // Enable if you want to resynchronize your absolute encoders and motor encoders periodically when they are not moving.
     // swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
     //RobotModeTriggers.autonomous().onTrue(Commands.runOnce(this::zeroGyroWithAlliance));
+    if (SwerveDriveTelemetry.isSimulation)
+    {
+      // Simulation-only: auto-zero the gyro/heading whenever entering teleop, so testing doesn't
+      // depend on remembering to press the manual zero-gyro binding first. Gated to simulation so
+      // this doesn't change real-robot behavior (a real match shouldn't silently reset pose on every
+      // enable).
+      RobotModeTriggers.teleop().onTrue(Commands.runOnce(this::zeroGyroWithAlliance));
+    }
 
     m_PoseEstimator =
         new SwerveDrivePoseEstimator(
@@ -226,6 +246,12 @@ public class SwerveSubsystem extends SubsystemBase
     SimulatedArena.overrideInstance(new Arena2026Rebuilt());
     SimulatedArena.getInstance().enableBreakdownPublishing();
 
+    // YAGSL bundles its OWN shaded/relocated copy of maple-sim (swervelib.simulation.ironmaple...)
+    // for its internal drivetrain physics - a completely separate class hierarchy and physics world
+    // from the org.ironmaple... classes used everywhere else here (arena, game pieces). The two
+    // never interact, so reusing swerveDrive.getMapleSimDrive() directly isn't possible (confirmed by
+    // a compile error: incompatible types). A separate standalone body, glued to the real pose every
+    // tick, is genuinely necessary here - it's not the cause of the uncommanded spin.
     DriveTrainSimulationConfig mapleSimConfig = DriveTrainSimulationConfig.Default()
         .withRobotMass(Kilograms.of(67.13))
         .withBumperSize(Inches.of(34.75), Inches.of(34.75))
@@ -249,7 +275,13 @@ public class SwerveSubsystem extends SubsystemBase
         Inches.of(32),
         Inches.of(20),
         IntakeSimulation.IntakeSide.FRONT,
-        1);
+        50);
+    // Tried marking this a sensor (dyn4j BodyFixture.setSensor) to stop it physically ramming Fuel
+    // pieces instead of smoothly capturing them - reverted. maple-sim's own IntakeSimulation source
+    // deliberately does NOT do this, and after adding it, capture became drastically less reliable
+    // (many minutes or never, instead of "works sometimes, no clear pattern"). Whatever the exact
+    // mechanism, the physical-push behavior is the lesser problem - capture actually working is the
+    // priority.
     fuelIntakeSimulation.register();
     // Starts stopped; the real Intake subsystem's roller state drives this via setFuelIntakeRunning().
 
@@ -285,6 +317,33 @@ public class SwerveSubsystem extends SubsystemBase
    * @param pivotPositionRotations Current {@link frc.robot.subsystems.ShooterPivot#getShooterAngle()} setpoint.
    * @param flywheelTargetSpeedRps Current {@link frc.robot.subsystems.Shooter#getTargetSpeed()} setpoint.
    */
+  /**
+   * Rotational velocity (radians/sec) to command so the robot turns to face the shooter (mounted on
+   * the back) at the real hub, using the same continuous-input wrapped {@link #headingController}
+   * as trajectory following - replaces {@link frc.robot.subsystems.swervedrive.Eyes#getTargetRotation()}'s
+   * manual per-alliance degree math, which had no wraparound and could snap to the wrong heading
+   * (e.g. facing the driver station) whenever the raw bearing crossed +/-180.
+   */
+  public double getRotationToFaceHub()
+  {
+    Pose2d robotPose = getPose();
+    Translation2d hubPosition = redAlliance
+        ? new Translation2d(Constants.Positions.hubRedX, Constants.Positions.hubRedY)
+        : new Translation2d(Constants.Positions.hubBlueX, Constants.Positions.hubBlueY);
+    Rotation2d bearingToHub = new Rotation2d(
+        hubPosition.getX() - robotPose.getX(), hubPosition.getY() - robotPose.getY());
+    Rotation2d targetHeading = bearingToHub.plus(Rotation2d.fromDegrees(180));
+    SmartDashboard.putBoolean("Aim/RedAlliance", redAlliance);
+    SmartDashboard.putNumber("Aim/RobotX", robotPose.getX());
+    SmartDashboard.putNumber("Aim/RobotY", robotPose.getY());
+    SmartDashboard.putNumber("Aim/RobotHeadingDeg", robotPose.getRotation().getDegrees());
+    SmartDashboard.putNumber("Aim/HubX", hubPosition.getX());
+    SmartDashboard.putNumber("Aim/HubY", hubPosition.getY());
+    SmartDashboard.putNumber("Aim/BearingToHubDeg", bearingToHub.getDegrees());
+    SmartDashboard.putNumber("Aim/TargetHeadingDeg", targetHeading.getDegrees());
+    return headingController.calculate(robotPose.getRotation().getRadians(), targetHeading.getRadians());
+  }
+
   public void fireFuelFromShooter(double pivotPositionRotations, double flywheelTargetSpeedRps)
   {
     if (fuelIntakeSimulation == null || fuelIntakeSimulation.getGamePiecesAmount() <= 0)
@@ -297,10 +356,34 @@ public class SwerveSubsystem extends SubsystemBase
         LAUNCH_ANGLE_AT_PIVOT_MIN.in(Degrees),
         LAUNCH_ANGLE_AT_PIVOT_MAX.in(Degrees),
         MathUtil.inverseInterpolate(PIVOT_MIN_ROTATIONS, PIVOT_MAX_ROTATIONS, pivotPositionRotations)));
-    LinearVelocity launchSpeed = MetersPerSecond.of(
-        Math.abs(flywheelTargetSpeedRps) * FLYWHEEL_EFFECTIVE_RADIUS_METERS * 2 * Math.PI);
 
+    // Ballistic-solve launch speed to actually reach the real hub position/height, instead of
+    // guessing exit speed from flywheel RPS via an uncalibrated wheel-radius conversion. Hub
+    // coords (Constants.Positions.hubBlueX/Y, hubRedX/Y) are real field geometry, cross-checked
+    // against frc1678's public field-layout constants - not a guess. Distance uses robot center
+    // (not the shooter's offset exit point) to match Eyes.getTargetDistance()'s own approximation.
     Pose2d robotPose = getPose();
+    Translation2d hubPosition = redAlliance
+        ? new Translation2d(Constants.Positions.hubRedX, Constants.Positions.hubRedY)
+        : new Translation2d(Constants.Positions.hubBlueX, Constants.Positions.hubBlueY);
+    double horizontalDistanceMeters = robotPose.getTranslation().getDistance(hubPosition);
+    double heightDeltaMeters = HUB_TARGET_HEIGHT.in(Meter) - SHOOTER_EXIT_HEIGHT.in(Meter);
+    double angleRadians = launchAngle.in(Radians);
+    double denominator = 2 * Math.cos(angleRadians) * Math.cos(angleRadians)
+        * (horizontalDistanceMeters * Math.tan(angleRadians) - heightDeltaMeters);
+    LinearVelocity launchSpeed;
+    if (denominator > 0.01)
+    {
+      double v0 = Math.sqrt(9.81 * horizontalDistanceMeters * horizontalDistanceMeters / denominator);
+      launchSpeed = MetersPerSecond.of(v0);
+    } else
+    {
+      // Pivot angle too shallow to reach this distance/height at all - fall back to the old
+      // flywheel-RPS-based guess rather than producing a NaN/negative speed.
+      launchSpeed = MetersPerSecond.of(
+          Math.abs(flywheelTargetSpeedRps) * FLYWHEEL_EFFECTIVE_RADIUS_METERS * 2 * Math.PI);
+    }
+
     // Shooter faces the robot's back (opposite the intake's front), hence the 180 degree flip -
     // matches SHOOTER_POSITION_ON_ROBOT's negative X offset above.
     Rotation2d shooterFacing = robotPose.getRotation().plus(Rotation2d.fromDegrees(180));
@@ -330,6 +413,14 @@ public class SwerveSubsystem extends SubsystemBase
                                   new Pose2d(new Translation2d(Meter.of(2), Meter.of(0)),
                                              Rotation2d.fromDegrees(0)));
 
+    // YAGSL's built-in heading correction (docs: "should only be used while controlling the robot
+    // via angle") kicks in on ANY drive call - AIM's or the default's - whenever rotation input is
+    // near zero while translating: it silently latches whichever heading the robot had at that
+    // instant and drives back to it via its own internal PID, independent of whatever Command is
+    // actually scheduled. Every drive command here is angular-velocity-based (never heading-axis),
+    // so this must stay off or it fights our own rotation commands / holds a stale AIM heading.
+    swerveDrive.setHeadingCorrection(false);
+
     isRedAlliance();
 
     m_PoseEstimator = 
@@ -357,15 +448,50 @@ public class SwerveSubsystem extends SubsystemBase
   @Override
   public void periodic()
   {
+    m_PoseEstimator.update(getHeading(), swerveDrive.getModulePositions());
     robotPosePublisher.set(new Pose3d(getPose()));
   }
 
   @Override
   public void simulationPeriodic()
   {
-    // m_PoseEstimator.update(getHeading(), swerveDrive.getModulePositions());
+    m_PoseEstimator.update(getHeading(), swerveDrive.getModulePositions());
     swerveDrive.updateOdometry();
     // estimatedRobotPosePublisher.set(m_PoseEstimator.getEstimatedPosition());
+    SmartDashboard.putNumber("Diag/ActualOmegaDegPerSec", Math.toDegrees(swerveDrive.getRobotVelocity().omegaRadiansPerSecond));
+
+    // A rotation command / velocity would show up in the omega diagnostics above. A raw pose
+    // overwrite (resetOdometry, or anything that sets the pose directly) would NOT - it bypasses
+    // velocity entirely. Latch the biggest single-tick heading jump ever seen so a one-frame snap
+    // can't be missed just because the dashboard number already settled back down by the time it's
+    // read. Only clears on code restart, not automatically.
+    Pose2d currentPoseForJumpCheck = getPose();
+    double currentHeadingDegrees = currentPoseForJumpCheck.getRotation().getDegrees();
+    if (!Double.isNaN(previousHeadingDegrees))
+    {
+      double jumpDegrees = Math.abs(MathUtil.inputModulus(currentHeadingDegrees - previousHeadingDegrees, -180, 180));
+      if (jumpDegrees > maxHeadingJumpSeenDegrees)
+      {
+        maxHeadingJumpSeenDegrees = jumpDegrees;
+        SmartDashboard.putNumber("Diag/MaxHeadingJumpDegrees", maxHeadingJumpSeenDegrees);
+      }
+      // Full before/after snapshot on any big single-tick jump, so we can tell whether X/Y also
+      // teleported (points to a resetOdometry-style call) or only heading did (points elsewhere).
+      if (jumpDegrees > 90 && !jumpSnapshotTaken)
+      {
+        jumpSnapshotTaken = true;
+        SmartDashboard.putNumber("Diag/Jump/BeforeHeadingDeg", previousHeadingDegrees);
+        SmartDashboard.putNumber("Diag/Jump/BeforeX", previousX);
+        SmartDashboard.putNumber("Diag/Jump/BeforeY", previousY);
+        SmartDashboard.putNumber("Diag/Jump/AfterHeadingDeg", currentHeadingDegrees);
+        SmartDashboard.putNumber("Diag/Jump/AfterX", currentPoseForJumpCheck.getX());
+        SmartDashboard.putNumber("Diag/Jump/AfterY", currentPoseForJumpCheck.getY());
+        SmartDashboard.putBoolean("Diag/Jump/RedAllianceAtJump", redAlliance);
+      }
+    }
+    previousHeadingDegrees = currentHeadingDegrees;
+    previousX = currentPoseForJumpCheck.getX();
+    previousY = currentPoseForJumpCheck.getY();
 
     if (mapleSimIntakeAnchor != null)
     {
@@ -374,10 +500,23 @@ public class SwerveSubsystem extends SubsystemBase
       // only our separate standalone arena needs to be ticked here.
       mapleSimIntakeAnchor.setSimulationWorldPose(
           swerveDrive.getSimulationDriveTrainPose().orElse(swerveDrive.getPose()));
-      SimulatedArena.getInstance().simulationPeriodic();
       SmartDashboard.putNumber("MapleSim/Fuel Pieces Held", fuelIntakeSimulation.getGamePiecesAmount());
-      SmartDashboard.putNumber("MapleSim/Fuel Pieces On Field", SimulatedArena.getInstance()
-          .getGamePiecesByType(RebuiltFuelOnField.REBUILT_FUEL_INFO.type()).size());
+      var fuelOnField = SimulatedArena.getInstance().getGamePiecesByType(RebuiltFuelOnField.REBUILT_FUEL_INFO.type());
+      SmartDashboard.putNumber("MapleSim/Fuel Pieces On Field", fuelOnField.size());
+      // Every Fuel piece on the field defaults to dyn4j's normal at-rest sleeping behavior, which
+      // puts a freshly spawned (near-zero velocity) piece to sleep almost immediately - it then
+      // looks frozen until some collision wakes it. Covers every spawn path (test-spawn button,
+      // any future match-start field population), not just the one call site that creates them.
+      for (var piece : fuelOnField)
+      {
+        if (piece instanceof Body body)
+        {
+          body.setAtRestDetectionEnabled(false);
+          // Disabling detection alone only stops it from going to sleep in the future - if it's
+          // already asleep from before this ran, force it awake now too.
+          body.setAtRest(false);
+        }
+      }
       SmartDashboard.putNumber("MapleSim/Score", SimulatedArena.getInstance().getScore(!redAlliance));
 
       List<Pose3d> fuelPoses = new ArrayList<>(Arrays.asList(SimulatedArena.getInstance()
@@ -406,7 +545,13 @@ public class SwerveSubsystem extends SubsystemBase
     Pose2d robotPose = getPose();
     Translation2d spawnLocation = robotPose.getTranslation()
         .plus(new Translation2d(1.0, 0.0).rotateBy(robotPose.getRotation()));
-    SimulatedArena.getInstance().addGamePiece(new RebuiltFuelOnField(spawnLocation));
+    RebuiltFuelOnField fuel = new RebuiltFuelOnField(spawnLocation);
+    // GamePieceOnFieldSimulation extends dyn4j's Body, which puts bodies to sleep (stops simulating
+    // them) almost immediately once at rest - a freshly spawned piece has ~zero velocity, so it goes
+    // dormant right away and only wakes when a force/impulse (e.g. a collision) hits it. Disabling
+    // at-rest detection keeps it live from the moment it spawns instead of appearing frozen.
+    fuel.setAtRestDetectionEnabled(false);
+    SimulatedArena.getInstance().addGamePiece(fuel);
   }
 
   public void followTrajectory(SwerveSample sample) {
@@ -696,6 +841,7 @@ public class SwerveSubsystem extends SubsystemBase
 
     return run(() -> {
       // Make the robot move
+      SmartDashboard.putNumber("Diag/RawDriveCommandOmega", angularRotationX.getAsDouble());
       swerveDrive.drive(SwerveMath.scaleTranslation(new Translation2d(
                             MathUtil.applyDeadband(newTranslationX.getAsDouble(), Constants.OperatorConstants.DEADBAND) * swerveDrive.getMaximumChassisVelocity(),
                             MathUtil.applyDeadband(newTranslationY.getAsDouble(), Constants.OperatorConstants.DEADBAND) * swerveDrive.getMaximumChassisVelocity()), 0.8),
@@ -772,7 +918,9 @@ public class SwerveSubsystem extends SubsystemBase
   public Command driveFieldOriented(Supplier<ChassisSpeeds> velocity)
   {
     return run(() -> {
-      swerveDrive.driveFieldOriented(velocity.get());
+      ChassisSpeeds speeds = velocity.get();
+      SmartDashboard.putNumber("Diag/DefaultDriveOmega", speeds.omegaRadiansPerSecond);
+      swerveDrive.driveFieldOriented(speeds);
     });
   }
 
