@@ -451,11 +451,26 @@ public class SwerveSubsystem extends SubsystemBase
 
     if (mapleSimIntakeAnchor != null)
     {
-      // Keep the intake anchor glued to YAGSL's own internally-simulated robot pose (see the
-      // mapleSimIntakeAnchor field doc); YAGSL ticks its own internal maple-sim arena itself, so
-      // only our separate standalone arena needs to be ticked here.
-      mapleSimIntakeAnchor.setSimulationWorldPose(
-          swerveDrive.getSimulationDriveTrainPose().orElse(swerveDrive.getPose()));
+      // Keep the intake anchor glued to the robot's real tracked pose. Previously preferred
+      // getSimulationDriveTrainPose() (YAGSL's own internal, separately-shaded maple-sim
+      // drivetrain) over getPose(), on the assumption it was live ground truth - but nothing in
+      // this project ever set up that internal integration, so it very likely returns a stale/
+      // default pose wrapped in a present Optional, not empty, meaning the .orElse(getPose())
+      // fallback never actually ran. That would explain total non-collision for the entire
+      // session (the anchor silently pinned near a fixed bad location, never moving with the
+      // real robot) and the newly-observed test-piece spawning off the field. getPose() is the
+      // one confirmed all session to track the robot correctly (AdvantageScope renders it, every
+      // earlier diagnostic read it successfully) - using it unconditionally here instead.
+      mapleSimIntakeAnchor.setSimulationWorldPose(swerveDrive.getPose());
+      // Was removed earlier this session under the theory that YAGSL's own updateOdometry() already
+      // ticks this same arena, making this redundant ("double-ticking"). That theory is wrong: YAGSL
+      // bundles its OWN separately-shaded copy of maple-sim (confirmed by a compile error when trying
+      // to directly reuse its internal drivetrain body here) - a completely different physics world
+      // from this one, which holds the Fuel pieces, hub, and intake anchor. Nothing else ticks this
+      // arena, so removing this call meant it was never stepped at all - explaining total non-
+      // collision (shooting kept working because projectile flight is pure analytic kinematics that
+      // doesn't need the world to step).
+      SimulatedArena.getInstance().simulationPeriodic();
       SmartDashboard.putNumber("MapleSim/Fuel Pieces Held", fuelIntakeSimulation.getGamePiecesAmount());
       var fuelOnField = SimulatedArena.getInstance().getGamePiecesByType(RebuiltFuelOnField.REBUILT_FUEL_INFO.type());
       SmartDashboard.putNumber("MapleSim/Fuel Pieces On Field", fuelOnField.size());
@@ -512,6 +527,9 @@ public class SwerveSubsystem extends SubsystemBase
     {
       return;
     }
+    // Same pose source the intake anchor is now synced to (see mapleSimIntakeAnchor's field doc) -
+    // getPose(), not getSimulationDriveTrainPose(), which was very likely returning a stale/default
+    // pose (explains the piece spawning off the field when this used it).
     Pose2d robotPose = getPose();
     Translation2d spawnLocation = robotPose.getTranslation()
         .plus(new Translation2d(1.0, 0.0).rotateBy(robotPose.getRotation()));
