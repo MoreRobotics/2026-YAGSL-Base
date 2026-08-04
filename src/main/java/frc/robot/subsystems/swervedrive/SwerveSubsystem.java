@@ -108,11 +108,9 @@ public class SwerveSubsystem extends SubsystemBase
 
   public boolean redAlliance;
 
-  private double previousHeadingDegrees = Double.NaN;
-  private double maxHeadingJumpSeenDegrees = 0.0;
-  private double previousX = 0.0;
-  private double previousY = 0.0;
-  private boolean jumpSnapshotTaken = false;
+  private RebuiltFuelOnField trackedTestFuelPiece;
+  private Translation2d trackedTestFuelSpawnLocation;
+  private double trackedTestFuelSpawnTimestamp;
 
   private final PIDController xController = new PIDController(10.0, 0.0, 0.0);
   private final PIDController yController = new PIDController(10.0, 0.0, 0.0);
@@ -333,14 +331,6 @@ public class SwerveSubsystem extends SubsystemBase
     Rotation2d bearingToHub = new Rotation2d(
         hubPosition.getX() - robotPose.getX(), hubPosition.getY() - robotPose.getY());
     Rotation2d targetHeading = bearingToHub.plus(Rotation2d.fromDegrees(180));
-    SmartDashboard.putBoolean("Aim/RedAlliance", redAlliance);
-    SmartDashboard.putNumber("Aim/RobotX", robotPose.getX());
-    SmartDashboard.putNumber("Aim/RobotY", robotPose.getY());
-    SmartDashboard.putNumber("Aim/RobotHeadingDeg", robotPose.getRotation().getDegrees());
-    SmartDashboard.putNumber("Aim/HubX", hubPosition.getX());
-    SmartDashboard.putNumber("Aim/HubY", hubPosition.getY());
-    SmartDashboard.putNumber("Aim/BearingToHubDeg", bearingToHub.getDegrees());
-    SmartDashboard.putNumber("Aim/TargetHeadingDeg", targetHeading.getDegrees());
     return headingController.calculate(robotPose.getRotation().getRadians(), targetHeading.getRadians());
   }
 
@@ -458,40 +448,6 @@ public class SwerveSubsystem extends SubsystemBase
     m_PoseEstimator.update(getHeading(), swerveDrive.getModulePositions());
     swerveDrive.updateOdometry();
     // estimatedRobotPosePublisher.set(m_PoseEstimator.getEstimatedPosition());
-    SmartDashboard.putNumber("Diag/ActualOmegaDegPerSec", Math.toDegrees(swerveDrive.getRobotVelocity().omegaRadiansPerSecond));
-
-    // A rotation command / velocity would show up in the omega diagnostics above. A raw pose
-    // overwrite (resetOdometry, or anything that sets the pose directly) would NOT - it bypasses
-    // velocity entirely. Latch the biggest single-tick heading jump ever seen so a one-frame snap
-    // can't be missed just because the dashboard number already settled back down by the time it's
-    // read. Only clears on code restart, not automatically.
-    Pose2d currentPoseForJumpCheck = getPose();
-    double currentHeadingDegrees = currentPoseForJumpCheck.getRotation().getDegrees();
-    if (!Double.isNaN(previousHeadingDegrees))
-    {
-      double jumpDegrees = Math.abs(MathUtil.inputModulus(currentHeadingDegrees - previousHeadingDegrees, -180, 180));
-      if (jumpDegrees > maxHeadingJumpSeenDegrees)
-      {
-        maxHeadingJumpSeenDegrees = jumpDegrees;
-        SmartDashboard.putNumber("Diag/MaxHeadingJumpDegrees", maxHeadingJumpSeenDegrees);
-      }
-      // Full before/after snapshot on any big single-tick jump, so we can tell whether X/Y also
-      // teleported (points to a resetOdometry-style call) or only heading did (points elsewhere).
-      if (jumpDegrees > 90 && !jumpSnapshotTaken)
-      {
-        jumpSnapshotTaken = true;
-        SmartDashboard.putNumber("Diag/Jump/BeforeHeadingDeg", previousHeadingDegrees);
-        SmartDashboard.putNumber("Diag/Jump/BeforeX", previousX);
-        SmartDashboard.putNumber("Diag/Jump/BeforeY", previousY);
-        SmartDashboard.putNumber("Diag/Jump/AfterHeadingDeg", currentHeadingDegrees);
-        SmartDashboard.putNumber("Diag/Jump/AfterX", currentPoseForJumpCheck.getX());
-        SmartDashboard.putNumber("Diag/Jump/AfterY", currentPoseForJumpCheck.getY());
-        SmartDashboard.putBoolean("Diag/Jump/RedAllianceAtJump", redAlliance);
-      }
-    }
-    previousHeadingDegrees = currentHeadingDegrees;
-    previousX = currentPoseForJumpCheck.getX();
-    previousY = currentPoseForJumpCheck.getY();
 
     if (mapleSimIntakeAnchor != null)
     {
@@ -529,6 +485,20 @@ public class SwerveSubsystem extends SubsystemBase
         }
       }
       fuelPosesPublisher.set(fuelPoses.toArray(new Pose3d[0]));
+
+      // Precise, non-subjective measurement of how long a spawned test piece takes to first budge
+      // from its spawn point (from any cause - collision, gravity settling, anything) instead of
+      // relying on a "feels like minutes" impression.
+      if (trackedTestFuelPiece != null)
+      {
+        Translation2d currentLocation = trackedTestFuelPiece.getPose3d().getTranslation().toTranslation2d();
+        if (currentLocation.getDistance(trackedTestFuelSpawnLocation) > 0.02)
+        {
+          SmartDashboard.putNumber("Diag/TestFuelSecondsToFirstMove",
+              Timer.getFPGATimestamp() - trackedTestFuelSpawnTimestamp);
+          trackedTestFuelPiece = null;
+        }
+      }
     }
   }
 
@@ -552,6 +522,10 @@ public class SwerveSubsystem extends SubsystemBase
     // at-rest detection keeps it live from the moment it spawns instead of appearing frozen.
     fuel.setAtRestDetectionEnabled(false);
     SimulatedArena.getInstance().addGamePiece(fuel);
+    trackedTestFuelPiece = fuel;
+    trackedTestFuelSpawnLocation = spawnLocation;
+    trackedTestFuelSpawnTimestamp = Timer.getFPGATimestamp();
+    SmartDashboard.putNumber("Diag/TestFuelSecondsToFirstMove", -1.0);
   }
 
   public void followTrajectory(SwerveSample sample) {
@@ -841,7 +815,6 @@ public class SwerveSubsystem extends SubsystemBase
 
     return run(() -> {
       // Make the robot move
-      SmartDashboard.putNumber("Diag/RawDriveCommandOmega", angularRotationX.getAsDouble());
       swerveDrive.drive(SwerveMath.scaleTranslation(new Translation2d(
                             MathUtil.applyDeadband(newTranslationX.getAsDouble(), Constants.OperatorConstants.DEADBAND) * swerveDrive.getMaximumChassisVelocity(),
                             MathUtil.applyDeadband(newTranslationY.getAsDouble(), Constants.OperatorConstants.DEADBAND) * swerveDrive.getMaximumChassisVelocity()), 0.8),
@@ -918,9 +891,7 @@ public class SwerveSubsystem extends SubsystemBase
   public Command driveFieldOriented(Supplier<ChassisSpeeds> velocity)
   {
     return run(() -> {
-      ChassisSpeeds speeds = velocity.get();
-      SmartDashboard.putNumber("Diag/DefaultDriveOmega", speeds.omegaRadiansPerSecond);
-      swerveDrive.driveFieldOriented(speeds);
+      swerveDrive.driveFieldOriented(velocity.get());
     });
   }
 

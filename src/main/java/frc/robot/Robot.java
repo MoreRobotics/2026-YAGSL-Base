@@ -106,29 +106,6 @@ public class Robot extends TimedRobot
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
-    // Diagnostic: some controllers (notably PS5 DualSense over certain drivers) report a trigger
-    // press as BOTH an analog axis value AND a separate digital button event on some button index -
-    // if that index happens to alias with another binding (e.g. Start/"zero gyro with alliance"),
-    // pressing the trigger would silently also fire that other binding. Dump every button index
-    // currently reporting pressed whenever the shoot axis (raw axis 4) is active, so this is either
-    // confirmed or ruled out directly instead of guessed at.
-    if (RobotContainer.getSwerveDrive() != null && m_robotContainer != null)
-    {
-      var driverHID = m_robotContainer.driver.getHID();
-      if (driverHID.getRawAxis(4) > 0.5)
-      {
-        StringBuilder pressedButtons = new StringBuilder();
-        for (int i = 1; i <= driverHID.getButtonCount(); i++)
-        {
-          if (driverHID.getRawButton(i))
-          {
-            pressedButtons.append(i).append(",");
-          }
-        }
-        edu.wpi.first.wpilibj.smartdashboard.SmartDashboard.putString("Diag/ButtonsPressedDuringShoot", pressedButtons.toString());
-      }
-    }
-
     // Get alliance from driver station
     if(flag)
     {
