@@ -440,11 +440,14 @@ import java.net.http.HttpResponse;
         }
         if(!doRejectUpdateRight)
         {
+            double rightK = 0.1;
+            double rightSigmaXY = rightK / Math.max(getLimelightRightPose().avgTagArea, 1e9);
             // s_Swerve.m_PoseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
             s_Swerve.m_PoseEstimator.addVisionMeasurement(
                 getLimelightRightPose().pose,
                 getLimelightRightPose().timestampSeconds,
-                VecBuilder.fill(.2,.2,9));
+                VecBuilder.fill(rightSigmaXY,rightSigmaXY,1e9));
+            SmartDashboard.putNumber("rightSigmaXY", rightSigmaXY);
         }
 
 
@@ -459,12 +462,16 @@ import java.net.http.HttpResponse;
         }
         if(!doRejectUpdateLeft)
         {
+            
+            double leftK = 0.1;
+            double leftSigmaXY = leftK / Math.max(getLimelightLeftPose().avgTagArea, 1e9);
             // s_Swerve.m_PoseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
             s_Swerve.m_PoseEstimator.addVisionMeasurement(
                 getLimelightLeftPose().pose,
                 getLimelightLeftPose().timestampSeconds,
-                VecBuilder.fill(.2,.2,9)
+                VecBuilder.fill(leftSigmaXY, leftSigmaXY,1e9)
                 );
+                SmartDashboard.putNumber("leftSigmaXY", leftSigmaXY);
         }
 
 
@@ -505,7 +512,7 @@ import java.net.http.HttpResponse;
         SmartDashboard.putNumber("pipeline", LimelightHelpers.getCurrentPipelineIndex("limelight-center"));
         SmartDashboard.putNumber("RobotX", s_Swerve.m_PoseEstimator.getEstimatedPosition().getX());
         SmartDashboard.putNumber("RobotY", s_Swerve.m_PoseEstimator.getEstimatedPosition().getY());
-        
+                
 
         targetHub.set(getTargetPose());
 

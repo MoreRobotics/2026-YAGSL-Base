@@ -41,20 +41,20 @@ public class Robot extends TimedRobot
   private boolean flag;
   private Optional<Alliance> alliance;
 
-  private final SwerveSubsystem s_Swerve = new SwerveSubsystem(null);
-  private final AutoFactory autoFactory;
+  // private final SwerveSubsystem s_Swerve = new SwerveSubsystem(null);
+ // private final AutoFactory autoFactory;
 
   public Robot()
   {
     instance = this;
     flag = true;
-    autoFactory = new AutoFactory(
-            s_Swerve::getPose, // A function that returns the current robot pose
-            s_Swerve::resetOdometry, // A function that resets the current robot pose to the provided Pose2d
-            s_Swerve::followTrajectory, // The drive subsystem trajectory follower 
-            true, // If alliance flipping should be enabled 
-            s_Swerve // The drive subsystem
-        );
+    // autoFactory = new AutoFactory(
+    //         s_Swerve::getPose, // A function that returns the current robot pose
+    //         s_Swerve::resetOdometry, // A function that resets the current robot pose to the provided Pose2d
+    //         s_Swerve::followTrajectory, // The drive subsystem trajectory follower 
+    //         true, // If alliance flipping should be enabled 
+    //         s_Swerve // The drive subsystem
+    //     );
   }
 
   public static Robot getInstance()
@@ -70,6 +70,7 @@ public class Robot extends TimedRobot
   {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
+    RobotContainer.getSwerveDrive().setupPathPlanner();
     m_robotContainer = new RobotContainer();
 
     // Create a timer to disable motor brake a few seconds after disable.  This will let the robot stop
