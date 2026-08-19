@@ -9,6 +9,9 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import choreo.auto.AutoFactory;
+import choreo.auto.AutoRoutine;
+import choreo.auto.AutoTrajectory;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -17,6 +20,7 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -134,6 +138,8 @@ public class RobotContainer
 
   public final SendableChooser<Command> autoChooser;
 
+  private final AutoFactory autoFactory;
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -155,6 +161,14 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     DriverStation.silenceJoystickConnectionWarning(true);
 
     // Auto Commands
+
+    autoFactory = new AutoFactory(
+            drivebase::getPose, // A function that returns the current robot pose
+            drivebase::resetOdometry, // A function that resets the current robot pose to the provided Pose2d
+            drivebase::followTrajectory, // The drive subsystem trajectory follower 
+            true, // If alliance flipping should be enabled 
+            drivebase // The drive subsystem
+        );
 
     NamedCommands.registerCommand("Run HotDog", 
     new InstantCommand(() -> s_HotDog.setHotDogSpeed(s_HotDog.getHotDogSpeed())).raceWith(new WaitCommand(5)).alongWith(new InstantCommand(() -> s_HotDog.setIndexerSpeed(s_HotDog.getIndexerSpeed())).raceWith(new WaitCommand(5))));
@@ -486,6 +500,23 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
   {
     // An example command will be run in autonomous
     return autoChooser.getSelected();
+  }
+
+  public AutoRoutine tesAutoRoutine()
+  {
+    AutoRoutine autoRoutine = autoFactory.newRoutine("Test Routine");
+
+    AutoTrajectory testTraj = autoRoutine.trajectory("Test Path");
+
+    autoRoutine.active().onTrue(
+      Commands.sequence(
+        testTraj.resetOdometry(),
+        testTraj.cmd()
+      )
+    );
+
+    return autoRoutine;
+
   }
 
   public void setMotorBrake(boolean brake)

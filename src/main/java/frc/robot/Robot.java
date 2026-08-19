@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import java.io.File;
 import java.io.SyncFailedException;
 import java.util.Optional;
 
@@ -15,6 +16,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -40,21 +42,11 @@ public class Robot extends TimedRobot
 
   private boolean flag;
   private Optional<Alliance> alliance;
-
-  private final SwerveSubsystem s_Swerve = new SwerveSubsystem(null);
-  private final AutoFactory autoFactory;
-
   public Robot()
   {
     instance = this;
     flag = true;
-    autoFactory = new AutoFactory(
-            s_Swerve::getPose, // A function that returns the current robot pose
-            s_Swerve::resetOdometry, // A function that resets the current robot pose to the provided Pose2d
-            s_Swerve::followTrajectory, // The drive subsystem trajectory follower 
-            true, // If alliance flipping should be enabled 
-            s_Swerve // The drive subsystem
-        );
+    
   }
 
   public static Robot getInstance()
