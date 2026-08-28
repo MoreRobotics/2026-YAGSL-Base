@@ -127,7 +127,20 @@ public class SwerveSubsystem extends SubsystemBase
     //RobotModeTriggers.autonomous().onTrue(Commands.runOnce(this::zeroGyroWithAlliance));
     setupPathPlanner();
 
-    
+    isRedAlliance();
+
+    m_PoseEstimator = 
+        new SwerveDrivePoseEstimator(
+            getKinematics(),
+            getHeading(),
+            getSwerveDrive().getModulePositions(),
+            getPose(),
+            VecBuilder.fill(0.1, 0.1, 0.1),
+            VecBuilder.fill(.7, .7, 99)
+            );
+
+    headingController.enableContinuousInput(-Math.PI, Math.PI);
+
   }
 
   /**
@@ -144,20 +157,7 @@ public class SwerveSubsystem extends SubsystemBase
                                   new Pose2d(new Translation2d(Meter.of(2), Meter.of(0)),
                                              Rotation2d.fromDegrees(0)));
 
-    isRedAlliance();
-
-    m_PoseEstimator = 
-        new SwerveDrivePoseEstimator(
-            getKinematics(),
-            getHeading(),
-            getSwerveDrive().getModulePositions(),
-            getPose(),
-            VecBuilder.fill(0.1, 0.1, 0.1),
-            VecBuilder.fill(.7, .7, 99)
-            );
-
-    headingController.enableContinuousInput(-Math.PI, Math.PI);
-
+    
     
   
     

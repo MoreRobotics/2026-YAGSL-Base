@@ -9,6 +9,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
@@ -139,6 +140,7 @@ public class RobotContainer
   public final SendableChooser<Command> autoChooser;
 
   private final AutoFactory autoFactory;
+  private final AutoChooser autoChooserChoreo;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -169,6 +171,7 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
             true, // If alliance flipping should be enabled 
             drivebase // The drive subsystem
         );
+
 
     NamedCommands.registerCommand("Run HotDog", 
     new InstantCommand(() -> s_HotDog.setHotDogSpeed(s_HotDog.getHotDogSpeed())).raceWith(new WaitCommand(5)).alongWith(new InstantCommand(() -> s_HotDog.setIndexerSpeed(s_HotDog.getIndexerSpeed())).raceWith(new WaitCommand(5))));
@@ -227,6 +230,11 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     autoChooser.addOption("Poofs Auto Right", poofsAutoRight);
     autoChooser.addOption("Citrus Right Trench Mirror", citrusRightTrench);
     autoChooser.addOption("Delayed Right Bump", delayedRightBump);
+
+    autoChooserChoreo = new AutoChooser();
+    autoChooserChoreo.addRoutine("Example Routine", this::tesAutoRoutine);
+
+    SmartDashboard.putData("Choreo Auto Chooser", autoChooserChoreo);
     
 
     // FollowPathCommand.warmupCommand();
@@ -507,16 +515,24 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
     AutoRoutine autoRoutine = autoFactory.newRoutine("Test Routine");
 
     AutoTrajectory testTraj = autoRoutine.trajectory("Test Path");
-
+    
     autoRoutine.active().onTrue(
       Commands.sequence(
         testTraj.resetOdometry(),
+        new InstantCommand(() -> s_Intake.changeTarget()),
+        new MoveIntake(s_Intake),
+        new InstantCommand(() -> s_Intake.changeState()),
         testTraj.cmd()
       )
     );
 
     return autoRoutine;
 
+  }
+
+  public AutoChooser getChoreoAutoChooser()
+  {
+    return autoChooserChoreo;
   }
 
   public void setMotorBrake(boolean brake)

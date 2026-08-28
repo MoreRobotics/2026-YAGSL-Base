@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 import com.pathplanner.lib.util.PathPlannerLogging;
@@ -76,6 +77,9 @@ public class Robot extends TimedRobot
     FollowPathCommand.warmupCommand().schedule();
     PathfindingCommand.warmupCommand().schedule();
     DataLogManager.start();
+
+    // RobotModeTriggers.autonomous().whileTrue(m_robotContainer.getChoreoAutoChooser().selectedCommandScheduler());
+
 
     PathPlannerLogging.setLogActivePathCallback(poses -> System.out.println("active path @ " + Timer.getFPGATimestamp()));
   }
@@ -143,8 +147,8 @@ public class Robot extends TimedRobot
   {
     System.out.print("auto enabled @" + Timer.getFPGATimestamp()); 
     // RobotContainer.getSwerveDrive().setupPathPlanner();
-    m_robotContainer.setMotorBrake(true);
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    // m_robotContainer.setMotorBrake(true);
+     m_autonomousCommand = m_robotContainer.getChoreoAutoChooser().selectedCommand();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null)
@@ -152,7 +156,7 @@ public class Robot extends TimedRobot
       CommandScheduler.getInstance().schedule(m_autonomousCommand);
     }
     
-    //RobotContainer.getSwerveDrive();
+    RobotContainer.getSwerveDrive();
   }
 
   /**
