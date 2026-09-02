@@ -83,9 +83,9 @@ public class SwerveSubsystem extends SubsystemBase
 
   public boolean redAlliance;
 
-  private final PIDController xController = new PIDController(10.0, 0.0, 0.0);
-  private final PIDController yController = new PIDController(10.0, 0.0, 0.0);
-  private final PIDController headingController = new PIDController(7.5, 0.0, 0.0);
+  private final PIDController xController = new PIDController(2.5, 0.0, 0.0);
+  private final PIDController yController = new PIDController(5.0, 0.0, 0.0);
+  private final PIDController headingController = new PIDController(5, 0.0, 0.0);
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.

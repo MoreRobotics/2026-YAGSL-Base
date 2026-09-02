@@ -514,15 +514,15 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
   {
     AutoRoutine autoRoutine = autoFactory.newRoutine("Test Routine");
 
-    AutoTrajectory testTraj = autoRoutine.trajectory("Test Path");
+    AutoTrajectory testTraj = autoRoutine.trajectory("NewPath");
     
     autoRoutine.active().onTrue(
       Commands.sequence(
         testTraj.resetOdometry(),
-        new InstantCommand(() -> s_Intake.changeTarget()),
-        new MoveIntake(s_Intake),
-        new InstantCommand(() -> s_Intake.changeState()),
         testTraj.cmd()
+        // new InstantCommand(() -> s_Intake.changeTarget()),
+        // new MoveIntake(s_Intake),
+        // new InstantCommand(() -> s_Intake.changeState())
       )
     );
 
