@@ -3,7 +3,22 @@
  "version":2,
  "type":"Swerve",
  "variables":{
-  "expressions":{},
+  "expressions":{
+   "a":{
+    "dimension":"LinAcc",
+    "var":{
+     "exp":"0",
+     "val":0.0
+    }
+   },
+   "v":{
+    "dimension":"LinVel",
+    "var":{
+     "exp":"0",
+     "val":0.0
+    }
+   }
+  },
   "poses":{}
  },
  "config":{
