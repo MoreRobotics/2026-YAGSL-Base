@@ -131,12 +131,13 @@ public class Robot extends TimedRobot
   @Override
   public void disabledPeriodic()
   {
-    if (disabledTimer.hasElapsed(Constants.DrivebaseConstants.WHEEL_LOCK_TIME))
-    {
-      m_robotContainer.setMotorBrake(false);
-      disabledTimer.stop();
-      disabledTimer.reset();
-    }
+
+    // if (disabledTimer.hasElapsed(Constants.DrivebaseConstants.WHEEL_LOCK_TIME))
+    // {
+    //   m_robotContainer.setMotorBrake(false);
+    //   disabledTimer.stop();
+    //   disabledTimer.reset();
+    // }
   }
 
   /**
@@ -148,6 +149,7 @@ public class Robot extends TimedRobot
     System.out.print("auto enabled @" + Timer.getFPGATimestamp()); 
     // RobotContainer.getSwerveDrive().setupPathPlanner();
     // m_robotContainer.setMotorBrake(true);
+    m_robotContainer.setMotorBrake(true);
      m_autonomousCommand = m_robotContainer.getChoreoAutoChooser().selectedCommand();
 
     // schedule the autonomous command (example)
@@ -156,7 +158,7 @@ public class Robot extends TimedRobot
       CommandScheduler.getInstance().schedule(m_autonomousCommand);
     }
     
-    RobotContainer.getSwerveDrive();
+    //RobotContainer.getSwerveDrive();
   }
 
   /**
