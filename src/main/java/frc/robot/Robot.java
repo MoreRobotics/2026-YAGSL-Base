@@ -19,7 +19,10 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+import frc.robot.commands.StowShooter;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 import com.pathplanner.lib.util.PathPlannerLogging;
@@ -126,6 +129,15 @@ public class Robot extends TimedRobot
     m_robotContainer.setMotorBrake(true);
     disabledTimer.reset();
     disabledTimer.start();
+
+    // m_robotContainer.s_HotDog.setDefaultCommand(new ParallelCommandGroup(
+    //   new InstantCommand(() -> m_robotContainer.s_HotDog.setHotDogSpeed(0)),
+    //   new InstantCommand(() -> m_robotContainer.s_HotDog.setIndexerSpeed(0))));
+
+    // m_robotContainer.s_ShooterPivot.setDefaultCommand(new StowShooter(m_robotContainer.s_ShooterPivot));
+
+    // m_robotContainer.s_Shooter.setDefaultCommand(new InstantCommand(() -> m_robotContainer.s_Shooter.setShooterVoltage(-1)));
+    
   }
 
   @Override
@@ -150,7 +162,9 @@ public class Robot extends TimedRobot
     // RobotContainer.getSwerveDrive().setupPathPlanner();
     // m_robotContainer.setMotorBrake(true);
     m_robotContainer.setMotorBrake(true);
-     m_autonomousCommand = m_robotContainer.getChoreoAutoChooser().selectedCommand();
+     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+     FollowPathCommand.warmupCommand().schedule();
+    PathfindingCommand.warmupCommand().schedule();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null)

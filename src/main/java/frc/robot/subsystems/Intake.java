@@ -251,8 +251,10 @@ public class Intake extends SubsystemBase {
     m_LeftIntakeRoller.setControl(m_RollerFollower.withLeaderID(rightIntakePowerID));
   }
   public void stopIntakeVoltage() {
-    m_RightIntakeRoller.setControl(voltageRequestStop);
-    m_LeftIntakeRoller.setControl(m_RollerFollower.withLeaderID(rightIntakePowerID));
+    m_RightIntakeRoller.setVoltage(0);
+    m_LeftIntakeRoller.setVoltage(0);
+    // m_RightIntakeRoller.setControl(voltageRequestStop);
+    // m_LeftIntakeRoller.setControl(m_RollerFollower.withLeaderID(rightIntakePowerID));
   }
 
   public void setCurrentLimit(double currentLimit)
