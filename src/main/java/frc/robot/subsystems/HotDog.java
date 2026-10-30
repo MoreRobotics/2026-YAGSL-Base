@@ -53,7 +53,7 @@ public class HotDog extends SubsystemBase {
 
 
   private TalonFX m_HotDogLeft;
-  private TalonFX m_HotDogRight;
+  // private TalonFX m_HotDogRight;
   private TalonFXConfiguration indexerConfigs;
   private TalonFXConfiguration hotDogConfigs;
   private MotionMagicVelocityVoltage m_velocityRequest;
@@ -74,7 +74,7 @@ public class HotDog extends SubsystemBase {
     m_Indexer = new TalonFX(IndexerID);
 
     m_HotDogLeft = new TalonFX(hotDogLeftID);
-    m_HotDogRight = new TalonFX(hotDogRightID);
+    // m_HotDogRight = new TalonFX(hotDogRightID);
     m_velocityRequest = new MotionMagicVelocityVoltage(0).withSlot(0);
 
     m_Follower = new Follower(hotDogLeftID, MotorAlignmentValue.Opposed);
@@ -109,7 +109,7 @@ public class HotDog extends SubsystemBase {
     m_Indexer.getConfigurator().apply(indexerConfigs);
 
     m_HotDogLeft.getConfigurator().apply(hotDogConfigs);
-    m_HotDogRight.getConfigurator().apply(hotDogConfigs);
+    // m_HotDogRight.getConfigurator().apply(hotDogConfigs);
 
     indexerVoltageRequest = new VoltageOut(-indexerVoltage);
     indexerVoltageRequestOutake = new VoltageOut(indexerVoltage);
@@ -141,7 +141,7 @@ public class HotDog extends SubsystemBase {
   {
     SmartDashboard.putNumber("HotDog Commanded Speed", setpoint);
     m_HotDogLeft.setControl(m_velocityRequest.withVelocity(setpoint));
-    m_HotDogRight.setControl(m_Follower.withLeaderID(hotDogLeftID));
+    // m_HotDogRight.setControl(m_Follower.withLeaderID(hotDogLeftID));
   }
 
   public double getHotDogSpeed()
@@ -172,15 +172,15 @@ public class HotDog extends SubsystemBase {
 
   public void setHotDogVoltage(){
     m_HotDogLeft.setControl(hotDogVoltageRequest);
-    m_HotDogRight.setControl(hotDogVoltageRequestOutake);
+    // m_HotDogRight.setControl(hotDogVoltageRequestOutake);
   }
   public void setHotDogVoltageOutake(){
     m_HotDogLeft.setControl(hotDogVoltageRequestOutake);
-    m_HotDogRight.setControl(hotDogVoltageRequest);
+    // m_HotDogRight.setControl(hotDogVoltageRequest);
   }
   public void stopHotDogVoltage() {
     m_HotDogLeft.setControl(hotDogVoltageRequestStop);
-    m_HotDogRight.setControl(hotDogVoltageRequestStop);
+    // m_HotDogRight.setControl(hotDogVoltageRequestStop);
   }
 
   @Override
@@ -189,8 +189,8 @@ public class HotDog extends SubsystemBase {
     // shooter.updateTelemetry();
 
     // Hot Dog Logging
-    SmartDashboard.putNumber("Right HotDog Speed", m_HotDogRight.getVelocity().getValueAsDouble());
-    SmartDashboard.putNumber("Right HotDog Current", m_HotDogRight.getStatorCurrent().getValueAsDouble());
+    // SmartDashboard.putNumber("Right HotDog Speed", m_HotDogRight.getVelocity().getValueAsDouble());
+    // SmartDashboard.putNumber("Right HotDog Current", m_HotDogRight.getStatorCurrent().getValueAsDouble());
     SmartDashboard.putNumber("Left HotDog Speed", m_HotDogLeft.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("Left HotDog Current", m_HotDogLeft.getStatorCurrent().getValueAsDouble());
 

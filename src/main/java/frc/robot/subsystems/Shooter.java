@@ -44,10 +44,10 @@ public class Shooter extends SubsystemBase {
 
   // Motor Classes
   private TalonFX m_TopLeftShooter;
-  private TalonFX m_TopRightShooter;
+  //private TalonFX m_TopRightShooter;
 
   private TalonFX m_BottomLeftShooter;
-  private TalonFX m_BottomRightShooter;
+  // private TalonFX m_BottomRightShooter;
 
   private TalonFXConfiguration configs;
   private MotionMagicVelocityVoltage m_Request;
@@ -60,9 +60,9 @@ public class Shooter extends SubsystemBase {
     this.s_Eyes = s_Eyes;
 
     m_TopLeftShooter = new TalonFX(topLeftShooterID);
-    m_TopRightShooter = new TalonFX(topRightShooterID);
+    // m_TopRightShooter = new TalonFX(topRightShooterID);
     m_BottomLeftShooter = new TalonFX(bottomLeftShooterID);
-    m_BottomRightShooter = new TalonFX(bottomRightShooterID);
+    // m_BottomRightShooter = new TalonFX(bottomRightShooterID);
 
 
     m_Request = new MotionMagicVelocityVoltage(0).withSlot(0);
@@ -83,10 +83,10 @@ public class Shooter extends SubsystemBase {
     configs.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
     m_TopLeftShooter.getConfigurator().apply(configs);
-    m_TopRightShooter.getConfigurator().apply(configs);
+    // m_TopRightShooter.getConfigurator().apply(configs);
 
     m_BottomLeftShooter.getConfigurator().apply(configs);
-    m_BottomRightShooter.getConfigurator().apply(configs);
+    // m_BottomRightShooter.getConfigurator().apply(configs);
 
     
 
@@ -99,8 +99,8 @@ public class Shooter extends SubsystemBase {
     m_TopLeftShooter.setControl(m_Request.withVelocity(-speed * speedOffset));
     m_BottomLeftShooter.setControl(m_LeftFollower.withLeaderID(topLeftShooterID));
 
-    m_TopRightShooter.setControl(m_Request.withVelocity(speed * speedOffset));
-    m_BottomRightShooter.setControl(m_RightFollower.withLeaderID(topRightShooterID));
+    // m_TopRightShooter.setControl(m_Request.withVelocity(speed * speedOffset));
+    // m_BottomRightShooter.setControl(m_RightFollower.withLeaderID(topRightShooterID));
   }
 
   public void setShooterVoltage(double voltage)
@@ -108,8 +108,8 @@ public class Shooter extends SubsystemBase {
     m_TopLeftShooter.setVoltage(-voltage);
     m_BottomLeftShooter.setControl(m_LeftFollower.withLeaderID(topLeftShooterID));
 
-    m_TopRightShooter.setVoltage(voltage);
-    m_BottomRightShooter.setControl(m_RightFollower.withLeaderID(topRightShooterID));
+    // m_TopRightShooter.setVoltage(voltage);
+    // m_BottomRightShooter.setControl(m_RightFollower.withLeaderID(topRightShooterID));
   }
 
   public double getCurrentSpeed() {
@@ -138,7 +138,7 @@ public class Shooter extends SubsystemBase {
 
   public boolean isReadyToShoot()
     {
-      if(m_TopRightShooter.getVelocity().getValueAsDouble() < (targetSpeed * .9))
+      if(m_BottomLeftShooter.getVelocity().getValueAsDouble() < (targetSpeed * .9))
       {
         return true;
       }
@@ -172,13 +172,13 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Top Left Shooter Motor Speed", m_TopLeftShooter.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("Bottom Left Shooter Motor Speed", m_BottomLeftShooter.getVelocity().getValueAsDouble());
 
-    SmartDashboard.putNumber("Top Right Shooter Motor Speed", m_TopRightShooter.getVelocity().getValueAsDouble());
-    SmartDashboard.putNumber("Bottom Right Shooter Motor Speed", m_BottomRightShooter.getVelocity().getValueAsDouble());
+    // SmartDashboard.putNumber("Top Right Shooter Motor Speed", m_TopRightShooter.getVelocity().getValueAsDouble());
+    // SmartDashboard.putNumber("Bottom Right Shooter Motor Speed", m_BottomRightShooter.getVelocity().getValueAsDouble());
 
     SmartDashboard.putNumber("Top Left Shooter Motor Current", m_TopLeftShooter.getStatorCurrent().getValueAsDouble());
     SmartDashboard.putNumber("Bottom Left Shooter Motor Current", m_BottomLeftShooter.getStatorCurrent().getValueAsDouble());
-    SmartDashboard.putNumber("Top Right Shooter Motor Current", m_TopRightShooter.getStatorCurrent().getValueAsDouble());
-    SmartDashboard.putNumber("Bottom Right Shooter Motor Current", m_BottomRightShooter.getStatorCurrent().getValueAsDouble());
+    // SmartDashboard.putNumber("Top Right Shooter Motor Current", m_TopRightShooter.getStatorCurrent().getValueAsDouble());
+    // SmartDashboard.putNumber("Bottom Right Shooter Motor Current", m_BottomRightShooter.getStatorCurrent().getValueAsDouble());
 
     SmartDashboard.putBoolean("Ready To Shoot", isReadyToShoot());
     

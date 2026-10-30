@@ -62,7 +62,6 @@ public class Intake extends SubsystemBase {
 
   // Talon Classes
   private TalonFX m_IntakePivot;
-  private TalonFX m_RightIntakeRoller;
   private TalonFX m_LeftIntakeRoller;
   private MotionMagicVoltage m_Request;
   private TalonFXConfiguration pivotConfigs;
@@ -78,7 +77,6 @@ public class Intake extends SubsystemBase {
   /** Creates a new Intake. */
   public Intake() {
     m_IntakePivot = new TalonFX(intakePivotID);
-    m_RightIntakeRoller = new TalonFX(rightIntakePowerID);
     m_LeftIntakeRoller = new TalonFX(leftIntakePowerID);
     //e_IntakePivot =  new CANcoder(intakePivotCANCoderID);
 
@@ -118,13 +116,13 @@ public class Intake extends SubsystemBase {
     rollerConfigs.MotionMagic.MotionMagicAcceleration = acceleration;
 
     m_IntakePivot.getConfigurator().apply(pivotConfigs);
-    m_RightIntakeRoller.getConfigurator().apply(rollerConfigs);
     m_LeftIntakeRoller.getConfigurator().apply(rollerConfigs);
+    
 
-    voltageRequest = new VoltageOut(intakeVoltage);
-    voltageRequestOutake = new VoltageOut(-intakeVoltage);
+    voltageRequest = new VoltageOut(-intakeVoltage);
+    voltageRequestOutake = new VoltageOut(intakeVoltage);
     voltageRequestStop = new VoltageOut(0.0);
-    voltageRequestIdle = new VoltageOut(intakeVoltageIdle);
+    voltageRequestIdle = new VoltageOut(-intakeVoltageIdle);
 
     // Set Intake RELATIVE
     m_IntakePivot.setPosition(0);
@@ -234,32 +232,26 @@ public class Intake extends SubsystemBase {
 
   public void setIntakeSpeed(double speed){
     SmartDashboard.putNumber("Intake Roller Commanded Speed", speed);
-    m_RightIntakeRoller.setControl(m_VelocityRequest.withVelocity(speed));
-    m_LeftIntakeRoller.setControl(m_RollerFollower);
+    m_LeftIntakeRoller.setControl(m_VelocityRequest.withVelocity(-speed));
   }
 
   public void setIntakeVoltage(){
-    m_RightIntakeRoller.setControl(voltageRequest);
-    m_LeftIntakeRoller.setControl(m_RollerFollower.withLeaderID(rightIntakePowerID));
+    m_LeftIntakeRoller.setControl(voltageRequest);
   }
   public void setOutakeVoltage() {
-    m_RightIntakeRoller.setControl(voltageRequestOutake);
-    m_LeftIntakeRoller.setControl(m_RollerFollower.withLeaderID(rightIntakePowerID));
+    m_LeftIntakeRoller.setControl(voltageRequestOutake);
   }
   public void setIdleVoltage(){
-    m_RightIntakeRoller.setControl(voltageRequestIdle);
-    m_LeftIntakeRoller.setControl(m_RollerFollower.withLeaderID(rightIntakePowerID));
+    m_LeftIntakeRoller.setControl(voltageRequestIdle);
   }
   public void stopIntakeVoltage() {
-    m_RightIntakeRoller.setControl(voltageRequestStop);
-    m_LeftIntakeRoller.setControl(m_RollerFollower.withLeaderID(rightIntakePowerID));
+    m_LeftIntakeRoller.setControl(voltageRequestStop);
   }
 
   public void setCurrentLimit(double currentLimit)
   {
     rollerConfigs.CurrentLimits.StatorCurrentLimit = currentLimit;
-     m_RightIntakeRoller.getConfigurator().apply(rollerConfigs);
-    m_LeftIntakeRoller.getConfigurator().apply(rollerConfigs);
+     m_LeftIntakeRoller.getConfigurator().apply(rollerConfigs);
   }
 
   public double getIdleRollerCurrentLimit()
@@ -298,14 +290,10 @@ public class Intake extends SubsystemBase {
     // SmartDashboard.putNumber("Intake Pivot Motor Acceleration", m_IntakePivot.getAcceleration().getValueAsDouble());
      SmartDashboard.putNumber("Intake Pivot Motor Velocity", m_IntakePivot.getVelocity().getValueAsDouble());
     //SmartDashboard.putNumber("Intake Pivot CANCoder Position", e_IntakePivot.getPosition().getValueAsDouble());
-    SmartDashboard.putNumber("Right Intake Roller Speed", m_RightIntakeRoller.getVelocity().getValueAsDouble());
-    SmartDashboard.putNumber("Left Intake Roller Speed", m_LeftIntakeRoller.getVelocity().getValueAsDouble());
-    SmartDashboard.putNumber("Right Intake Roller Current", m_RightIntakeRoller.getStatorCurrent().getValueAsDouble());
-    SmartDashboard.putNumber("Left Intake Roller Current", m_LeftIntakeRoller.getStatorCurrent().getValueAsDouble());
-    SmartDashboard.putNumber("Right Intake Roller Supply Current", m_RightIntakeRoller.getSupplyCurrent().getValueAsDouble());
-    SmartDashboard.putNumber("Left Intake Roller Supply Current", m_LeftIntakeRoller.getSupplyCurrent().getValueAsDouble());
-    SmartDashboard.putNumber("Right Intake Roller Voltage", m_RightIntakeRoller.getMotorVoltage().getValueAsDouble());
-    SmartDashboard.putNumber("Left Intake Roller Voltage", m_LeftIntakeRoller.getMotorVoltage().getValueAsDouble());
+    SmartDashboard.putNumber("Right Intake Roller Speed", m_LeftIntakeRoller.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("Right Intake Roller Current", m_LeftIntakeRoller.getStatorCurrent().getValueAsDouble());
+    SmartDashboard.putNumber("Right Intake Roller Supply Current", m_LeftIntakeRoller.getSupplyCurrent().getValueAsDouble());
+    SmartDashboard.putNumber("Right Intake Roller Voltage", m_LeftIntakeRoller.getMotorVoltage().getValueAsDouble());
     SmartDashboard.putNumber("Intake Pivot Current", m_IntakePivot.getStatorCurrent().getValueAsDouble());
     // SmartDashboard.putNumber("Intake Roller Current Limit", rollerConfigs.CurrentLimits.StatorCurrentLimit);
 
