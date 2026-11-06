@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
@@ -520,11 +521,26 @@ Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveAngula
       Commands.sequence(
         testTraj.resetOdometry(),
         testTraj.cmd()
-        // new InstantCommand(() -> s_Intake.changeTarget()),
-        // new MoveIntake(s_Intake),
-        // new InstantCommand(() -> s_Intake.changeState())
       )
     );
+
+    // testTraj.done().onTrue(
+    //   new ParallelRaceGroup(
+    //     new WaitCommand(2.5),
+    //     new ParallelCommandGroup(
+    //       new AimShooter(s_ShooterPivot),
+    //       new PrepareShooter(s_Shooter),
+    //       drivebase.driveCommand(
+    //       () -> 0,
+    //       () -> 0,
+    //       () -> (s_Eyes.getTargetRotation()) * (.12)).repeatedly().withTimeout(7),
+    //       new SequentialCommandGroup(
+    //         new WaitCommand(0.2),
+    //         new RunHotDog(s_HotDog)
+    //       )
+    //     )
+    //   )
+    // );
 
     return autoRoutine;
 
